@@ -11,7 +11,7 @@ return new class extends Migration
         Schema::create('donor_profiles', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->foreignUuid('user_id')->constrained('users')->onDelete('restrict');
-            $table->string('nik_encrypted', 500)->unique();
+            $table->string('nik_encrypted', 500)->nullable()->unique();
             $table->string('gender', 10);
             $table->date('birth_date');
             $table->string('blood_type', 5);
