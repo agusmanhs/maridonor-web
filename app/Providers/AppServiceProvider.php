@@ -19,6 +19,10 @@ class AppServiceProvider extends ServiceProvider
             \App\Repositories\Contracts\OtpCodeRepositoryInterface::class,
             \App\Repositories\Eloquent\OtpCodeRepository::class
         );
+        $this->app->bind(
+            \App\Repositories\Contracts\InstitutionRepositoryInterface::class,
+            \App\Repositories\Eloquent\InstitutionRepository::class
+        );
     }
 
     /**
