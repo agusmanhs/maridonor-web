@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\V1\Auth\AuthController;
+use App\Http\Controllers\Api\V1\BloodStock\BloodStockController;
 use App\Http\Controllers\Api\V1\Institution\InstitutionController;
 use Illuminate\Support\Facades\Route;
 
@@ -32,6 +33,20 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
             Route::get('/institutions/{id}/staff', [InstitutionController::class, 'getStaff'])->name('institutions.staff.index');
             Route::post('/institutions/{id}/staff', [InstitutionController::class, 'addStaff'])->name('institutions.staff.store');
             Route::delete('/institutions/{id}/staff/{userId}', [InstitutionController::class, 'removeStaff'])->name('institutions.staff.destroy');
+        });
+
+        // Blood Stock Management (PMI & RS staff/admins)
+        Route::middleware('role:pmi_staff,pmi_admin,rs_staff,rs_admin,super_admin')->group(function () {
+            Route::get('/institutions/{institutionId}/blood-stocks', [BloodStockController::class, 'index'])->name('blood-stocks.index');
+            Route::get('/institutions/{institutionId}/blood-stocks/summary', [BloodStockController::class, 'summary'])->name('blood-stocks.summary');
+            Route::get('/institutions/{institutionId}/blood-stocks/alerts', [BloodStockController::class, 'alerts'])->name('blood-stocks.alerts');
+            Route::post('/blood-stocks', [BloodStockController::class, 'store'])->name('blood-stocks.store');
+            Route::post('/blood-stocks/{id}/discard', [BloodStockController::class, 'discard'])->name('blood-stocks.discard');
+        });
+
+        // Blood Distribution (Only PMI staff/admin can distribute blood bags to hospitals)
+        Route::middleware('role:pmi_staff,pmi_admin,super_admin')->group(function () {
+            Route::post('/blood-stocks/{id}/distribute', [BloodStockController::class, 'distribute'])->name('blood-stocks.distribute');
         });
     });
 });
