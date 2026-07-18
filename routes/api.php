@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\V1\Article\ArticleController;
 use App\Http\Controllers\Api\V1\Auth\AuthController;
 use App\Http\Controllers\Api\V1\BloodRequest\BloodRequestController;
 use App\Http\Controllers\Api\V1\BloodStock\BloodStockController;
+use App\Http\Controllers\Api\V1\Dashboard\DashboardController;
 use App\Http\Controllers\Api\V1\Institution\InstitutionController;
 use App\Http\Controllers\Api\V1\Notification\NotificationController;
 use App\Http\Controllers\Api\V1\Reward\RewardController;
@@ -105,5 +106,9 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
         Route::middleware('role:super_admin,pmi_admin,pmi_staff')->group(function () {
             Route::post('/announcements', [NotificationController::class, 'storeAnnouncement'])->name('announcements.store');
         });
+
+        // Dashboard Metrics & Statistics
+        Route::get('/dashboard/pmi', [DashboardController::class, 'pmiMetrics'])->name('dashboard.pmi');
+        Route::get('/dashboard/hospital', [DashboardController::class, 'hospitalMetrics'])->name('dashboard.hospital');
     });
 });
