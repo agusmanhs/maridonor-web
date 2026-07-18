@@ -47,6 +47,10 @@ class AppServiceProvider extends ServiceProvider
             \App\Repositories\Contracts\ArticleRepositoryInterface::class,
             \App\Repositories\Eloquent\ArticleRepository::class
         );
+        $this->app->bind(
+            \App\Repositories\Contracts\NotificationRepositoryInterface::class,
+            \App\Repositories\Eloquent\NotificationRepository::class
+        );
     }
 
     /**

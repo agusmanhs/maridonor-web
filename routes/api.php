@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\V1\Auth\AuthController;
 use App\Http\Controllers\Api\V1\BloodRequest\BloodRequestController;
 use App\Http\Controllers\Api\V1\BloodStock\BloodStockController;
 use App\Http\Controllers\Api\V1\Institution\InstitutionController;
+use App\Http\Controllers\Api\V1\Notification\NotificationController;
 use App\Http\Controllers\Api\V1\Reward\RewardController;
 use App\Http\Controllers\Api\V1\Schedule\DonationScheduleController;
 use Illuminate\Support\Facades\Route;
@@ -17,7 +18,7 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
     Route::post('/auth/otp/send', [AuthController::class, 'sendOtp'])->name('auth.otp.send');
     Route::post('/auth/otp/verify', [AuthController::class, 'verifyOtp'])->name('auth.otp.verify');
 
-    // Public Institution, Schedule, Rewards, & Article/FAQ Routes
+    // Public Institution, Schedule, Rewards, Article & Announcement Routes
     Route::get('/institutions', [InstitutionController::class, 'index'])->name('institutions.index');
     Route::get('/institutions/{id}', [InstitutionController::class, 'show'])->name('institutions.show');
     Route::get('/institutions/{institutionId}/schedule-slots', [DonationScheduleController::class, 'index'])->name('schedule-slots.index');
@@ -25,6 +26,7 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
     Route::get('/articles', [ArticleController::class, 'index'])->name('articles.index');
     Route::get('/articles/{slug}', [ArticleController::class, 'show'])->name('articles.show');
     Route::get('/faqs', [ArticleController::class, 'indexFaqs'])->name('faqs.index');
+    Route::get('/announcements', [NotificationController::class, 'announcements'])->name('announcements.index');
 
     // Protected Routes
     Route::middleware('auth:sanctum')->group(function () {
@@ -92,6 +94,16 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
         // Manage FAQs (Only Super Admin)
         Route::middleware('role:super_admin')->group(function () {
             Route::post('/faqs', [ArticleController::class, 'storeFaq'])->name('faqs.store');
+        });
+
+        // Notifications Management
+        Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
+        Route::post('/notifications/read-all', [NotificationController::class, 'markAllRead'])->name('notifications.read-all');
+        Route::post('/notifications/{id}/read', [NotificationController::class, 'markRead'])->name('notifications.read');
+
+        // Manage Announcements (Only Super Admin and PMI Admin/Staff)
+        Route::middleware('role:super_admin,pmi_admin,pmi_staff')->group(function () {
+            Route::post('/announcements', [NotificationController::class, 'storeAnnouncement'])->name('announcements.store');
         });
     });
 });
