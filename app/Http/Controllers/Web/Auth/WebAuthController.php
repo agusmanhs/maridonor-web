@@ -29,9 +29,9 @@ class WebAuthController extends Controller
             $user = Auth::user();
 
             if (in_array($user->role->value, ['pmi_staff', 'pmi_admin', 'super_admin'])) {
-                return redirect()->intended('/');
+                return redirect()->intended('/dashboard/pmi');
             } elseif (in_array($user->role->value, ['rs_staff', 'rs_admin'])) {
-                return redirect()->intended('/');
+                return redirect()->intended('/dashboard/hospital');
             }
 
             Auth::logout();
