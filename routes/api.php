@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\V1\Auth\AuthController;
+use App\Http\Controllers\Api\V1\BloodRequest\BloodRequestController;
 use App\Http\Controllers\Api\V1\BloodStock\BloodStockController;
 use App\Http\Controllers\Api\V1\Institution\InstitutionController;
 use App\Http\Controllers\Api\V1\Schedule\DonationScheduleController;
@@ -60,6 +61,16 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
         // Manage slots (Only PMI staff/admin can create donation slots)
         Route::middleware('role:pmi_staff,pmi_admin,super_admin')->group(function () {
             Route::post('/schedule-slots', [DonationScheduleController::class, 'storeSlot'])->name('schedule-slots.store');
+        });
+
+        // Blood Requests Module (RS staff can request, PMI staff can approve and fulfill)
+        Route::get('/blood-requests', [BloodRequestController::class, 'index'])->name('blood-requests.index');
+        Route::get('/blood-requests/{id}', [BloodRequestController::class, 'show'])->name('blood-requests.show');
+        Route::post('/blood-requests', [BloodRequestController::class, 'store'])->name('blood-requests.store');
+        
+        Route::middleware('role:pmi_staff,pmi_admin,super_admin')->group(function () {
+            Route::post('/blood-requests/{id}/process', [BloodRequestController::class, 'process'])->name('blood-requests.process');
+            Route::post('/blood-requests/{id}/fulfill', [BloodRequestController::class, 'fulfill'])->name('blood-requests.fulfill');
         });
     });
 });
