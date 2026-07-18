@@ -43,6 +43,10 @@ class AppServiceProvider extends ServiceProvider
             \App\Repositories\Contracts\RewardRepositoryInterface::class,
             \App\Repositories\Eloquent\RewardRepository::class
         );
+        $this->app->bind(
+            \App\Repositories\Contracts\ArticleRepositoryInterface::class,
+            \App\Repositories\Eloquent\ArticleRepository::class
+        );
     }
 
     /**

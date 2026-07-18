@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\V1\Article\ArticleController;
 use App\Http\Controllers\Api\V1\Auth\AuthController;
 use App\Http\Controllers\Api\V1\BloodRequest\BloodRequestController;
 use App\Http\Controllers\Api\V1\BloodStock\BloodStockController;
@@ -16,11 +17,14 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
     Route::post('/auth/otp/send', [AuthController::class, 'sendOtp'])->name('auth.otp.send');
     Route::post('/auth/otp/verify', [AuthController::class, 'verifyOtp'])->name('auth.otp.verify');
 
-    // Public Institution, Schedule & Rewards Routes
+    // Public Institution, Schedule, Rewards, & Article/FAQ Routes
     Route::get('/institutions', [InstitutionController::class, 'index'])->name('institutions.index');
     Route::get('/institutions/{id}', [InstitutionController::class, 'show'])->name('institutions.show');
     Route::get('/institutions/{institutionId}/schedule-slots', [DonationScheduleController::class, 'index'])->name('schedule-slots.index');
     Route::get('/rewards/leaderboard', [RewardController::class, 'leaderboard'])->name('rewards.leaderboard');
+    Route::get('/articles', [ArticleController::class, 'index'])->name('articles.index');
+    Route::get('/articles/{slug}', [ArticleController::class, 'show'])->name('articles.show');
+    Route::get('/faqs', [ArticleController::class, 'indexFaqs'])->name('faqs.index');
 
     // Protected Routes
     Route::middleware('auth:sanctum')->group(function () {
@@ -79,5 +83,15 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
         Route::get('/rewards/badges', [RewardController::class, 'badges'])->name('rewards.badges');
         Route::get('/rewards/referrals', [RewardController::class, 'referrals'])->name('rewards.referrals');
         Route::post('/rewards/referrals/claim', [RewardController::class, 'claimReferral'])->name('rewards.referrals.claim');
+
+        // Manage Articles (Corporate admins and Super admin)
+        Route::middleware('role:super_admin,pmi_admin,rs_admin')->group(function () {
+            Route::post('/articles', [ArticleController::class, 'store'])->name('articles.store');
+        });
+
+        // Manage FAQs (Only Super Admin)
+        Route::middleware('role:super_admin')->group(function () {
+            Route::post('/faqs', [ArticleController::class, 'storeFaq'])->name('faqs.store');
+        });
     });
 });
