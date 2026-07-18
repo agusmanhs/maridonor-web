@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\V1\Auth\AuthController;
 use App\Http\Controllers\Api\V1\BloodRequest\BloodRequestController;
 use App\Http\Controllers\Api\V1\BloodStock\BloodStockController;
 use App\Http\Controllers\Api\V1\Institution\InstitutionController;
+use App\Http\Controllers\Api\V1\Reward\RewardController;
 use App\Http\Controllers\Api\V1\Schedule\DonationScheduleController;
 use Illuminate\Support\Facades\Route;
 
@@ -15,10 +16,11 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
     Route::post('/auth/otp/send', [AuthController::class, 'sendOtp'])->name('auth.otp.send');
     Route::post('/auth/otp/verify', [AuthController::class, 'verifyOtp'])->name('auth.otp.verify');
 
-    // Public Institution & Schedule Routes
+    // Public Institution, Schedule & Rewards Routes
     Route::get('/institutions', [InstitutionController::class, 'index'])->name('institutions.index');
     Route::get('/institutions/{id}', [InstitutionController::class, 'show'])->name('institutions.show');
     Route::get('/institutions/{institutionId}/schedule-slots', [DonationScheduleController::class, 'index'])->name('schedule-slots.index');
+    Route::get('/rewards/leaderboard', [RewardController::class, 'leaderboard'])->name('rewards.leaderboard');
 
     // Protected Routes
     Route::middleware('auth:sanctum')->group(function () {
@@ -72,5 +74,10 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
             Route::post('/blood-requests/{id}/process', [BloodRequestController::class, 'process'])->name('blood-requests.process');
             Route::post('/blood-requests/{id}/fulfill', [BloodRequestController::class, 'fulfill'])->name('blood-requests.fulfill');
         });
+
+        // Rewards Module (User/Donor points, badges and referrals)
+        Route::get('/rewards/badges', [RewardController::class, 'badges'])->name('rewards.badges');
+        Route::get('/rewards/referrals', [RewardController::class, 'referrals'])->name('rewards.referrals');
+        Route::post('/rewards/referrals/claim', [RewardController::class, 'claimReferral'])->name('rewards.referrals.claim');
     });
 });

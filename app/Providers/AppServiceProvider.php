@@ -39,6 +39,10 @@ class AppServiceProvider extends ServiceProvider
             \App\Repositories\Contracts\BloodRequestRepositoryInterface::class,
             \App\Repositories\Eloquent\BloodRequestRepository::class
         );
+        $this->app->bind(
+            \App\Repositories\Contracts\RewardRepositoryInterface::class,
+            \App\Repositories\Eloquent\RewardRepository::class
+        );
     }
 
     /**
