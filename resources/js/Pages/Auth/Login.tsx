@@ -28,7 +28,7 @@ export default function Login() {
                     {/* Header Logo */}
                     <div className="text-center space-y-3">
                         <Link href="/" className="inline-flex items-center space-x-3 group">
-                            <img src="/images/logo.png" alt="Maridonor Logo" className="h-10 w-auto" />
+                            <img src="/images/logo_icon.png" alt="Maridonor Logo" className="h-10 w-auto" />
                             <span className="text-2xl font-bold tracking-tight text-white">
                                 Mari<span className="text-red-500">donor</span>
                             </span>

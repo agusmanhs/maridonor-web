@@ -29,7 +29,7 @@ export default function Welcome({ title, auth }: Props) {
                 <header className="sticky top-0 z-50 backdrop-blur-md bg-slate-950/70 border-b border-slate-900/50">
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
                         <div className="flex items-center space-x-3">
-                            <img src="/images/logo.png" alt="Maridonor Logo" className="h-9 w-auto" />
+                            <img src="/images/logo_icon.png" alt="Maridonor Logo" className="h-9 w-auto" />
                             <span className="text-xl font-bold tracking-tight text-white font-sans">
                                 Mari<span className="text-red-500">donor</span>
                             </span>
