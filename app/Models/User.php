@@ -71,7 +71,7 @@ class User extends Authenticatable
 
     public function institutionStaff(): HasMany
     {
-        return $this->hasMany(InstitutionStaff::class);
+        return $this->hasMany(InstitutionStaff::class, 'user_id');
     }
 
     public function isDonor(): bool

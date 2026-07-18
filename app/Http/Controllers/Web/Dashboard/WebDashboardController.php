@@ -21,9 +21,14 @@ class WebDashboardController extends Controller
     {
         $user = $request->user();
         
-        // Dapatkan ID institusi PMI dari relasi staff
-        $staffRecord = $user->institutionStaff()->first();
-        $pmiInstitutionId = $staffRecord ? $staffRecord->institution_id : null;
+        // Dapatkan ID institusi PMI dari relasi staff atau fallback ke PMI pertama untuk super_admin
+        $pmiInstitutionId = null;
+        if ($user->role->value === 'super_admin') {
+            $pmiInstitutionId = \App\Models\Institution::where('type', \App\Enums\InstitutionType::Pmi)->first()?->id;
+        } else {
+            $staffRecord = $user->institutionStaff()->first();
+            $pmiInstitutionId = $staffRecord ? $staffRecord->institution_id : null;
+        }
 
         if (!$pmiInstitutionId) {
             abort(403, 'Anda tidak terasosiasi dengan UDD PMI mana pun.');
@@ -47,9 +52,14 @@ class WebDashboardController extends Controller
     {
         $user = $request->user();
 
-        // Dapatkan ID institusi RS dari relasi staff
-        $staffRecord = $user->institutionStaff()->first();
-        $hospitalInstitutionId = $staffRecord ? $staffRecord->institution_id : null;
+        // Dapatkan ID institusi RS dari relasi staff atau fallback ke RS pertama untuk super_admin
+        $hospitalInstitutionId = null;
+        if ($user->role->value === 'super_admin') {
+            $hospitalInstitutionId = \App\Models\Institution::where('type', \App\Enums\InstitutionType::Hospital)->first()?->id;
+        } else {
+            $staffRecord = $user->institutionStaff()->first();
+            $hospitalInstitutionId = $staffRecord ? $staffRecord->institution_id : null;
+        }
 
         if (!$hospitalInstitutionId) {
             abort(403, 'Anda tidak terasosiasi dengan Rumah Sakit mana pun.');
