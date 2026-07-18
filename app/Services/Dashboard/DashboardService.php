@@ -35,4 +35,14 @@ class DashboardService
 
         return $this->dashboardRepo->getHospitalMetrics($staff->institution_id);
     }
+
+    public function getPmiMetricsByInstitution(string $institutionId): array
+    {
+        return $this->dashboardRepo->getPmiMetrics($institutionId);
+    }
+
+    public function getHospitalMetricsByInstitution(string $institutionId): array
+    {
+        return $this->dashboardRepo->getHospitalMetrics($institutionId);
+    }
 }

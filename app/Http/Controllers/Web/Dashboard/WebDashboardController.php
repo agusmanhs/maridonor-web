@@ -34,7 +34,7 @@ class WebDashboardController extends Controller
             abort(403, 'Anda tidak terasosiasi dengan UDD PMI mana pun.');
         }
 
-        $metrics = $this->dashboardService->getPmiDashboardMetrics($pmiInstitutionId);
+        $metrics = $this->dashboardService->getPmiMetricsByInstitution($pmiInstitutionId);
 
         return Inertia::render('Dashboard/Pmi', [
             'metrics' => $metrics,
@@ -65,7 +65,7 @@ class WebDashboardController extends Controller
             abort(403, 'Anda tidak terasosiasi dengan Rumah Sakit mana pun.');
         }
 
-        $metrics = $this->dashboardService->getHospitalDashboardMetrics($hospitalInstitutionId);
+        $metrics = $this->dashboardService->getHospitalMetricsByInstitution($hospitalInstitutionId);
 
         return Inertia::render('Dashboard/Hospital', [
             'metrics' => $metrics,
