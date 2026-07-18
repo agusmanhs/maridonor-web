@@ -29,8 +29,13 @@ class DashboardRepository implements DashboardRepositoryInterface
 
         // 4. Hitung Tren Donasi Sukses (6 Bulan Terakhir)
         $sixMonthsAgo = now()->subMonths(6)->startOfMonth();
+        $dbDriver = DB::connection()->getDriverName();
+        $monthExpr = $dbDriver === 'sqlite'
+            ? "strftime('%Y-%m', created_at)"
+            : "to_char(created_at, 'YYYY-MM')";
+
         $donationTrends = Donation::select(
-                DB::raw("strftime('%Y-%m', created_at) as month"), // Kompatibel SQLite & PostgreSQL
+                DB::raw("$monthExpr as month"),
                 DB::raw("count(id) as total")
             )
             ->where('status', \App\Enums\DonationStatus::Completed ?? 'completed')

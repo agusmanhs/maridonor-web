@@ -33,13 +33,19 @@ class InstitutionRepository implements InstitutionRepositoryInterface
             });
         }
 
-        // Filter spasial jarak/radius jika latitude & longitude ada (Haversine formula)
+        // Filter spasial jarak/radius jika latitude & longitude ada (Haversine formula dengan Bounding Box filter)
         if (!empty($filters['latitude']) && !empty($filters['longitude']) && !empty($filters['radius_km'])) {
-            $lat = $filters['latitude'];
-            $lon = $filters['longitude'];
-            $radius = $filters['radius_km'];
+            $lat = (float) $filters['latitude'];
+            $lon = (float) $filters['longitude'];
+            $radius = (float) $filters['radius_km'];
 
-            $query->selectRaw("*, (6371 * acos(cos(radians(?)) * cos(radians(latitude)) * cos(radians(longitude) - radians(?)) + sin(radians(?)) * sin(radians(latitude)))) AS distance", [$lat, $lon, $lat])
+            // Tambahkan filter Bounding Box kasar untuk memangkas scanning index
+            $latRange = $radius / 111;
+            $lonRange = $radius / (111 * cos(deg2rad($lat)));
+
+            $query->whereBetween('latitude', [$lat - $latRange, $lat + $latRange])
+                ->whereBetween('longitude', [$lon - $lonRange, $lon + $lonRange])
+                ->selectRaw("*, (6371 * acos(cos(radians(?)) * cos(radians(latitude)) * cos(radians(longitude) - radians(?)) + sin(radians(?)) * sin(radians(latitude)))) AS distance", [$lat, $lon, $lat])
                 ->having('distance', '<=', $radius)
                 ->orderBy('distance');
         } else {
