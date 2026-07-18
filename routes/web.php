@@ -1,7 +1,24 @@
 <?php
 
+use App\Http\Controllers\Web\Auth\WebAuthController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    return inertia('Welcome', ['title' => 'Maridonor Admin Portal']);
+    return inertia('Welcome', [
+        'title' => 'Maridonor Admin Portal',
+        'auth' => [
+            'user' => auth()->user() ? [
+                'name' => auth()->user()->name,
+                'email' => auth()->user()->email,
+                'role' => auth()->user()->role->value,
+            ] : null,
+        ]
+    ]);
 });
+
+Route::middleware('guest')->group(function () {
+    Route::get('/login', [WebAuthController::class, 'showLoginForm'])->name('login');
+    Route::post('/login', [WebAuthController::class, 'login']);
+});
+
+Route::post('/logout', [WebAuthController::class, 'logout'])->middleware('auth')->name('logout');
