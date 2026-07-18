@@ -28,9 +28,7 @@ export default function Login() {
                     {/* Header Logo */}
                     <div className="text-center space-y-3">
                         <Link href="/" className="inline-flex items-center space-x-3 group">
-                            <div className="w-10 h-10 rounded-xl bg-red-600 flex items-center justify-center font-bold text-white shadow-lg shadow-red-600/20 group-hover:scale-105 transition duration-200">
-                                M
-                            </div>
+                            <img src="/images/logo.png" alt="Maridonor Logo" className="h-10 w-auto" />
                             <span className="text-2xl font-bold tracking-tight text-white">
                                 Mari<span className="text-red-500">donor</span>
                             </span>
