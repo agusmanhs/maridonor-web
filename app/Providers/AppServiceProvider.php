@@ -27,6 +27,14 @@ class AppServiceProvider extends ServiceProvider
             \App\Repositories\Contracts\BloodStockRepositoryInterface::class,
             \App\Repositories\Eloquent\BloodStockRepository::class
         );
+        $this->app->bind(
+            \App\Repositories\Contracts\ScheduleSlotRepositoryInterface::class,
+            \App\Repositories\Eloquent\ScheduleSlotRepository::class
+        );
+        $this->app->bind(
+            \App\Repositories\Contracts\BookingRepositoryInterface::class,
+            \App\Repositories\Eloquent\BookingRepository::class
+        );
     }
 
     /**

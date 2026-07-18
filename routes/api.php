@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\V1\Auth\AuthController;
 use App\Http\Controllers\Api\V1\BloodStock\BloodStockController;
 use App\Http\Controllers\Api\V1\Institution\InstitutionController;
+use App\Http\Controllers\Api\V1\Schedule\DonationScheduleController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->name('api.v1.')->group(function () {
@@ -13,9 +14,10 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
     Route::post('/auth/otp/send', [AuthController::class, 'sendOtp'])->name('auth.otp.send');
     Route::post('/auth/otp/verify', [AuthController::class, 'verifyOtp'])->name('auth.otp.verify');
 
-    // Public Institution Routes
+    // Public Institution & Schedule Routes
     Route::get('/institutions', [InstitutionController::class, 'index'])->name('institutions.index');
     Route::get('/institutions/{id}', [InstitutionController::class, 'show'])->name('institutions.show');
+    Route::get('/institutions/{institutionId}/schedule-slots', [DonationScheduleController::class, 'index'])->name('schedule-slots.index');
 
     // Protected Routes
     Route::middleware('auth:sanctum')->group(function () {
@@ -47,6 +49,17 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
         // Blood Distribution (Only PMI staff/admin can distribute blood bags to hospitals)
         Route::middleware('role:pmi_staff,pmi_admin,super_admin')->group(function () {
             Route::post('/blood-stocks/{id}/distribute', [BloodStockController::class, 'distribute'])->name('blood-stocks.distribute');
+        });
+
+        // Booking & Scheduling for Donors
+        Route::post('/bookings', [DonationScheduleController::class, 'storeBooking'])->name('bookings.store');
+        Route::get('/bookings/my', [DonationScheduleController::class, 'myBookings'])->name('bookings.my');
+        Route::post('/bookings/{id}/cancel', [DonationScheduleController::class, 'cancelBooking'])->name('bookings.cancel');
+        Route::post('/bookings/{id}/check-in', [DonationScheduleController::class, 'checkIn'])->name('bookings.check-in');
+
+        // Manage slots (Only PMI staff/admin can create donation slots)
+        Route::middleware('role:pmi_staff,pmi_admin,super_admin')->group(function () {
+            Route::post('/schedule-slots', [DonationScheduleController::class, 'storeSlot'])->name('schedule-slots.store');
         });
     });
 });
