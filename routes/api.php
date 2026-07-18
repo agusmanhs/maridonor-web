@@ -15,9 +15,9 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
     // Public Auth Routes
     Route::post('/auth/register', [AuthController::class, 'register'])->name('auth.register');
     Route::post('/auth/register/institution', [InstitutionController::class, 'register'])->name('auth.register.institution');
-    Route::post('/auth/login', [AuthController::class, 'login'])->name('auth.login');
-    Route::post('/auth/otp/send', [AuthController::class, 'sendOtp'])->name('auth.otp.send');
-    Route::post('/auth/otp/verify', [AuthController::class, 'verifyOtp'])->name('auth.otp.verify');
+    Route::post('/auth/login', [AuthController::class, 'login'])->middleware('throttle:10,1')->name('auth.login');
+    Route::post('/auth/otp/send', [AuthController::class, 'sendOtp'])->middleware('throttle:3,1')->name('auth.otp.send');
+    Route::post('/auth/otp/verify', [AuthController::class, 'verifyOtp'])->middleware('throttle:10,1')->name('auth.otp.verify');
 
     // Public Institution, Schedule, Rewards, Article & Announcement Routes
     Route::get('/institutions', [InstitutionController::class, 'index'])->name('institutions.index');
@@ -108,7 +108,12 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
         });
 
         // Dashboard Metrics & Statistics
-        Route::get('/dashboard/pmi', [DashboardController::class, 'pmiMetrics'])->name('dashboard.pmi');
-        Route::get('/dashboard/hospital', [DashboardController::class, 'hospitalMetrics'])->name('dashboard.hospital');
+        Route::middleware('role:pmi_staff,pmi_admin,super_admin')->group(function () {
+            Route::get('/dashboard/pmi', [DashboardController::class, 'pmiMetrics'])->name('dashboard.pmi');
+        });
+
+        Route::middleware('role:rs_staff,rs_admin,super_admin')->group(function () {
+            Route::get('/dashboard/hospital', [DashboardController::class, 'hospitalMetrics'])->name('dashboard.hospital');
+        });
     });
 });
