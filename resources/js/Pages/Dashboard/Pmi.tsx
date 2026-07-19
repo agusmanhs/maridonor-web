@@ -61,10 +61,10 @@ export default function PmiDashboard({ metrics, auth }: Props) {
                             <span>🩸</span>
                             <span>Kelola Stok Darah</span>
                         </Link>
-                        <a href="#" className="flex items-center space-x-3 px-3 py-2.5 text-slate-400 hover:text-white hover:bg-slate-850 rounded-xl text-sm font-semibold transition duration-150">
+                        <Link href="/blood-requests" className="flex items-center space-x-3 px-3 py-2.5 text-slate-400 hover:text-white hover:bg-slate-850 rounded-xl text-sm font-semibold transition duration-150">
                             <span>🚨</span>
                             <span>Permohonan Darah</span>
-                        </a>
+                        </Link>
                         <a href="#" className="flex items-center space-x-3 px-3 py-2.5 text-slate-400 hover:text-white hover:bg-slate-850 rounded-xl text-sm font-semibold transition duration-150">
                             <span>📅</span>
                             <span>Slot Jadwal Donor</span>

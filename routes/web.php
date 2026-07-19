@@ -33,4 +33,10 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/blood-stocks', [\App\Http\Controllers\Web\BloodStock\WebBloodStockController::class, 'store'])->name('blood-stocks.store');
         Route::post('/blood-stocks/{id}/distribute', [\App\Http\Controllers\Web\BloodStock\WebBloodStockController::class, 'distribute'])->name('blood-stocks.distribute');
     });
+
+    // Rute Permohonan Darah Darurat
+    Route::get('/blood-requests', [\App\Http\Controllers\Web\BloodRequest\WebBloodRequestController::class, 'index'])->name('blood-requests.index');
+    Route::get('/blood-requests/{id}', [\App\Http\Controllers\Web\BloodRequest\WebBloodRequestController::class, 'show'])->name('blood-requests.show');
+    Route::middleware('role:rs_staff,rs_admin,super_admin')->post('/blood-requests', [\App\Http\Controllers\Web\BloodRequest\WebBloodRequestController::class, 'store'])->name('blood-requests.store');
+    Route::middleware('role:pmi_staff,pmi_admin,super_admin')->post('/blood-requests/{id}/fulfill', [\App\Http\Controllers\Web\BloodRequest\WebBloodRequestController::class, 'fulfill'])->name('blood-requests.fulfill');
 });
