@@ -129,9 +129,15 @@ export default function Login() {
                         </form>
                     </div>
 
-                    {/* Back Link */}
-                    <div className="text-center">
-                        <Link href="/" className="text-xs theme-text-muted hover:theme-text-main transition duration-150">
+                    {/* Register & Back Links */}
+                    <div className="text-center space-y-2">
+                        <p className="text-xs theme-text-muted">
+                            Belum punya akun?{' '}
+                            <Link href="/register" className="text-red-500 font-bold hover:text-red-400 transition duration-150">
+                                Daftar sebagai Pendonor
+                            </Link>
+                        </p>
+                        <Link href="/" className="inline-block text-xs theme-text-muted hover:theme-text-main transition duration-150">
                             &larr; Kembali ke Beranda
                         </Link>
                     </div>
