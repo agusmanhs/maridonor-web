@@ -65,7 +65,7 @@ export default function DashboardLayout({ children, sidebarType, title, subtitle
             <div className="absolute bottom-0 left-0 w-[400px] h-[400px] rounded-full bg-rose-600/5 blur-3xl pointer-events-none"></div>
 
             {/* Sidebar Menu */}
-            <aside className="w-full lg:w-64 theme-bg-sidebar border-b lg:border-b-0 lg:border-r theme-border-main backdrop-blur-xl flex flex-col relative z-20 transition-colors duration-300">
+            <aside className="w-full lg:w-64 lg:h-screen lg:sticky lg:top-0 theme-bg-sidebar border-b lg:border-b-0 lg:border-r theme-border-main backdrop-blur-xl flex flex-col relative z-20 transition-colors duration-300">
                 <div className="p-6 border-b theme-border-main flex items-center space-x-3.5">
                     <div className="p-2 bg-gradient-to-br from-red-500/10 to-rose-600/10 rounded-xl border border-red-500/20">
                         <img src="/images/logo_icon.png" alt="Maridonor Logo" className="h-7 w-auto" />
@@ -75,7 +75,7 @@ export default function DashboardLayout({ children, sidebarType, title, subtitle
                     </span>
                 </div>
 
-                <div className="flex-1 p-4 space-y-1.5">
+                <div className="flex-1 p-4 space-y-1.5 overflow-y-auto">
                     <span className="px-3 text-[10px] font-bold theme-text-muted uppercase tracking-wider block mb-2">
                         {showDonorMenu && !showPmiMenu && !showHospitalMenu ? 'Portal Pendonor' : 'Menu Utama'}
                     </span>
