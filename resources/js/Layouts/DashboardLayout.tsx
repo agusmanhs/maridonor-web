@@ -58,7 +58,7 @@ export default function DashboardLayout({ children, sidebarType, title, subtitle
     };
 
     return (
-        <div className="min-h-screen theme-bg-main theme-text-main flex flex-col lg:flex-row antialiased relative overflow-hidden transition-colors duration-300" style={{ fontFamily: "'Outfit', sans-serif" }}>
+        <div className="min-h-screen lg:h-screen lg:overflow-hidden theme-bg-main theme-text-main flex flex-col lg:flex-row antialiased relative overflow-hidden transition-colors duration-300" style={{ fontFamily: "'Outfit', sans-serif" }}>
             
             {/* Background Glows */}
             <div className="absolute top-0 right-0 w-[400px] h-[400px] rounded-full bg-red-600/5 blur-3xl pointer-events-none"></div>
