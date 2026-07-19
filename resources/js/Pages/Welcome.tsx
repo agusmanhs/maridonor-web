@@ -27,15 +27,13 @@ export default function Welcome({ title, auth }: Props) {
                 <title>Beranda - Maridonor</title>
                 <link rel="preconnect" href="https://fonts.googleapis.com" />
                 <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-                <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+                <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
             </Head>
             
-            <div className="min-h-screen theme-bg-main theme-text-main selection:bg-red-600 selection:text-white antialiased relative overflow-hidden transition-colors duration-300" style={{ fontFamily: "'Outfit', sans-serif" }}>
+            <div className="min-h-screen theme-bg-main theme-text-main selection:bg-red-600 selection:theme-text-main antialiased relative overflow-hidden transition-colors duration-300" style={{ fontFamily: "'Outfit', sans-serif" }}>
                 
-                {/* Background Grid Pattern & Glowing Orbs */}
-                <div className="absolute inset-0 bg-[linear-gradient(to_right,var(--border-main)_1px,transparent_1px),linear-gradient(to_bottom,var(--border-main)_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] opacity-40"></div>
-                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[350px] rounded-full bg-gradient-to-b from-red-650/10 via-rose-650/5 to-transparent blur-3xl pointer-events-none"></div>
-                <div className="absolute bottom-10 right-10 w-96 h-96 rounded-full bg-red-600/5 blur-3xl pointer-events-none"></div>
+                {/* Ambient Glowing Orbs */}
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] rounded-full bg-red-500/5 blur-[100px] pointer-events-none"></div>
 
                 {/* Navbar Sticky Glassmorphic */}
                 <header className="sticky top-0 z-50 backdrop-blur-lg theme-bg-main/70 border-b theme-border-main transition-colors duration-300">
@@ -44,8 +42,8 @@ export default function Welcome({ title, auth }: Props) {
                             <div className="p-2 bg-gradient-to-br from-red-500/10 to-rose-600/10 rounded-xl border border-red-500/20 group-hover:border-red-500/40 transition duration-200">
                                 <img src="/images/logo_icon.png" alt="Maridonor Logo" className="h-8 w-auto group-hover:scale-105 transition duration-200" />
                             </div>
-                            <span className="text-2xl font-extrabold tracking-tight theme-text-main">
-                                Mari<span className="text-red-500">donor</span>
+                            <span className="text-2xl font-black tracking-tight theme-text-main">
+                                Mari<span className="text-red-600">donor</span>
                             </span>
                         </div>
 
@@ -76,7 +74,7 @@ export default function Welcome({ title, auth }: Props) {
                             ) : (
                                 <Link 
                                     href="/login" 
-                                    className="px-6 py-3 text-sm font-bold text-white bg-gradient-to-r from-red-650 to-rose-600 hover:from-red-550 hover:to-rose-550 rounded-xl shadow-lg shadow-red-600/15 transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0"
+                                    className="px-6 py-2.5 text-sm font-bold text-white bg-red-600 hover:bg-red-700 rounded-lg shadow-md shadow-red-600/20 transition-all duration-200"
                                 >
                                     Portal Masuk
                                 </Link>
@@ -95,11 +93,9 @@ export default function Welcome({ title, auth }: Props) {
                                 <span>Sistem Logistik Donor Darah Nasional</span>
                             </div>
 
-                            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight theme-text-main leading-tight font-serif">
-                                Setetes Darah,<br />
-                                <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-600 via-rose-500 to-red-500">
-                                    Satu Kehidupan Baru
-                                </span>
+                            <h1 className="text-4xl sm:text-5xl lg:text-[4rem] font-black tracking-tight theme-text-main leading-[1.1]">
+                                Setetes <span className="text-red-600">Darah</span>,<br />
+                                Satu Kehidupan Baru.
                             </h1>
 
                             <p className="text-base sm:text-lg theme-text-muted max-w-xl mx-auto lg:mx-0 leading-relaxed font-light">
@@ -109,15 +105,15 @@ export default function Welcome({ title, auth }: Props) {
                             <div className="flex flex-col sm:flex-row justify-center lg:justify-start gap-4">
                                 <Link 
                                     href="/login" 
-                                    className="px-8 py-4 text-base font-bold text-white bg-gradient-to-r from-red-605 to-rose-605 hover:from-red-550 hover:to-rose-550 rounded-2xl shadow-xl shadow-red-600/25 text-center transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0"
+                                    className="px-8 py-3.5 text-sm font-bold text-white bg-red-600 hover:bg-red-700 rounded-lg shadow-lg shadow-red-600/25 text-center transition-all duration-200"
                                 >
                                     Masuk ke Portal
                                 </Link>
                                 <a 
                                     href="#features" 
-                                    className="px-8 py-4 text-base font-bold theme-text-main theme-bg-card hover:bg-red-500/5 rounded-2xl border theme-border-main text-center transition duration-150"
+                                    className="px-8 py-3.5 text-base font-bold theme-text-main theme-bg-card hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg border theme-border-main text-center transition duration-150 shadow-sm"
                                 >
-                                    Pelajari Fitur
+                                    Pelajari Lebih Lanjut
                                 </a>
                             </div>
 
@@ -173,24 +169,30 @@ export default function Welcome({ title, auth }: Props) {
                     </div>
 
                     {/* Features Section */}
-                    <div id="features" className="py-12 space-y-12">
-                        <div className="text-center max-w-2xl mx-auto space-y-3">
-                            <h2 className="text-3xl font-extrabold theme-text-main">Satu Platform Untuk Semua Kebutuhan</h2>
-                            <p className="text-sm theme-text-muted leading-relaxed font-light">
-                                Menggabungkan kecepatan respon darurat Rumah Sakit dengan keandalan logistik Unit Donor Darah Palang Merah Indonesia.
+                    <div id="features" className="py-24 space-y-16">
+                        <div className="max-w-3xl space-y-4">
+                            <h2 className="text-3xl lg:text-4xl font-black theme-text-main tracking-tight">Kenapa Maridonor?</h2>
+                            <p className="text-base theme-text-muted leading-relaxed font-medium">
+                                Berbagi kehidupan, bergerak hidup sehat, dan berbuat kebaikan dalam satu platform logistik yang terpadu.
                             </p>
                         </div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                             {[
-                                { title: 'Monitoring Real-Time', desc: 'Pemantauan inventori stok kantong darah PMI secara akurat berdasarkan tipe komponen.', icon: '📊' },
-                                { title: 'Permohonan Darah Cepat', desc: 'Rumah Sakit dapat langsung mengirimkan permintaan darah darurat dengan notifikasi instan.', icon: '🚨' },
-                                { title: 'Sertifikat Digital', desc: 'Penghargaan eksklusif untuk pendonor yang melakukan kontribusi donor darah walk-in.', icon: '🏆' },
+                                { title: 'Kemudahan Akses', desc: 'Pemantauan inventori stok kantong darah secara akurat untuk kebutuhan darurat.', icon: '📅', color: 'bg-yellow-400' },
+                                { title: 'Respons Cepat', desc: 'Rumah Sakit dapat langsung mengirimkan permintaan darah darurat.', icon: '🚨', color: 'bg-purple-500' },
+                                { title: 'Pemantauan Real-time', desc: 'Monitor data ketersediaan komponen darah di seluruh PMI mitra secara instan.', icon: '📊', color: 'bg-orange-400' },
+                                { title: 'Pengalaman Berkelanjutan', desc: 'Dapatkan penghargaan dan sertifikat digital untuk setiap donor darah yang Anda lakukan.', icon: '🏆', color: 'bg-emerald-500' },
                             ].map((feat, idx) => (
-                                <div key={idx} className="theme-bg-card border theme-border-card hover:border-red-500/20 p-6 rounded-2xl transition duration-200 group">
-                                    <span className="text-3xl block mb-4 group-hover:scale-110 transition duration-150">{feat.icon}</span>
-                                    <h4 className="text-base font-bold theme-text-main mb-2">{feat.title}</h4>
-                                    <p className="text-xs theme-text-muted leading-relaxed">{feat.desc}</p>
+                                <div key={idx} className="theme-bg-card border theme-border-card p-8 rounded-3xl shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] hover:shadow-[0_8px_30px_-4px_rgba(0,0,0,0.1)] transition-all duration-300 flex flex-col items-start relative group">
+                                    <div className="w-14 h-14 rounded-2xl bg-red-500/5 flex items-center justify-center text-3xl mb-6 group-hover:scale-110 transition-transform duration-300">
+                                        {feat.icon}
+                                    </div>
+                                    <h4 className="text-lg font-bold theme-text-main mb-3 leading-tight">{feat.title}</h4>
+                                    <p className="text-sm theme-text-muted leading-relaxed flex-1 mb-8">{feat.desc}</p>
+                                    
+                                    {/* Accent Bar at bottom */}
+                                    <div className={`absolute bottom-8 left-8 h-1 w-8 rounded-full ${feat.color}`}></div>
                                 </div>
                             ))}
                         </div>

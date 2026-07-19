@@ -22,10 +22,10 @@ export default function Login() {
                 <title>Masuk - Portal Staf Maridonor</title>
                 <link rel="preconnect" href="https://fonts.googleapis.com" />
                 <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-                <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+                <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
             </Head>
             
-            <div className="min-h-screen theme-bg-main flex flex-col items-center justify-center p-4 sm:p-6 selection:bg-red-600 selection:text-white antialiased relative overflow-hidden transition-colors duration-300" style={{ fontFamily: "'Outfit', sans-serif" }}>
+            <div className="min-h-screen theme-bg-main flex flex-col items-center justify-center p-4 sm:p-6 selection:bg-red-600 selection:theme-text-main antialiased relative overflow-hidden transition-colors duration-300" style={{ fontFamily: "'Outfit', sans-serif" }}>
                 
                 {/* Floating Theme Switcher */}
                 <div className="absolute top-6 right-6 z-30">
@@ -45,8 +45,8 @@ export default function Login() {
                             <div className="p-2 bg-gradient-to-br from-red-500/10 to-rose-600/10 rounded-xl border border-red-500/20 group-hover:border-red-500/40 transition duration-200">
                                 <img src="/images/logo_icon.png" alt="Maridonor Logo" className="h-8 w-auto group-hover:scale-105 transition duration-200" />
                             </div>
-                            <span className="text-2xl font-extrabold tracking-tight theme-text-main">
-                                Mari<span className="text-red-500">donor</span>
+                            <span className="text-2xl font-black tracking-tight theme-text-main">
+                                Mari<span className="text-red-600">donor</span>
                             </span>
                         </Link>
                         <h2 className="text-lg font-bold theme-text-main tracking-tight">
@@ -122,7 +122,7 @@ export default function Login() {
                             <button
                                 type="submit"
                                 disabled={processing}
-                                className="w-full py-3.5 text-sm font-bold text-white bg-gradient-to-r from-red-650 to-rose-650 hover:from-red-550 hover:to-rose-550 disabled:opacity-50 rounded-xl shadow-lg shadow-red-600/15 hover:shadow-red-600/25 transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0 flex justify-center items-center"
+                                className="w-full py-3.5 text-sm font-bold text-white bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 disabled:opacity-50 rounded-xl shadow-lg shadow-red-600/15 hover:shadow-red-600/25 transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0 flex justify-center items-center"
                             >
                                 {processing ? 'Memverifikasi...' : 'Masuk ke Portal'}
                             </button>

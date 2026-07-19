@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Head, router, Link } from '@inertiajs/react';
+import DashboardLayout from '../../Layouts/DashboardLayout';
 
 interface BloodStockItem {
     id: string;
@@ -33,8 +34,17 @@ interface User {
     role: string;
 }
 
+interface PaginatedData<T> {
+    data: T[];
+    links: { url: string | null; label: string; active: boolean }[];
+    current_page: number;
+    last_page: number;
+    per_page: number;
+    total: number;
+}
+
 interface Props {
-    stocks: BloodStockItem[];
+    stocks: PaginatedData<BloodStockItem>;
     hospitals: HospitalItem[];
     filters: {
         blood_type?: string;
@@ -72,12 +82,19 @@ export default function BloodStockIndex({ stocks, hospitals, filters, currentIns
     const [targetHospitalId, setTargetHospitalId] = useState('');
 
     const handleFilterChange = (key: string, value: string) => {
-        const newFilters = {
+        const urlParams = new URLSearchParams(window.location.search);
+        const type = urlParams.get('type');
+
+        const newFilters: any = {
             blood_type: selectedBloodType,
             component_type: selectedComponent,
             status: selectedStatus,
             [key]: value
         };
+
+        if (type) {
+            newFilters.type = type;
+        }
 
         // Kirim filter ke backend menggunakan router.get
         router.get('/blood-stocks', newFilters, {
@@ -129,73 +146,31 @@ export default function BloodStockIndex({ stocks, hospitals, filters, currentIns
     return (
         <>
             <Head title="Kelola Stok Darah - Maridonor" />
-            <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col lg:flex-row font-sans antialiased selection:bg-red-600 selection:text-white">
-                
-                {/* Sidebar Menu */}
-                <aside className="w-full lg:w-64 bg-slate-900 border-b lg:border-b-0 lg:border-r border-slate-800 flex flex-col">
-                    <div className="p-6 border-b border-slate-800 flex items-center space-x-3">
-                        <img src="/images/logo_icon.png" alt="Maridonor Logo" className="h-8 w-auto" />
-                        <span className="text-lg font-bold tracking-tight text-white">
-                            Mari<span className="text-red-500">donor</span>
-                        </span>
-                    </div>
-
-                    <div className="flex-1 p-4 space-y-1.5">
-                        <span className="px-3 text-[10px] font-bold text-slate-500 uppercase tracking-wider block mb-2">Menu Utama</span>
-                        <Link href={isPmi ? '/dashboard/pmi' : '/dashboard/hospital'} className="flex items-center space-x-3 px-3 py-2.5 text-slate-400 hover:text-white hover:bg-slate-850 rounded-xl text-sm font-semibold transition duration-150">
-                            <span>📊</span>
-                            <span>Ikhtisar Dashboard</span>
-                        </Link>
-                        <Link href="/blood-stocks" className="flex items-center space-x-3 px-3 py-2.5 bg-red-600/10 text-red-500 rounded-xl text-sm font-semibold border border-red-500/10">
-                            <span>{isPmi ? '🩸' : '🩺'}</span>
-                            <span>{isPmi ? 'Kelola Stok Darah' : 'Stok Bank Darah RS'}</span>
-                        </Link>
-                    </div>
-
-                    <div className="p-4 border-t border-slate-800">
-                        <form onSubmit={handleLogout}>
-                            <button type="submit" className="w-full py-2.5 text-sm font-semibold text-slate-400 hover:text-white hover:bg-slate-850 rounded-xl border border-slate-800 transition duration-150 flex items-center justify-center space-x-2">
-                                <span>🚪</span>
-                                <span>Keluar Akun</span>
-                            </button>
-                        </form>
-                    </div>
-                </aside>
-
-                {/* Main Content Area */}
-                <main className="flex-1 p-6 lg:p-10 space-y-8 overflow-y-auto">
-                    
-                    {/* Header */}
-                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-6 border-b border-slate-900">
-                        <div>
-                            <h1 className="text-2xl lg:text-3xl font-extrabold text-white tracking-tight">
-                                {isPmi ? 'Inventori Stok Darah PMI' : 'Bank Darah Rumah Sakit'}
-                            </h1>
-                            <p className="text-sm text-slate-400">
-                                {currentInstitution?.name} — {isPmi ? 'Pencatatan & Alokasi Distribusi' : 'Pemantauan Kantong Darah Diterima'}
-                            </p>
-                        </div>
-                        {isPmi && (
-                            <button 
-                                onClick={() => setIsAddModalOpen(true)}
-                                className="px-5 py-2.5 bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-550 hover:to-rose-550 text-white rounded-xl text-sm font-semibold shadow-lg shadow-red-600/15 transition-all duration-150 active:scale-95"
-                            >
-                                + Registrasi Kantong Darah
-                            </button>
-                        )}
-                    </div>
+            <DashboardLayout
+                sidebarType={isPmi ? 'pmi' : 'hospital'}
+                title={isPmi ? 'Inventori Stok Darah PMI' : 'Bank Darah Rumah Sakit'}
+                subtitle={`${currentInstitution?.name} — ${isPmi ? 'Pencatatan & Alokasi Distribusi' : 'Pemantauan Kantong Darah Diterima'}`}
+                headerRight={isPmi ? (
+                    <button 
+                        onClick={() => setIsAddModalOpen(true)}
+                        className="px-5 py-2.5 bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-550 hover:to-rose-550 text-white rounded-xl text-sm font-semibold shadow-lg shadow-red-600/15 transition-all duration-150 active:scale-95"
+                    >
+                        + Registrasi Kantong Darah
+                    </button>
+                ) : undefined}
+            >
 
                     {/* Filter Panel */}
-                    <div className="bg-slate-900 border border-slate-800 p-5 rounded-2xl grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div className="theme-bg-card border theme-border-main p-5 rounded-2xl grid grid-cols-1 sm:grid-cols-3 gap-4">
                         <div className="space-y-1.5">
-                            <label className="text-xs font-bold text-slate-400 uppercase">Golongan Darah</label>
+                            <label className="text-xs font-bold theme-text-muted uppercase">Golongan Darah</label>
                             <select 
                                 value={selectedBloodType}
                                 onChange={(e) => {
                                     setSelectedBloodType(e.target.value);
                                     handleFilterChange('blood_type', e.target.value);
                                 }}
-                                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-red-500/50"
+                                className="w-full theme-bg-main border theme-border-main rounded-xl px-3 py-2 text-sm theme-text-main focus:outline-none focus:border-red-500/50"
                             >
                                 <option value="">Semua Golongan</option>
                                 <option value="A">A</option>
@@ -206,14 +181,14 @@ export default function BloodStockIndex({ stocks, hospitals, filters, currentIns
                         </div>
 
                         <div className="space-y-1.5">
-                            <label className="text-xs font-bold text-slate-400 uppercase">Komponen</label>
+                            <label className="text-xs font-bold theme-text-muted uppercase">Komponen</label>
                             <select 
                                 value={selectedComponent}
                                 onChange={(e) => {
                                     setSelectedComponent(e.target.value);
                                     handleFilterChange('component_type', e.target.value);
                                 }}
-                                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-red-500/50"
+                                className="w-full theme-bg-main border theme-border-main rounded-xl px-3 py-2 text-sm theme-text-main focus:outline-none focus:border-red-500/50"
                             >
                                 <option value="">Semua Komponen</option>
                                 <option value="whole_blood">Whole Blood (WB)</option>
@@ -225,14 +200,14 @@ export default function BloodStockIndex({ stocks, hospitals, filters, currentIns
                         </div>
 
                         <div className="space-y-1.5">
-                            <label className="text-xs font-bold text-slate-400 uppercase">Status</label>
+                            <label className="text-xs font-bold theme-text-muted uppercase">Status</label>
                             <select 
                                 value={selectedStatus}
                                 onChange={(e) => {
                                     setSelectedStatus(e.target.value);
                                     handleFilterChange('status', e.target.value);
                                 }}
-                                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-red-500/50"
+                                className="w-full theme-bg-main border theme-border-main rounded-xl px-3 py-2 text-sm theme-text-main focus:outline-none focus:border-red-500/50"
                             >
                                 <option value="">Semua Status</option>
                                 <option value="available">Tersedia (Available)</option>
@@ -244,11 +219,11 @@ export default function BloodStockIndex({ stocks, hospitals, filters, currentIns
                     </div>
 
                     {/* Inventory Table */}
-                    <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden">
+                    <div className="theme-bg-card border theme-border-main rounded-2xl overflow-hidden">
                         <div className="overflow-x-auto">
                             <table className="w-full text-left border-collapse">
                                 <thead>
-                                    <tr className="border-b border-slate-800 text-xs font-bold text-slate-400">
+                                    <tr className="border-b theme-border-main text-xs font-bold theme-text-muted">
                                         <th className="py-3 px-4">Nomor Bag</th>
                                         <th className="py-3 px-4">Tipe Darah</th>
                                         <th className="py-3 px-4">Komponen</th>
@@ -259,30 +234,30 @@ export default function BloodStockIndex({ stocks, hospitals, filters, currentIns
                                         {isPmi && <th className="py-3 px-4 text-center">Aksi</th>}
                                     </tr>
                                 </thead>
-                                <tbody className="text-sm divide-y divide-slate-850">
-                                    {stocks.length === 0 ? (
+                                <tbody className="text-sm divide-y theme-divide-main">
+                                    {stocks.data.length === 0 ? (
                                         <tr>
                                             <td colSpan={isPmi ? 8 : 7} className="py-8 text-center text-slate-500 font-semibold">
                                                 Tidak ada kantong darah terdaftar dengan filter ini.
                                             </td>
                                         </tr>
                                     ) : (
-                                        stocks.map((stock) => {
+                                        stocks.data.map((stock) => {
                                             const daysLeft = Math.ceil((new Date(stock.expires_at).getTime() - new Date().getTime()) / (1000 * 3600 * 24));
                                             const isNearExpired = daysLeft > 0 && daysLeft <= 7;
 
                                             return (
-                                                <tr key={stock.id} className="hover:bg-slate-850/30 transition duration-100">
-                                                    <td className="py-4 px-4 font-mono font-semibold text-white">{stock.bag_number}</td>
-                                                    <td className="py-4 px-4 text-slate-200">
+                                                <tr key={stock.id} className="hover:slate-500/5 transition duration-100">
+                                                    <td className="py-4 px-4 font-mono font-semibold theme-text-main">{stock.bag_number}</td>
+                                                    <td className="py-4 px-4 theme-text-main">
                                                         <span className="font-bold">{stock.blood_type}</span>
-                                                        <span className="text-xs text-slate-400"> ({stock.rhesus === 'positive' ? 'Positif' : 'Negatif'})</span>
+                                                        <span className="text-xs theme-text-muted"> ({stock.rhesus === 'positive' ? 'Positif' : 'Negatif'})</span>
                                                     </td>
-                                                    <td className="py-4 px-4 text-slate-300 capitalize">{stock.component_type.replace('_', ' ')}</td>
-                                                    <td className="py-4 px-4 text-slate-300">{stock.quantity_ml} ml</td>
-                                                    <td className="py-4 px-4 text-slate-400">{new Date(stock.collected_at).toLocaleDateString('id-ID')}</td>
+                                                    <td className="py-4 px-4 theme-text-muted capitalize">{stock.component_type.replace('_', ' ')}</td>
+                                                    <td className="py-4 px-4 theme-text-muted">{stock.quantity_ml} ml</td>
+                                                    <td className="py-4 px-4 theme-text-muted">{new Date(stock.collected_at).toLocaleDateString('id-ID')}</td>
                                                     <td className="py-4 px-4">
-                                                        <span className={`font-semibold ${isNearExpired ? 'text-rose-500 animate-pulse' : 'text-slate-300'}`}>
+                                                        <span className={`font-semibold ${isNearExpired ? 'text-rose-500 animate-pulse' : 'theme-text-muted'}`}>
                                                             {new Date(stock.expires_at).toLocaleDateString('id-ID')}
                                                         </span>
                                                         {isNearExpired && <span className="text-[10px] block font-bold text-rose-500">({daysLeft} hari lagi!)</span>}
@@ -293,12 +268,12 @@ export default function BloodStockIndex({ stocks, hospitals, filters, currentIns
                                                                 stock.status === 'available' ? 'bg-green-500/10 text-green-500' :
                                                                 stock.status === 'distributed' ? 'bg-blue-500/10 text-blue-500' :
                                                                 stock.status === 'reserved' ? 'bg-yellow-500/10 text-yellow-500' :
-                                                                'bg-slate-800 text-slate-400'
+                                                                'bg-slate-800 theme-text-muted'
                                                             }`}>
                                                                 {stock.status}
                                                             </span>
                                                             {stock.status === 'distributed' && stock.distributed_to_details && (
-                                                                <span className="text-[10px] text-slate-400 font-semibold">
+                                                                <span className="text-[10px] theme-text-muted font-semibold">
                                                                     ke: {stock.distributed_to_details.name}
                                                                 </span>
                                                             )}
@@ -328,39 +303,63 @@ export default function BloodStockIndex({ stocks, hospitals, filters, currentIns
                                 </tbody>
                             </table>
                         </div>
+                        {/* Pagination Links */}
+                        {stocks.links && stocks.links.length > 3 && (
+                            <div className="p-4 border-t theme-border-main flex items-center justify-center space-x-1 overflow-x-auto">
+                                {stocks.links.map((link, i) => (
+                                    link.url ? (
+                                        <Link
+                                            key={i}
+                                            href={link.url}
+                                            className={`px-3 py-1.5 text-xs font-bold rounded-lg transition-colors ${
+                                                link.active 
+                                                    ? 'bg-red-600 text-white shadow-md shadow-red-600/20' 
+                                                    : 'theme-bg-input theme-border-main border theme-text-main hover:bg-slate-500/10'
+                                            }`}
+                                            dangerouslySetInnerHTML={{ __html: link.label }}
+                                        />
+                                    ) : (
+                                        <span 
+                                            key={i} 
+                                            className="px-3 py-1.5 text-xs font-bold text-slate-400 theme-bg-input border theme-border-main rounded-lg opacity-50 cursor-not-allowed"
+                                            dangerouslySetInnerHTML={{ __html: link.label }}
+                                        />
+                                    )
+                                ))}
+                            </div>
+                        )}
                     </div>
-                </main>
-            </div>
+            </DashboardLayout>
 
             {/* Modal Tambah Kantong Darah */}
             {isAddModalOpen && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 backdrop-blur-sm p-4">
-                    <div className="bg-slate-900 border border-slate-800 w-full max-w-lg rounded-2xl overflow-hidden shadow-2xl">
-                        <div className="p-6 border-b border-slate-800 flex justify-between items-center">
-                            <h3 className="text-lg font-bold text-white">Registrasi Kantong Darah Baru</h3>
-                            <button onClick={() => setIsAddModalOpen(false)} className="text-slate-400 hover:text-white text-lg font-bold">&times;</button>
+                <div className="fixed inset-0 z-50 flex items-center justify-center theme-bg-main/80 backdrop-blur-sm p-4">
+                    <div className="theme-bg-card border theme-border-main w-full max-w-lg rounded-2xl overflow-hidden shadow-2xl">
+                        <div className="p-6 border-b theme-border-main flex justify-between items-center">
+                            <h3 className="text-lg font-bold theme-text-main">Registrasi Kantong Darah Baru</h3>
+                            <button onClick={() => setIsAddModalOpen(false)} className="theme-text-muted hover:theme-text-main text-lg font-bold">&times;</button>
                         </div>
 
                         <form onSubmit={handleAddSubmit} className="p-6 space-y-4">
                             <div className="space-y-1.5">
-                                <label className="text-xs font-bold text-slate-400 uppercase">Nomor Bag/Barcode</label>
+                                <label className="text-xs font-bold theme-text-muted uppercase">Nomor Bag/Barcode</label>
                                 <input 
                                     type="text" 
                                     placeholder="contoh: BAG-PMI-88421"
                                     value={formData.bag_number}
                                     onChange={(e) => setFormData({ ...formData, bag_number: e.target.value })}
                                     required 
-                                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-red-500/50"
+                                    className="w-full theme-bg-main border theme-border-main rounded-xl px-3 py-2 text-sm theme-text-main focus:outline-none focus:border-red-500/50"
                                 />
                             </div>
 
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="space-y-1.5">
-                                    <label className="text-xs font-bold text-slate-400 uppercase">Golongan Darah</label>
+                                    <label className="text-xs font-bold theme-text-muted uppercase">Golongan Darah</label>
                                     <select 
                                         value={formData.blood_type}
                                         onChange={(e) => setFormData({ ...formData, blood_type: e.target.value })}
-                                        className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white focus:outline-none"
+                                        className="w-full theme-bg-main border theme-border-main rounded-xl px-3 py-2 text-sm theme-text-main focus:outline-none"
                                     >
                                         <option value="A">A</option>
                                         <option value="B">B</option>
@@ -369,11 +368,11 @@ export default function BloodStockIndex({ stocks, hospitals, filters, currentIns
                                     </select>
                                 </div>
                                 <div className="space-y-1.5">
-                                    <label className="text-xs font-bold text-slate-400 uppercase">Rhesus</label>
+                                    <label className="text-xs font-bold theme-text-muted uppercase">Rhesus</label>
                                     <select 
                                         value={formData.rhesus}
                                         onChange={(e) => setFormData({ ...formData, rhesus: e.target.value })}
-                                        className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white focus:outline-none"
+                                        className="w-full theme-bg-main border theme-border-main rounded-xl px-3 py-2 text-sm theme-text-main focus:outline-none"
                                     >
                                         <option value="positive">Positif (+)</option>
                                         <option value="negative">Negatif (-)</option>
@@ -383,11 +382,11 @@ export default function BloodStockIndex({ stocks, hospitals, filters, currentIns
 
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="space-y-1.5">
-                                    <label className="text-xs font-bold text-slate-400 uppercase">Komponen Darah</label>
+                                    <label className="text-xs font-bold theme-text-muted uppercase">Komponen Darah</label>
                                     <select 
                                         value={formData.component_type}
                                         onChange={(e) => setFormData({ ...formData, component_type: e.target.value })}
-                                        className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white focus:outline-none"
+                                        className="w-full theme-bg-main border theme-border-main rounded-xl px-3 py-2 text-sm theme-text-main focus:outline-none"
                                     >
                                         <option value="whole_blood">Whole Blood (WB)</option>
                                         <option value="prc">Packed Red Cells (PRC)</option>
@@ -397,39 +396,39 @@ export default function BloodStockIndex({ stocks, hospitals, filters, currentIns
                                     </select>
                                 </div>
                                 <div className="space-y-1.5">
-                                    <label className="text-xs font-bold text-slate-400 uppercase">Volume (ml)</label>
+                                    <label className="text-xs font-bold theme-text-muted uppercase">Volume (ml)</label>
                                     <input 
                                         type="number" 
                                         value={formData.quantity_ml}
                                         onChange={(e) => setFormData({ ...formData, quantity_ml: parseInt(e.target.value) })}
                                         required 
-                                        className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-red-500/50"
+                                        className="w-full theme-bg-main border theme-border-main rounded-xl px-3 py-2 text-sm theme-text-main focus:outline-none focus:border-red-500/50"
                                     />
                                 </div>
                             </div>
 
                             <div className="space-y-1.5">
-                                <label className="text-xs font-bold text-slate-400 uppercase">Tanggal Diambil / Donor</label>
+                                <label className="text-xs font-bold theme-text-muted uppercase">Tanggal Diambil / Donor</label>
                                 <input 
                                     type="date" 
                                     value={formData.collected_at}
                                     onChange={(e) => setFormData({ ...formData, collected_at: e.target.value })}
                                     required 
-                                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-red-500/50"
+                                    className="w-full theme-bg-main border theme-border-main rounded-xl px-3 py-2 text-sm theme-text-main focus:outline-none focus:border-red-500/50"
                                 />
                             </div>
 
-                            <div className="flex justify-end space-x-3 pt-4 border-t border-slate-800">
+                            <div className="flex justify-end space-x-3 pt-4 border-t theme-border-main">
                                 <button 
                                     type="button" 
                                     onClick={() => setIsAddModalOpen(false)}
-                                    className="px-4 py-2 border border-slate-800 hover:bg-slate-850 text-slate-350 rounded-xl text-sm font-semibold transition duration-150"
+                                    className="px-4 py-2 border theme-border-main hover:theme-bg-sidebar text-slate-350 rounded-xl text-sm font-semibold transition duration-150"
                                 >
                                     Batal
                                 </button>
                                 <button 
                                     type="submit" 
-                                    className="px-4 py-2 bg-red-600 hover:bg-red-500 text-white rounded-xl text-sm font-semibold transition duration-150"
+                                    className="px-4 py-2 bg-red-600 hover:bg-red-500 theme-text-main rounded-xl text-sm font-semibold transition duration-150"
                                 >
                                     Daftarkan
                                 </button>
@@ -441,21 +440,21 @@ export default function BloodStockIndex({ stocks, hospitals, filters, currentIns
 
             {/* Modal Distribusikan Kantong Darah */}
             {isDistributeModalOpen && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 backdrop-blur-sm p-4">
-                    <div className="bg-slate-900 border border-slate-800 w-full max-w-md rounded-2xl overflow-hidden shadow-2xl">
-                        <div className="p-6 border-b border-slate-800 flex justify-between items-center">
-                            <h3 className="text-lg font-bold text-white">Alokasi Distribusi Kantong</h3>
-                            <button onClick={() => setIsDistributeModalOpen(false)} className="text-slate-400 hover:text-white text-lg font-bold">&times;</button>
+                <div className="fixed inset-0 z-50 flex items-center justify-center theme-bg-main/80 backdrop-blur-sm p-4">
+                    <div className="theme-bg-card border theme-border-main w-full max-w-md rounded-2xl overflow-hidden shadow-2xl">
+                        <div className="p-6 border-b theme-border-main flex justify-between items-center">
+                            <h3 className="text-lg font-bold theme-text-main">Alokasi Distribusi Kantong</h3>
+                            <button onClick={() => setIsDistributeModalOpen(false)} className="theme-text-muted hover:theme-text-main text-lg font-bold">&times;</button>
                         </div>
 
                         <form onSubmit={handleDistributeSubmit} className="p-6 space-y-4">
                             <div className="space-y-1.5">
-                                <label className="text-xs font-bold text-slate-400 uppercase">Rumah Sakit Penerima</label>
+                                <label className="text-xs font-bold theme-text-muted uppercase">Rumah Sakit Penerima</label>
                                 <select 
                                     value={targetHospitalId}
                                     onChange={(e) => setTargetHospitalId(e.target.value)}
                                     required
-                                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-red-500/50"
+                                    className="w-full theme-bg-main border theme-border-main rounded-xl px-3 py-2 text-sm theme-text-main focus:outline-none focus:border-red-500/50"
                                 >
                                     <option value="">Pilih RS Penerima</option>
                                     {hospitals.map((h) => (
@@ -464,21 +463,21 @@ export default function BloodStockIndex({ stocks, hospitals, filters, currentIns
                                 </select>
                             </div>
 
-                            <div className="flex justify-end space-x-3 pt-4 border-t border-slate-800">
+                            <div className="flex justify-end space-x-3 pt-4 border-t theme-border-main">
                                 <button 
                                     type="button" 
                                     onClick={() => {
                                         setIsDistributeModalOpen(false);
                                         setTargetHospitalId('');
                                     }}
-                                    className="px-4 py-2 border border-slate-800 hover:bg-slate-850 text-slate-350 rounded-xl text-sm font-semibold transition duration-150"
+                                    className="px-4 py-2 border theme-border-main hover:theme-bg-sidebar text-slate-350 rounded-xl text-sm font-semibold transition duration-150"
                                 >
                                     Batal
                                 </button>
                                 <button 
                                     type="submit" 
                                     disabled={!targetHospitalId}
-                                    className="px-4 py-2 bg-gradient-to-r from-red-600 to-rose-600 disabled:opacity-50 text-white rounded-xl text-sm font-semibold transition duration-150"
+                                    className="px-4 py-2 bg-gradient-to-r from-red-600 to-rose-600 disabled:opacity-50 theme-text-main rounded-xl text-sm font-semibold transition duration-150"
                                 >
                                     Kirim Distribusi
                                 </button>

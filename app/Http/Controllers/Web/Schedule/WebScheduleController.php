@@ -44,7 +44,7 @@ class WebScheduleController extends Controller
         $donations = Donation::where('institution_id', $institutionId)
             ->with(['donorProfile.user'])
             ->orderBy('created_at', 'desc')
-            ->get();
+            ->paginate(10)->withQueryString();
 
         return Inertia::render('Schedule/Index', [
             'slots' => $slots,

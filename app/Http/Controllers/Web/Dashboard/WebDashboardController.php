@@ -92,7 +92,7 @@ class WebDashboardController extends Controller
         $donations = \App\Models\Donation::where('donor_id', $donorProfile->id)
             ->with(['institution.address'])
             ->orderBy('donated_at', 'desc')
-            ->get();
+            ->paginate(5)->withQueryString();
 
         // Ambil daftar slot aktif di PMI
         $upcomingSlots = \App\Models\ScheduleSlot::with(['institution'])

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Head, router, Link } from '@inertiajs/react';
+import DashboardLayout from '../../Layouts/DashboardLayout';
 
 interface BloodRequestItem {
     id: string;
@@ -67,11 +68,18 @@ export default function BloodRequestIndex({ requests, filters, currentInstitutio
     });
 
     const handleFilterChange = (key: string, value: string) => {
-        const newFilters = {
+        const urlParams = new URLSearchParams(window.location.search);
+        const type = urlParams.get('type');
+
+        const newFilters: any = {
             urgency_level: selectedUrgency,
             status: selectedStatus,
             [key]: value
         };
+
+        if (type) {
+            newFilters.type = type;
+        }
 
         router.get('/blood-requests', newFilters, {
             preserveState: true,
@@ -113,75 +121,31 @@ export default function BloodRequestIndex({ requests, filters, currentInstitutio
     return (
         <>
             <Head title="Permohonan Darah - Maridonor" />
-            <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col lg:flex-row font-sans antialiased selection:bg-red-600 selection:text-white">
-                
-                {/* Sidebar Menu */}
-                <aside className="w-full lg:w-64 bg-slate-900 border-b lg:border-b-0 lg:border-r border-slate-800 flex flex-col">
-                    <div className="p-6 border-b border-slate-800 flex items-center space-x-3">
-                        <img src="/images/logo_icon.png" alt="Maridonor Logo" className="h-8 w-auto" />
-                        <span className="text-lg font-bold tracking-tight text-white">
-                            Mari<span className="text-red-500">donor</span>
-                        </span>
-                    </div>
-
-                    <div className="flex-1 p-4 space-y-1.5">
-                        <span className="px-3 text-[10px] font-bold text-slate-500 uppercase tracking-wider block mb-2">Menu Utama</span>
-                        <Link href={!isHospital ? '/dashboard/pmi' : '/dashboard/hospital'} className="flex items-center space-x-3 px-3 py-2.5 text-slate-400 hover:text-white hover:bg-slate-850 rounded-xl text-sm font-semibold transition duration-150">
-                            <span>📊</span>
-                            <span>Ikhtisar Dashboard</span>
-                        </Link>
-                        <Link href="/blood-requests" className="flex items-center space-x-3 px-3 py-2.5 bg-red-600/10 text-red-500 rounded-xl text-sm font-semibold border border-red-500/10">
-                            <span>🚨</span>
-                            <span>{isHospital ? 'Ajukan Permohonan' : 'Permohonan Darah'}</span>
-                        </Link>
-                        <Link href="/blood-stocks" className="flex items-center space-x-3 px-3 py-2.5 text-slate-400 hover:text-white hover:bg-slate-850 rounded-xl text-sm font-semibold transition duration-150">
-                            <span>{!isHospital ? '🩸' : '🩺'}</span>
-                            <span>{!isHospital ? 'Kelola Stok Darah' : 'Stok Bank Darah RS'}</span>
-                        </Link>
-                    </div>
-
-                    <div className="p-4 border-t border-slate-800">
-                        <form onSubmit={handleLogout}>
-                            <button type="submit" className="w-full py-2.5 text-sm font-semibold text-slate-400 hover:text-white hover:bg-slate-850 rounded-xl border border-slate-800 transition duration-150 flex items-center justify-center space-x-2">
-                                <span>🚪</span>
-                                <span>Keluar Akun</span>
-                            </button>
-                        </form>
-                    </div>
-                </aside>
-
-                {/* Main Content Area */}
-                <main className="flex-1 p-6 lg:p-10 space-y-8 overflow-y-auto">
-                    
-                    {/* Header */}
-                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-6 border-b border-slate-900">
-                        <div>
-                            <h1 className="text-2xl lg:text-3xl font-extrabold text-white tracking-tight">Permohonan Darah Darurat</h1>
-                            <p className="text-sm text-slate-400">
-                                {isHospital ? 'Ajukan dan pantau status permohonan bank darah RS' : 'Daftar permohonan masuk dari Rumah Sakit mitra'}
-                            </p>
-                        </div>
-                        {isHospital && (
-                            <button 
-                                onClick={() => setIsRequestModalOpen(true)}
-                                className="px-5 py-2.5 bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-550 hover:to-rose-550 text-white rounded-xl text-sm font-semibold shadow-lg shadow-red-600/15 transition-all duration-150 active:scale-95"
-                            >
-                                + Ajukan Permohonan Darah
-                            </button>
-                        )}
-                    </div>
+            <DashboardLayout
+                sidebarType={isHospital ? 'hospital' : 'pmi'}
+                title="Permohonan Darah Darurat"
+                subtitle={isHospital ? 'Ajukan dan pantau status permohonan bank darah RS' : 'Daftar permohonan masuk dari Rumah Sakit mitra'}
+                headerRight={isHospital ? (
+                    <button 
+                        onClick={() => setIsRequestModalOpen(true)}
+                        className="px-5 py-2.5 bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-550 hover:to-rose-550 text-white rounded-xl text-sm font-semibold shadow-lg shadow-red-600/15 transition-all duration-150 active:scale-95"
+                    >
+                        + Ajukan Permohonan Darah
+                    </button>
+                ) : undefined}
+            >
 
                     {/* Filter Panel */}
-                    <div className="bg-slate-900 border border-slate-800 p-5 rounded-2xl grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="theme-bg-card border theme-border-main p-5 rounded-2xl grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div className="space-y-1.5">
-                            <label className="text-xs font-bold text-slate-400 uppercase">Tingkat Urgensi</label>
+                            <label className="text-xs font-bold theme-text-muted uppercase">Tingkat Urgensi</label>
                             <select 
                                 value={selectedUrgency}
                                 onChange={(e) => {
                                     setSelectedUrgency(e.target.value);
                                     handleFilterChange('urgency_level', e.target.value);
                                 }}
-                                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-red-500/50"
+                                className="w-full theme-bg-main border theme-border-main rounded-xl px-3 py-2 text-sm theme-text-main focus:outline-none focus:border-red-500/50"
                             >
                                 <option value="">Semua Urgensi</option>
                                 <option value="normal">Normal</option>
@@ -191,14 +155,14 @@ export default function BloodRequestIndex({ requests, filters, currentInstitutio
                         </div>
 
                         <div className="space-y-1.5">
-                            <label className="text-xs font-bold text-slate-400 uppercase">Status</label>
+                            <label className="text-xs font-bold theme-text-muted uppercase">Status</label>
                             <select 
                                 value={selectedStatus}
                                 onChange={(e) => {
                                     setSelectedStatus(e.target.value);
                                     handleFilterChange('status', e.target.value);
                                 }}
-                                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-red-500/50"
+                                className="w-full theme-bg-main border theme-border-main rounded-xl px-3 py-2 text-sm theme-text-main focus:outline-none focus:border-red-500/50"
                             >
                                 <option value="">Semua Status</option>
                                 <option value="open">Menunggu (Open)</option>
@@ -210,11 +174,11 @@ export default function BloodRequestIndex({ requests, filters, currentInstitutio
                     </div>
 
                     {/* Request Table */}
-                    <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden">
+                    <div className="theme-bg-card border theme-border-main rounded-2xl overflow-hidden">
                         <div className="overflow-x-auto">
                             <table className="w-full text-left border-collapse">
                                 <thead>
-                                    <tr className="border-b border-slate-800 text-xs font-bold text-slate-400">
+                                    <tr className="border-b theme-border-main text-xs font-bold theme-text-muted">
                                         <th className="py-3 px-4">Kode Request</th>
                                         {!isHospital && <th className="py-3 px-4">Rumah Sakit</th>}
                                         <th className="py-3 px-4">Pasien</th>
@@ -227,7 +191,7 @@ export default function BloodRequestIndex({ requests, filters, currentInstitutio
                                         <th className="py-3 px-4 text-center">Aksi</th>
                                     </tr>
                                 </thead>
-                                <tbody className="text-sm divide-y divide-slate-850">
+                                <tbody className="text-sm divide-y theme-divide-main">
                                     {requests.length === 0 ? (
                                         <tr>
                                             <td colSpan={isHospital ? 9 : 10} className="py-8 text-center text-slate-500 font-semibold">
@@ -236,32 +200,32 @@ export default function BloodRequestIndex({ requests, filters, currentInstitutio
                                         </tr>
                                     ) : (
                                         requests.map((req) => (
-                                            <tr key={req.id} className="hover:bg-slate-850/30 transition duration-100">
-                                                <td className="py-4 px-4 font-mono font-semibold text-white">{req.request_code}</td>
+                                            <tr key={req.id} className="hover:slate-500/5 transition duration-100">
+                                                <td className="py-4 px-4 font-mono font-semibold theme-text-main">{req.request_code}</td>
                                                 {!isHospital && (
-                                                    <td className="py-4 px-4 text-slate-300 font-semibold">
+                                                    <td className="py-4 px-4 theme-text-muted font-semibold">
                                                         {req.destination_hospital?.name || '-'}
                                                     </td>
                                                 )}
-                                                <td className="py-4 px-4 text-slate-300">{req.patient_name}</td>
-                                                <td className="py-4 px-4 text-slate-200">
+                                                <td className="py-4 px-4 theme-text-muted">{req.patient_name}</td>
+                                                <td className="py-4 px-4 theme-text-main">
                                                     <span className="font-bold">{req.blood_type}</span>
-                                                    <span className="text-xs text-slate-400"> ({req.rhesus === 'positive' ? '+' : '-'})</span>
+                                                    <span className="text-xs theme-text-muted"> ({req.rhesus === 'positive' ? '+' : '-'})</span>
                                                 </td>
-                                                <td className="py-4 px-4 text-slate-300 capitalize">{req.component_type.replace('_', ' ')}</td>
-                                                <td className="py-4 px-4 text-center font-semibold text-slate-200">
+                                                <td className="py-4 px-4 theme-text-muted capitalize">{req.component_type.replace('_', ' ')}</td>
+                                                <td className="py-4 px-4 text-center font-semibold theme-text-main">
                                                     {req.quantity_fulfilled} / {req.quantity_needed} Bag
                                                 </td>
                                                 <td className="py-4 px-4">
                                                     <span className={`inline-flex text-[10px] font-bold px-2 py-0.5 rounded uppercase ${
                                                         req.urgency_level === 'emergency' ? 'bg-red-500/10 text-red-500 animate-pulse' :
                                                         req.urgency_level === 'urgent' ? 'bg-orange-500/10 text-orange-500' :
-                                                        'bg-slate-850 text-slate-400'
+                                                        'theme-bg-sidebar theme-text-muted'
                                                     }`}>
                                                         {req.urgency_level}
                                                     </span>
                                                 </td>
-                                                <td className="py-4 px-4 text-slate-400">
+                                                <td className="py-4 px-4 theme-text-muted">
                                                     {new Date(req.deadline_at).toLocaleDateString('id-ID')} {new Date(req.deadline_at).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })}
                                                 </td>
                                                 <td className="py-4 px-4">
@@ -269,14 +233,14 @@ export default function BloodRequestIndex({ requests, filters, currentInstitutio
                                                         req.status === 'open' ? 'bg-yellow-500/10 text-yellow-500' :
                                                         req.status === 'partially_fulfilled' ? 'bg-blue-500/10 text-blue-500' :
                                                         req.status === 'fulfilled' ? 'bg-green-500/10 text-green-500' :
-                                                        'bg-slate-800 text-slate-400'
+                                                        'bg-slate-800 theme-text-muted'
                                                     }`}>
                                                         {req.status.replace('_', ' ')}
                                                     </span>
                                                 </td>
                                                 <td className="py-4 px-4 text-center">
                                                     <Link 
-                                                        href={`/blood-requests/${req.id}`}
+                                                        href={`/blood-requests/${req.id}${typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('type') ? `?type=${new URLSearchParams(window.location.search).get('type')}` : ''}`}
                                                         className="px-3 py-1 bg-red-600/10 hover:bg-red-600/25 text-red-500 rounded-lg text-xs font-bold border border-red-500/25 transition duration-150"
                                                     >
                                                         Detail
@@ -289,76 +253,75 @@ export default function BloodRequestIndex({ requests, filters, currentInstitutio
                             </table>
                         </div>
                     </div>
-                </main>
-            </div>
+            </DashboardLayout>
 
             {/* Modal Form Permohonan Darah Baru */}
             {isRequestModalOpen && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 backdrop-blur-sm p-4">
-                    <div className="bg-slate-900 border border-slate-800 w-full max-w-2xl rounded-2xl overflow-hidden shadow-2xl">
-                        <div className="p-6 border-b border-slate-800 flex justify-between items-center">
-                            <h3 className="text-lg font-bold text-white">Ajukan Permohonan Darah Darurat</h3>
-                            <button onClick={() => setIsRequestModalOpen(false)} className="text-slate-400 hover:text-white text-lg font-bold">&times;</button>
+                <div className="fixed inset-0 z-50 flex items-center justify-center theme-bg-main/80 backdrop-blur-sm p-4">
+                    <div className="theme-bg-card border theme-border-main w-full max-w-2xl rounded-2xl overflow-hidden shadow-2xl">
+                        <div className="p-6 border-b theme-border-main flex justify-between items-center">
+                            <h3 className="text-lg font-bold theme-text-main">Ajukan Permohonan Darah Darurat</h3>
+                            <button onClick={() => setIsRequestModalOpen(false)} className="theme-text-muted hover:theme-text-main text-lg font-bold">&times;</button>
                         </div>
 
                         <form onSubmit={handleSubmit} className="p-6 space-y-4 max-h-[80vh] overflow-y-auto">
                             
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="space-y-1.5">
-                                    <label className="text-xs font-bold text-slate-400 uppercase">Nama Pasien</label>
+                                    <label className="text-xs font-bold theme-text-muted uppercase">Nama Pasien</label>
                                     <input 
                                         type="text" 
                                         placeholder="Nama lengkap pasien"
                                         value={formData.patient_name}
                                         onChange={(e) => setFormData({ ...formData, patient_name: e.target.value })}
                                         required 
-                                        className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-red-500/50"
+                                        className="w-full theme-bg-main border theme-border-main rounded-xl px-3 py-2 text-sm theme-text-main focus:outline-none focus:border-red-500/50"
                                     />
                                 </div>
                                 <div className="space-y-1.5">
-                                    <label className="text-xs font-bold text-slate-400 uppercase">Tahun Lahir</label>
+                                    <label className="text-xs font-bold theme-text-muted uppercase">Tahun Lahir</label>
                                     <input 
                                         type="number" 
                                         value={formData.patient_birth_year}
                                         onChange={(e) => setFormData({ ...formData, patient_birth_year: parseInt(e.target.value) })}
                                         required 
-                                        className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white focus:outline-none"
+                                        className="w-full theme-bg-main border theme-border-main rounded-xl px-3 py-2 text-sm theme-text-main focus:outline-none"
                                     />
                                 </div>
                             </div>
 
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="space-y-1.5">
-                                    <label className="text-xs font-bold text-slate-400 uppercase">No. Rekam Medis (MR)</label>
+                                    <label className="text-xs font-bold theme-text-muted uppercase">No. Rekam Medis (MR)</label>
                                     <input 
                                         type="text" 
                                         placeholder="MR-xxxxxx"
                                         value={formData.medical_record_number}
                                         onChange={(e) => setFormData({ ...formData, medical_record_number: e.target.value })}
                                         required 
-                                        className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-red-500/50"
+                                        className="w-full theme-bg-main border theme-border-main rounded-xl px-3 py-2 text-sm theme-text-main focus:outline-none focus:border-red-500/50"
                                     />
                                 </div>
                                 <div className="space-y-1.5">
-                                    <label className="text-xs font-bold text-slate-400 uppercase">Diagnosis / Alasan Medis</label>
+                                    <label className="text-xs font-bold theme-text-muted uppercase">Diagnosis / Alasan Medis</label>
                                     <input 
                                         type="text" 
                                         placeholder="contoh: Anemia Kronis"
                                         value={formData.diagnosis}
                                         onChange={(e) => setFormData({ ...formData, diagnosis: e.target.value })}
                                         required 
-                                        className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white focus:outline-none"
+                                        className="w-full theme-bg-main border theme-border-main rounded-xl px-3 py-2 text-sm theme-text-main focus:outline-none"
                                     />
                                 </div>
                             </div>
 
                             <div className="grid grid-cols-3 gap-4">
                                 <div className="space-y-1.5">
-                                    <label className="text-xs font-bold text-slate-400 uppercase">Golongan Darah</label>
+                                    <label className="text-xs font-bold theme-text-muted uppercase">Golongan Darah</label>
                                     <select 
                                         value={formData.blood_type}
                                         onChange={(e) => setFormData({ ...formData, blood_type: e.target.value })}
-                                        className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white focus:outline-none"
+                                        className="w-full theme-bg-main border theme-border-main rounded-xl px-3 py-2 text-sm theme-text-main focus:outline-none"
                                     >
                                         <option value="A">A</option>
                                         <option value="B">B</option>
@@ -367,22 +330,22 @@ export default function BloodRequestIndex({ requests, filters, currentInstitutio
                                     </select>
                                 </div>
                                 <div className="space-y-1.5">
-                                    <label className="text-xs font-bold text-slate-400 uppercase">Rhesus</label>
+                                    <label className="text-xs font-bold theme-text-muted uppercase">Rhesus</label>
                                     <select 
                                         value={formData.rhesus}
                                         onChange={(e) => setFormData({ ...formData, rhesus: e.target.value })}
-                                        className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white focus:outline-none"
+                                        className="w-full theme-bg-main border theme-border-main rounded-xl px-3 py-2 text-sm theme-text-main focus:outline-none"
                                     >
                                         <option value="positive">Positif (+)</option>
                                         <option value="negative">Negatif (-)</option>
                                     </select>
                                 </div>
                                 <div className="space-y-1.5">
-                                    <label className="text-xs font-bold text-slate-400 uppercase">Komponen</label>
+                                    <label className="text-xs font-bold theme-text-muted uppercase">Komponen</label>
                                     <select 
                                         value={formData.component_type}
                                         onChange={(e) => setFormData({ ...formData, component_type: e.target.value })}
-                                        className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white focus:outline-none"
+                                        className="w-full theme-bg-main border theme-border-main rounded-xl px-3 py-2 text-sm theme-text-main focus:outline-none"
                                     >
                                         <option value="whole_blood">Whole Blood (WB)</option>
                                         <option value="prc">Packed Red Cells (PRC)</option>
@@ -395,22 +358,22 @@ export default function BloodRequestIndex({ requests, filters, currentInstitutio
 
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="space-y-1.5">
-                                    <label className="text-xs font-bold text-slate-400 uppercase">Jumlah Kantong</label>
+                                    <label className="text-xs font-bold theme-text-muted uppercase">Jumlah Kantong</label>
                                     <input 
                                         type="number" 
                                         min="1"
                                         value={formData.quantity_needed}
                                         onChange={(e) => setFormData({ ...formData, quantity_needed: parseInt(e.target.value) })}
                                         required 
-                                        className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white focus:outline-none"
+                                        className="w-full theme-bg-main border theme-border-main rounded-xl px-3 py-2 text-sm theme-text-main focus:outline-none"
                                     />
                                 </div>
                                 <div className="space-y-1.5">
-                                    <label className="text-xs font-bold text-slate-400 uppercase">Urgensi</label>
+                                    <label className="text-xs font-bold theme-text-muted uppercase">Urgensi</label>
                                     <select 
                                         value={formData.urgency_level}
                                         onChange={(e) => setFormData({ ...formData, urgency_level: e.target.value })}
-                                        className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white focus:outline-none"
+                                        className="w-full theme-bg-main border theme-border-main rounded-xl px-3 py-2 text-sm theme-text-main focus:outline-none"
                                     >
                                         <option value="normal">Normal</option>
                                         <option value="urgent">Urgent</option>
@@ -421,60 +384,60 @@ export default function BloodRequestIndex({ requests, filters, currentInstitutio
 
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="space-y-1.5">
-                                    <label className="text-xs font-bold text-slate-400 uppercase">Nama Kontak Staf</label>
+                                    <label className="text-xs font-bold theme-text-muted uppercase">Nama Kontak Staf</label>
                                     <input 
                                         type="text" 
                                         value={formData.contact_name}
                                         onChange={(e) => setFormData({ ...formData, contact_name: e.target.value })}
                                         required 
-                                        className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white focus:outline-none"
+                                        className="w-full theme-bg-main border theme-border-main rounded-xl px-3 py-2 text-sm theme-text-main focus:outline-none"
                                     />
                                 </div>
                                 <div className="space-y-1.5">
-                                    <label className="text-xs font-bold text-slate-400 uppercase">No. Telepon Kontak</label>
+                                    <label className="text-xs font-bold theme-text-muted uppercase">No. Telepon Kontak</label>
                                     <input 
                                         type="text" 
                                         value={formData.contact_phone}
                                         onChange={(e) => setFormData({ ...formData, contact_phone: e.target.value })}
                                         required 
-                                        className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white focus:outline-none"
+                                        className="w-full theme-bg-main border theme-border-main rounded-xl px-3 py-2 text-sm theme-text-main focus:outline-none"
                                     />
                                 </div>
                             </div>
 
                             <div className="space-y-1.5">
-                                <label className="text-xs font-bold text-slate-400 uppercase">Tenggat Waktu Pemenuhan</label>
+                                <label className="text-xs font-bold theme-text-muted uppercase">Tenggat Waktu Pemenuhan</label>
                                 <input 
                                     type="datetime-local" 
                                     value={formData.deadline_at}
                                     onChange={(e) => setFormData({ ...formData, deadline_at: e.target.value })}
                                     required 
-                                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white focus:outline-none"
+                                    className="w-full theme-bg-main border theme-border-main rounded-xl px-3 py-2 text-sm theme-text-main focus:outline-none"
                                 />
                             </div>
 
                             <div className="space-y-1.5">
-                                <label className="text-xs font-bold text-slate-400 uppercase">Catatan Tambahan</label>
+                                <label className="text-xs font-bold theme-text-muted uppercase">Catatan Tambahan</label>
                                 <textarea 
                                     rows={2}
                                     placeholder="Instruksi tambahan jika ada..."
                                     value={formData.notes}
                                     onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-                                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-red-500/50"
+                                    className="w-full theme-bg-main border theme-border-main rounded-xl px-3 py-2 text-sm theme-text-main focus:outline-none focus:border-red-500/50"
                                 />
                             </div>
 
-                            <div className="flex justify-end space-x-3 pt-4 border-t border-slate-800">
+                            <div className="flex justify-end space-x-3 pt-4 border-t theme-border-main">
                                 <button 
                                     type="button" 
                                     onClick={() => setIsRequestModalOpen(false)}
-                                    className="px-4 py-2 border border-slate-800 hover:bg-slate-850 text-slate-350 rounded-xl text-sm font-semibold transition duration-150"
+                                    className="px-4 py-2 border theme-border-main hover:theme-bg-sidebar text-slate-350 rounded-xl text-sm font-semibold transition duration-150"
                                 >
                                     Batal
                                 </button>
                                 <button 
                                     type="submit" 
-                                    className="px-4 py-2 bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white rounded-xl text-sm font-semibold transition duration-150"
+                                    className="px-4 py-2 bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 theme-text-main rounded-xl text-sm font-semibold transition duration-150"
                                 >
                                     Kirim Permohonan
                                 </button>

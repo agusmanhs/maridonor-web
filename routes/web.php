@@ -50,4 +50,12 @@ Route::middleware(['auth'])->group(function () {
 
     // Rute Sertifikat Digital
     Route::get('/donations/{id}/certificate', [\App\Http\Controllers\Web\Certificate\WebCertificateController::class, 'show'])->name('donations.certificate');
+
+    // Rute Master Data (Super Admin)
+    Route::middleware('role:super_admin')->prefix('admin')->name('admin.')->group(function () {
+        Route::get('/users', [\App\Http\Controllers\Web\Admin\AdminUserController::class, 'index'])->name('users.index');
+        Route::post('/users', [\App\Http\Controllers\Web\Admin\AdminUserController::class, 'store'])->name('users.store');
+        Route::get('/institutions', [\App\Http\Controllers\Web\Admin\AdminInstitutionController::class, 'index'])->name('institutions.index');
+        Route::post('/institutions', [\App\Http\Controllers\Web\Admin\AdminInstitutionController::class, 'store'])->name('institutions.store');
+    });
 });

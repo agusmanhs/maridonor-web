@@ -23,8 +23,13 @@ class WebBloodStockController extends Controller
         $institutionId = $staffRecord ? $staffRecord->institution_id : null;
 
         if ($user->role->value === 'super_admin' && !$institutionId) {
-            // Super admin fallback ke institusi pertama
-            $institutionId = Institution::first()?->id;
+            // Super admin fallback ke institusi berdasarkan tipe
+            $type = $request->query('type', 'pmi');
+            if ($type === 'hospital') {
+                $institutionId = Institution::where('type', 'hospital')->first()?->id;
+            } else {
+                $institutionId = Institution::where('type', 'pmi')->first()?->id;
+            }
         }
 
         if (!$institutionId) {

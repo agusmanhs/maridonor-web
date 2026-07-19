@@ -8,6 +8,7 @@ use App\Models\BloodStock;
 use App\Repositories\Contracts\BloodStockRepositoryInterface;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Validation\ValidationException;
 
 class BloodStockService
@@ -16,7 +17,7 @@ class BloodStockService
         private readonly BloodStockRepositoryInterface $stockRepo
     ) {}
 
-    public function list(string $institutionId, array $filters): Collection
+    public function list(string $institutionId, array $filters): LengthAwarePaginator
     {
         return $this->stockRepo->getStockList($institutionId, $filters);
     }

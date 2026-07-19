@@ -6,6 +6,7 @@ use App\Models\BloodStock;
 use App\Models\BloodStockThreshold;
 use App\Repositories\Contracts\BloodStockRepositoryInterface;
 use Illuminate\Support\Collection;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
 
 class BloodStockRepository implements BloodStockRepositoryInterface
@@ -20,7 +21,7 @@ class BloodStockRepository implements BloodStockRepositoryInterface
         return BloodStock::where('bag_number', $bagNumber)->first();
     }
 
-    public function getStockList(string $institutionId, array $filters): Collection
+    public function getStockList(string $institutionId, array $filters): LengthAwarePaginator
     {
         $query = BloodStock::where('institution_id', $institutionId);
 
@@ -43,7 +44,7 @@ class BloodStockRepository implements BloodStockRepositoryInterface
             $query->where('status', \App\Enums\StockStatus::Available);
         }
 
-        return $query->latest('expires_at')->get();
+        return $query->latest('expires_at')->paginate(10)->withQueryString();
     }
 
     public function create(array $data): BloodStock

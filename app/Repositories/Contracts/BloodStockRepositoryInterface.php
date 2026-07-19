@@ -4,6 +4,7 @@ namespace App\Repositories\Contracts;
 
 use App\Models\BloodStock;
 use Illuminate\Support\Collection;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 interface BloodStockRepositoryInterface
 {
@@ -11,7 +12,7 @@ interface BloodStockRepositoryInterface
 
     public function findByBagNumber(string $bagNumber): ?BloodStock;
 
-    public function getStockList(string $institutionId, array $filters): Collection;
+    public function getStockList(string $institutionId, array $filters): LengthAwarePaginator;
 
     public function create(array $data): BloodStock;
 

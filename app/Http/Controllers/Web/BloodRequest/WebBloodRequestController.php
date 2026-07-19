@@ -24,7 +24,12 @@ class WebBloodRequestController extends Controller
         $institutionId = $staffRecord ? $staffRecord->institution_id : null;
 
         if ($user->role->value === 'super_admin' && !$institutionId) {
-            $institutionId = Institution::first()?->id;
+            $type = $request->query('type', 'pmi');
+            if ($type === 'hospital') {
+                $institutionId = Institution::where('type', 'hospital')->first()?->id;
+            } else {
+                $institutionId = Institution::where('type', 'pmi')->first()?->id;
+            }
         }
 
         if (!$institutionId) {
@@ -62,7 +67,12 @@ class WebBloodRequestController extends Controller
         $institutionId = $staffRecord ? $staffRecord->institution_id : null;
 
         if ($user->role->value === 'super_admin' && !$institutionId) {
-            $institutionId = Institution::where('type', 'pmi')->first()?->id;
+            $type = $request->query('type', 'pmi');
+            if ($type === 'hospital') {
+                $institutionId = Institution::where('type', 'hospital')->first()?->id;
+            } else {
+                $institutionId = Institution::where('type', 'pmi')->first()?->id;
+            }
         }
 
         $bloodRequest = $this->bloodRequestService->detail($id);
