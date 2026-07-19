@@ -93,4 +93,18 @@ class AdminInstitutionController extends Controller
 
         return redirect()->route('admin.institutions.index')->with('success', 'Institusi baru berhasil didaftarkan.');
     }
+
+    public function updateStatus(Request $request, $id)
+    {
+        $validated = $request->validate([
+            'status' => ['required', 'string', 'in:approved,rejected,under_review,pending'],
+        ]);
+
+        $institution = Institution::findOrFail($id);
+        $institution->update([
+            'status' => $validated['status'],
+        ]);
+
+        return redirect()->route('admin.institutions.index')->with('success', 'Status institusi berhasil diperbarui.');
+    }
 }

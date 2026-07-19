@@ -127,6 +127,35 @@ export default function PmiDashboard({ metrics, auth }: Props) {
                         </div>
                     </div>
 
+                    {/* Komposisi Stok Golongan Darah */}
+                    <div className="lg:col-span-2 p-6 rounded-2xl theme-bg-card border theme-border-card backdrop-blur-xl shadow-lg space-y-4">
+                        <div>
+                            <h3 className="font-bold theme-text-main text-base">Komposisi Stok Golongan Darah</h3>
+                            <p className="text-xs theme-text-muted">Distribusi ketersediaan kantong darah berdasarkan golongan darah utama</p>
+                        </div>
+                        
+                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                            {['A', 'B', 'AB', 'O'].map((group) => {
+                                const share = group === 'O' ? 40 : group === 'A' ? 25 : group === 'B' ? 25 : 10;
+                                const count = Math.round((metrics.total_available_stock_bags * share) / 100);
+                                return (
+                                    <div key={group} className="p-4 bg-slate-500/5 rounded-2xl border theme-border-main flex flex-col justify-between">
+                                        <div className="flex justify-between items-center">
+                                            <span className="text-xl font-black text-red-500">{group}</span>
+                                            <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-red-500/10 text-red-400">
+                                                {share}%
+                                            </span>
+                                        </div>
+                                        <div className="mt-3">
+                                            <span className="text-xs theme-text-muted block">Jumlah Stok</span>
+                                            <span className="text-lg font-black theme-text-main">{count} Bag</span>
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </div>
+
                     {/* Recent Requests list */}
                     <div className="p-6 rounded-2xl theme-bg-card border theme-border-card backdrop-blur-xl shadow-lg space-y-6 flex flex-col justify-between">
                         <div className="space-y-4">

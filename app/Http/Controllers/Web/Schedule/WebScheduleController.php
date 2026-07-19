@@ -14,6 +14,10 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Inertia\Response;
+use App\Models\Booking;
+use App\Models\ScheduleSlot;
+use App\Enums\BookingStatus;
+use Carbon\Carbon;
 
 class WebScheduleController extends Controller
 {
@@ -154,5 +158,76 @@ class WebScheduleController extends Controller
         });
 
         return redirect()->route('schedules.index')->with('success', 'Transaksi donor walk-in berhasil dicatat dan poin pendonor bertambah.');
+    }
+
+    public function bookSlot(Request $request, $id): RedirectResponse
+    {
+        $user = $request->user();
+        $donorProfile = DonorProfile::where('user_id', $user->id)->first();
+        if (!$donorProfile) {
+            abort(404, 'Profil pendonor Anda belum terdaftar.');
+        }
+
+        // 1. Cek kelayakan donor
+        if ($donorProfile->next_eligible_date && Carbon::parse($donorProfile->next_eligible_date)->isFuture()) {
+            return back()->withErrors(['booking' => 'Anda belum layak berdonor saat ini. Tanggal kelayakan Anda berikutnya adalah ' . $donorProfile->next_eligible_date->toDateString()]);
+        }
+
+        // 2. Cek apakah sudah punya booking aktif
+        $activeBooking = Booking::where('donor_id', $donorProfile->id)
+            ->where('status', BookingStatus::Booked)
+            ->first();
+        if ($activeBooking) {
+            return back()->withErrors(['booking' => 'Anda sudah memiliki reservasi jadwal donor yang masih aktif. Silakan selesaikan atau batalkan reservasi tersebut terlebih dahulu.']);
+        }
+
+        // 3. Cek kapasitas slot
+        $slot = ScheduleSlot::findOrFail($id);
+        if ($slot->booked_count >= $slot->capacity) {
+            return back()->withErrors(['booking' => 'Kapasitas slot ini sudah penuh. Silakan pilih slot lainnya.']);
+        }
+
+        DB::transaction(function () use ($donorProfile, $slot) {
+            // Increment booked count
+            $slot->increment('booked_count');
+
+            // Hitung queue number
+            $queueNumber = Booking::where('slot_id', $slot->id)->count() + 1;
+
+            Booking::create([
+                'donor_id' => $donorProfile->id,
+                'slot_id' => $slot->id,
+                'qr_code' => 'DONOR-' . strtoupper(uniqid()),
+                'queue_number' => $queueNumber,
+                'status' => BookingStatus::Booked,
+            ]);
+        });
+
+        return redirect()->route('dashboard.donor')->with('success', 'Reservasi jadwal donor berhasil disimpan.');
+    }
+
+    public function cancelBooking(Request $request, $id): RedirectResponse
+    {
+        $user = $request->user();
+        $donorProfile = DonorProfile::where('user_id', $user->id)->first();
+        if (!$donorProfile) {
+            abort(404, 'Profil pendonor Anda belum terdaftar.');
+        }
+
+        $booking = Booking::where('id', $id)->where('donor_id', $donorProfile->id)->where('status', BookingStatus::Booked)->firstOrFail();
+        
+        DB::transaction(function () use ($booking) {
+            $booking->update([
+                'status' => BookingStatus::Cancelled,
+                'cancelled_at' => now(),
+                'cancellation_reason' => 'Dibatalkan oleh pendonor melalui Web Portal.',
+                'cancelled_by' => $booking->donorProfile->user_id,
+            ]);
+
+            // Decrement slot booked count
+            $booking->scheduleSlot()->decrement('booked_count');
+        });
+
+        return redirect()->route('dashboard.donor')->with('success', 'Reservasi jadwal donor Anda telah dibatalkan.');
     }
 }

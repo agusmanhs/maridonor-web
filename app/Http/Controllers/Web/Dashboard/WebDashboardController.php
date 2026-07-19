@@ -101,7 +101,61 @@ class WebDashboardController extends Controller
             ->orderBy('slot_date', 'asc')
             ->orderBy('start_time', 'asc')
             ->take(5)
-            ->get();
+            ->get()
+            ->map(fn($slot) => [
+                'id' => $slot->id,
+                'date' => $slot->slot_date->toDateString(),
+                'start_time' => $slot->start_time,
+                'end_time' => $slot->end_time,
+                'max_capacity' => $slot->capacity,
+                'booked_count' => $slot->booked_count,
+                'institution' => [
+                    'id' => $slot->institution->id,
+                    'name' => $slot->institution->name,
+                ]
+            ]);
+
+        // Ambil booking aktif milik user saat ini
+        $activeBooking = \App\Models\Booking::where('donor_id', $donorProfile->id)
+            ->where('status', \App\Enums\BookingStatus::Booked)
+            ->with(['scheduleSlot.institution'])
+            ->first();
+
+        $activeBookingData = $activeBooking ? [
+            'id' => $activeBooking->id,
+            'queue_number' => $activeBooking->queue_number,
+            'qr_code' => $activeBooking->qr_code,
+            'status' => $activeBooking->status->value,
+            'slot' => [
+                'id' => $activeBooking->scheduleSlot->id,
+                'date' => $activeBooking->scheduleSlot->slot_date->toDateString(),
+                'start_time' => $activeBooking->scheduleSlot->start_time,
+                'end_time' => $activeBooking->scheduleSlot->end_time,
+                'institution_name' => $activeBooking->scheduleSlot->institution->name,
+            ]
+        ] : null;
+
+        // Ambil permohonan darah darurat aktif
+        $activeBloodRequests = \App\Models\BloodRequest::whereIn('status', [
+                \App\Enums\RequestStatus::Open,
+                \App\Enums\RequestStatus::PartiallyFulfilled
+            ])
+            ->where('urgency_level', \App\Enums\UrgencyLevel::Emergency)
+            ->with(['destinationHospital'])
+            ->orderBy('created_at', 'desc')
+            ->take(5)
+            ->get()
+            ->map(fn($req) => [
+                'id' => $req->id,
+                'blood_type' => $req->blood_type->value,
+                'rhesus' => $req->rhesus->value,
+                'component_type' => $req->component_type->value,
+                'quantity_needed' => $req->quantity_needed,
+                'quantity_fulfilled' => $req->quantity_fulfilled,
+                'urgency_level' => $req->urgency_level->value,
+                'hospital_name' => $req->destinationHospital->name,
+                'deadline_at' => $req->deadline_at ? $req->deadline_at->toDateTimeString() : null,
+            ]);
 
         return Inertia::render('Dashboard/Donor', [
             'donorProfile' => [
@@ -116,6 +170,8 @@ class WebDashboardController extends Controller
             ],
             'donations' => $donations,
             'upcomingSlots' => $upcomingSlots,
+            'activeBooking' => $activeBookingData,
+            'activeBloodRequests' => $activeBloodRequests,
             'auth' => [
                 'user' => [
                     'name' => $user->name,

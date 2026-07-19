@@ -50,6 +50,12 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/schedules/donations', [\App\Http\Controllers\Web\Schedule\WebScheduleController::class, 'storeDonation'])->name('schedules.store_donation');
     });
 
+    // Booking Rutes bagi Pendonor
+    Route::middleware('role:donor,super_admin')->group(function () {
+        Route::post('/schedules/slots/{id}/book', [\App\Http\Controllers\Web\Schedule\WebScheduleController::class, 'bookSlot'])->name('schedules.book_slot');
+        Route::delete('/bookings/{id}', [\App\Http\Controllers\Web\Schedule\WebScheduleController::class, 'cancelBooking'])->name('bookings.cancel');
+    });
+
     // Rute Sertifikat Digital
     Route::get('/donations/{id}/certificate', [\App\Http\Controllers\Web\Certificate\WebCertificateController::class, 'show'])->name('donations.certificate');
 
@@ -59,5 +65,6 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/users', [\App\Http\Controllers\Web\Admin\AdminUserController::class, 'store'])->name('users.store');
         Route::get('/institutions', [\App\Http\Controllers\Web\Admin\AdminInstitutionController::class, 'index'])->name('institutions.index');
         Route::post('/institutions', [\App\Http\Controllers\Web\Admin\AdminInstitutionController::class, 'store'])->name('institutions.store');
+        Route::patch('/institutions/{id}/status', [\App\Http\Controllers\Web\Admin\AdminInstitutionController::class, 'updateStatus'])->name('institutions.update_status');
     });
 });

@@ -87,6 +87,12 @@ export default function InstitutionsIndex({ institutions, filters, auth }: Props
         });
     };
 
+    const handleUpdateStatus = (id: string, status: string) => {
+        if (confirm(`Apakah Anda yakin ingin mengubah status institusi ini menjadi ${status === 'approved' ? 'DISETUJUI' : 'DITOLAK'}?`)) {
+            router.patch(`/admin/institutions/${id}/status`, { status });
+        }
+    };
+
     return (
         <>
             <Head title="Kelola Institusi - Master Data" />
@@ -166,6 +172,7 @@ export default function InstitutionsIndex({ institutions, filters, auth }: Props
                                     <th className="py-3 px-4">Email</th>
                                     <th className="py-3 px-4">Status</th>
                                     <th className="py-3 px-4">Bergabung Pada</th>
+                                    <th className="py-3 px-4 text-center">Aksi</th>
                                 </tr>
                             </thead>
                             <tbody className="text-sm divide-y theme-divide-main">
@@ -201,6 +208,26 @@ export default function InstitutionsIndex({ institutions, filters, auth }: Props
                                             </td>
                                             <td className="py-4 px-4 theme-text-muted">
                                                 {new Date(inst.created_at).toLocaleDateString('id-ID')}
+                                            </td>
+                                            <td className="py-4 px-4">
+                                                <div className="flex items-center justify-center space-x-2">
+                                                    {inst.status !== 'approved' && (
+                                                        <button 
+                                                            onClick={() => handleUpdateStatus(inst.id, 'approved')}
+                                                            className="px-2.5 py-1 bg-green-500/10 hover:bg-green-500/20 text-green-500 rounded-lg text-xs font-bold transition duration-100"
+                                                        >
+                                                            Setujui
+                                                        </button>
+                                                    )}
+                                                    {inst.status !== 'rejected' && (
+                                                        <button 
+                                                            onClick={() => handleUpdateStatus(inst.id, 'rejected')}
+                                                            className="px-2.5 py-1 bg-red-500/10 hover:bg-red-500/20 text-red-500 rounded-lg text-xs font-bold transition duration-100"
+                                                        >
+                                                            Tolak
+                                                        </button>
+                                                    )}
+                                                </div>
                                             </td>
                                         </tr>
                                     ))
