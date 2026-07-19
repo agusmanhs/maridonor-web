@@ -18,7 +18,7 @@ interface DonationItem {
     component_type: string;
     volume_ml: number;
     donated_at: string;
-    donor?: {
+    donor_profile?: {
         user?: {
             name: string;
             email: string;
@@ -269,8 +269,8 @@ export default function ScheduleIndex({ slots, donations, currentInstitution, au
                                         ) : (
                                             donations.map((don) => (
                                                 <tr key={don.id} className="hover:bg-slate-850/30 transition duration-100">
-                                                    <td className="py-4 px-4 font-semibold text-white">{don.donor?.user?.name || '-'}</td>
-                                                    <td className="py-4 px-4 text-slate-400 font-mono text-xs">{don.donor?.user?.email || '-'}</td>
+                                                    <td className="py-4 px-4 font-semibold text-white">{don.donor_profile?.user?.name || '-'}</td>
+                                                    <td className="py-4 px-4 text-slate-400 font-mono text-xs">{don.donor_profile?.user?.email || '-'}</td>
                                                     <td className="py-4 px-4 text-slate-200">
                                                         <span className="font-bold">{don.blood_type}</span>
                                                         <span className="text-xs text-slate-400"> ({don.rhesus === 'positive' ? '+' : '-'})</span>

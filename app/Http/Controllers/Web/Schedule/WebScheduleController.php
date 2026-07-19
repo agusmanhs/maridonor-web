@@ -42,7 +42,7 @@ class WebScheduleController extends Controller
 
         // Ambil riwayat donasi sukses di UDD PMI saat ini
         $donations = Donation::where('institution_id', $institutionId)
-            ->with(['donor.user'])
+            ->with(['donorProfile.user'])
             ->orderBy('created_at', 'desc')
             ->get();
 
