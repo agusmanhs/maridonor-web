@@ -45,6 +45,9 @@ Route::middleware(['auth'])->group(function () {
 
     // Rute Slot Jadwal & Transaksi Donor (PMI)
     Route::get('/schedules', [\App\Http\Controllers\Web\Schedule\WebScheduleController::class, 'index'])->name('schedules.index');
+    Route::patch('/bookings/{id}/check-in', [\App\Http\Controllers\Web\Schedule\WebScheduleController::class, 'checkInBooking'])->name('bookings.web_check_in');
+    Route::post('/bookings/{id}/screening', [\App\Http\Controllers\Web\Schedule\WebScheduleController::class, 'submitScreening'])->name('bookings.screening');
+
     Route::middleware('role:pmi_staff,pmi_admin,super_admin')->group(function () {
         Route::post('/schedules/slots', [\App\Http\Controllers\Web\Schedule\WebScheduleController::class, 'storeSlot'])->name('schedules.store_slot');
         Route::post('/schedules/donations', [\App\Http\Controllers\Web\Schedule\WebScheduleController::class, 'storeDonation'])->name('schedules.store_donation');
@@ -66,5 +69,13 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/institutions', [\App\Http\Controllers\Web\Admin\AdminInstitutionController::class, 'index'])->name('institutions.index');
         Route::post('/institutions', [\App\Http\Controllers\Web\Admin\AdminInstitutionController::class, 'store'])->name('institutions.store');
         Route::patch('/institutions/{id}/status', [\App\Http\Controllers\Web\Admin\AdminInstitutionController::class, 'updateStatus'])->name('institutions.update_status');
+
+        // KYC Verification routes
+        Route::get('/kyc', [\App\Http\Controllers\Web\Admin\AdminKycController::class, 'index'])->name('kyc.index');
+        Route::patch('/kyc/{id}/status', [\App\Http\Controllers\Web\Admin\AdminKycController::class, 'updateStatus'])->name('kyc.update_status');
+
+        // CMS routes for Articles & Announcements
+        Route::resource('/articles', \App\Http\Controllers\Web\Admin\AdminArticleController::class)->except(['show']);
+        Route::resource('/announcements', \App\Http\Controllers\Web\Admin\AdminAnnouncementController::class)->except(['show']);
     });
 });

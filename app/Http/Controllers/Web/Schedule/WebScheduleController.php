@@ -48,11 +48,22 @@ class WebScheduleController extends Controller
         $donations = Donation::where('institution_id', $institutionId)
             ->with(['donorProfile.user'])
             ->orderBy('created_at', 'desc')
-            ->paginate(10)->withQueryString();
+            ->paginate(10, ['*'], 'donations_page')->withQueryString();
+
+        // Ambil daftar antrean reservasi hari ini/aktif
+        $bookings = Booking::whereHas('scheduleSlot', function ($q) use ($institutionId) {
+                $q->where('institution_id', $institutionId);
+            })
+            ->with(['donorProfile.user', 'scheduleSlot'])
+            ->whereIn('status', [BookingStatus::Booked, BookingStatus::CheckedIn, BookingStatus::Donated, BookingStatus::Deferred])
+            ->orderByRaw("FIELD(status, 'checked_in', 'booked', 'donated', 'deferred')")
+            ->orderBy('created_at', 'desc')
+            ->paginate(15, ['*'], 'bookings_page')->withQueryString();
 
         return Inertia::render('Schedule/Index', [
             'slots' => $slots,
             'donations' => $donations,
+            'bookings' => $bookings,
             'currentInstitution' => $currentInstitution,
             'auth' => [
                 'user' => [
@@ -229,5 +240,135 @@ class WebScheduleController extends Controller
         });
 
         return redirect()->route('dashboard.donor')->with('success', 'Reservasi jadwal donor Anda telah dibatalkan.');
+    }
+
+    public function checkInBooking(Request $request, $id): RedirectResponse
+    {
+        $booking = Booking::findOrFail($id);
+        if ($booking->status !== BookingStatus::Booked) {
+            throw ValidationException::withMessages([
+                'booking' => ['Status reservasi tidak valid untuk check-in.'],
+            ]);
+        }
+
+        $booking->update([
+            'status' => BookingStatus::CheckedIn,
+            'checked_in_at' => now(),
+        ]);
+
+        return back()->with('success', 'Pendonor berhasil check-in. Silakan lanjutkan ke tahap screening medis.');
+    }
+
+    public function submitScreening(Request $request, $id): RedirectResponse
+    {
+        $booking = Booking::findOrFail($id);
+        if ($booking->status !== BookingStatus::CheckedIn) {
+            throw ValidationException::withMessages([
+                'booking' => ['Pendonor harus melakukan check-in terlebih dahulu sebelum screening.'],
+            ]);
+        }
+
+        $validated = $request->validate([
+            'status' => 'required|string|in:completed,deferred',
+            'systolic_bp' => 'required|integer|min:50|max:250',
+            'diastolic_bp' => 'required|integer|min:30|max:150',
+            'hemoglobin' => 'required|numeric|min:5|max:25',
+            'weight' => 'required|numeric|min:30|max:200',
+            'component_type' => 'required_if:status,completed|string|in:whole_blood,prc,ffp,platelet,cryo',
+            'volume_ml' => 'required_if:status,completed|integer|min:100|max:1000',
+            'deferred_reason' => 'required_if:status,deferred|nullable|string|max:500',
+            'officer_notes' => 'nullable|string|max:500',
+        ]);
+
+        $donorProfile = $booking->donorProfile;
+        $user = $request->user();
+        $staffRecord = $user->institutionStaff()->first();
+        $institutionId = $staffRecord ? $staffRecord->institution_id : null;
+
+        if ($user->role->value === 'super_admin' && !$institutionId) {
+            $institutionId = Institution::where('type', 'pmi')->first()?->id;
+        }
+
+        if (!$institutionId) {
+            abort(403, 'Aksi tidak diizinkan.');
+        }
+
+        DB::transaction(function () use ($booking, $donorProfile, $validated, $institutionId, $user) {
+            if ($validated['status'] === 'completed') {
+                // 1. Buat Transaksi Donasi
+                Donation::create([
+                    'donor_id' => $donorProfile->id,
+                    'institution_id' => $institutionId,
+                    'booking_id' => $booking->id,
+                    'blood_type' => $donorProfile->blood_type,
+                    'rhesus' => $donorProfile->rhesus,
+                    'component_type' => $validated['component_type'],
+                    'volume_ml' => $validated['volume_ml'],
+                    'donated_at' => now(),
+                    'status' => \App\Enums\DonationStatus::Completed,
+                    'hemoglobin' => $validated['hemoglobin'],
+                    'systolic_bp' => $validated['systolic_bp'],
+                    'diastolic_bp' => $validated['diastolic_bp'],
+                    'weight_at_donation' => $validated['weight'],
+                    'officer_notes' => $validated['officer_notes'],
+                    'officer_id' => $user->id,
+                    'points_earned' => 100,
+                ]);
+
+                // 2. Perbarui status booking
+                $booking->update([
+                    'status' => BookingStatus::Donated,
+                ]);
+
+                // 3. Perbarui Profil Pendonor (Poin & eligibility)
+                $donorProfile->increment('points', 100);
+                $donorProfile->increment('total_donations', 1);
+                $donorProfile->update([
+                    'last_donation_date' => now(),
+                    'next_eligible_date' => now()->addDays(60),
+                    'eligibility_status' => \App\Enums\EligibilityStatus::Eligible,
+                    'deferral_reason' => null,
+                ]);
+            } else {
+                // Penangguhan (Deferred)
+                // 1. Perbarui status booking
+                $booking->update([
+                    'status' => BookingStatus::Deferred,
+                ]);
+
+                // 2. Perbarui status kelayakan di profil pendonor
+                $donorProfile->update([
+                    'eligibility_status' => \App\Enums\EligibilityStatus::Deferred,
+                    'deferral_reason' => $validated['deferred_reason'],
+                ]);
+
+                // 3. Buat Catatan Donasi sebagai 'deferred' untuk histori screening
+                Donation::create([
+                    'donor_id' => $donorProfile->id,
+                    'institution_id' => $institutionId,
+                    'booking_id' => $booking->id,
+                    'blood_type' => $donorProfile->blood_type,
+                    'rhesus' => $donorProfile->rhesus,
+                    'component_type' => \App\Enums\BloodComponent::WholeBlood, // default
+                    'volume_ml' => 0,
+                    'donated_at' => now(),
+                    'status' => \App\Enums\DonationStatus::Deferred,
+                    'hemoglobin' => $validated['hemoglobin'],
+                    'systolic_bp' => $validated['systolic_bp'],
+                    'diastolic_bp' => $validated['diastolic_bp'],
+                    'weight_at_donation' => $validated['weight'],
+                    'deferred_reason' => $validated['deferred_reason'],
+                    'officer_notes' => $validated['officer_notes'],
+                    'officer_id' => $user->id,
+                    'points_earned' => 0,
+                ]);
+            }
+        });
+
+        $message = $validated['status'] === 'completed' 
+            ? 'Screening berhasil. Donasi darah dicatat dan poin pendonor ditambahkan.' 
+            : 'Screening selesai. Pendonor ditangguhkan medis dengan alasan: ' . $validated['deferred_reason'];
+
+        return back()->with('success', $message);
     }
 }

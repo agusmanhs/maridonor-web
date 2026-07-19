@@ -141,6 +141,18 @@ export default function DashboardLayout({ children, sidebarType, title, subtitle
                                 <span>🏥</span>
                                 <span>Data Institusi</span>
                             </Link>
+                            <Link href="/admin/kyc" className={`flex items-center space-x-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition duration-150 ${isActive('/admin/kyc')}`}>
+                                <span>🛡️</span>
+                                <span>Verifikasi KYC</span>
+                            </Link>
+                            <Link href="/admin/articles" className={`flex items-center space-x-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition duration-150 ${isActive('/admin/articles')}`}>
+                                <span>📚</span>
+                                <span>Artikel & Edukasi</span>
+                            </Link>
+                            <Link href="/admin/announcements" className={`flex items-center space-x-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition duration-150 ${isActive('/admin/announcements')}`}>
+                                <span>📢</span>
+                                <span>Pengumuman & Event</span>
+                            </Link>
                         </div>
                     )}
 
