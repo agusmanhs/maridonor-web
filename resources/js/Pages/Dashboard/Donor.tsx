@@ -1,5 +1,6 @@
 import React from 'react';
 import { Head, router, Link } from '@inertiajs/react';
+import ThemeSwitcher from '../../Components/ThemeSwitcher';
 
 interface DonorProfile {
     id: string;
@@ -97,9 +98,12 @@ export default function DonorDashboard({ donorProfile, donations, upcomingSlots,
                 <main className="flex-1 p-6 lg:p-10 space-y-8 overflow-y-auto">
                     
                     {/* Header */}
-                    <div className="pb-6 border-b border-slate-900">
-                        <h1 className="text-2xl lg:text-3xl font-extrabold text-white tracking-tight">Selamat Datang, {auth.user.name}!</h1>
-                        <p className="text-sm text-slate-400">Terima kasih atas kontribusi kemanusiaan Anda. Pantau status dan poin donasi Anda di sini.</p>
+                    <div className="pb-6 border-b border-slate-900 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                        <div>
+                            <h1 className="text-2xl lg:text-3xl font-extrabold text-white tracking-tight">Selamat Datang, {auth.user.name}!</h1>
+                            <p className="text-sm text-slate-400">Terima kasih atas kontribusi kemanusiaan Anda. Pantau status dan poin donasi Anda di sini.</p>
+                        </div>
+                        <ThemeSwitcher />
                     </div>
 
                     {/* Banner Status Kelayakan */}

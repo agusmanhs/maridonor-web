@@ -1,5 +1,6 @@
 import React from 'react';
 import { Head, Link, router } from '@inertiajs/react';
+import ThemeSwitcher from '../Components/ThemeSwitcher';
 
 interface User {
     name: string;
@@ -80,6 +81,7 @@ export default function Welcome({ title, auth }: Props) {
                                     Portal Masuk
                                 </Link>
                             )}
+                            <ThemeSwitcher />
                         </nav>
                     </div>
                 </header>

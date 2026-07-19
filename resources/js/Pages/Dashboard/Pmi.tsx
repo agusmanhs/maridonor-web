@@ -1,5 +1,6 @@
 import React from 'react';
 import { Head, router, Link } from '@inertiajs/react';
+import ThemeSwitcher from '../../Components/ThemeSwitcher';
 
 interface Trend {
     month: string;
@@ -101,12 +102,15 @@ export default function PmiDashboard({ metrics, auth }: Props) {
                             <h1 className="text-2xl lg:text-3xl font-extrabold text-white tracking-tight">PMI Dashboard</h1>
                             <p className="text-sm text-slate-400">Unit Donor Darah PMI Kota Bandung — Logistik Bank Darah Terpadu</p>
                         </div>
-                        <div className="flex items-center space-x-3.5 bg-slate-900/60 border border-slate-800/80 px-4 py-2.5 rounded-2xl backdrop-blur-lg">
-                            <span className="relative flex h-2 w-2">
-                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                                <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
-                            </span>
-                            <span className="text-xs font-bold text-slate-300">Staff Aktif: {auth.user.name}</span>
+                        <div className="flex items-center space-x-4">
+                            <div className="flex items-center space-x-3.5 bg-slate-900/60 border border-slate-800/80 px-4 py-2.5 rounded-2xl backdrop-blur-lg">
+                                <span className="relative flex h-2 w-2">
+                                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                                    <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                                </span>
+                                <span className="text-xs font-bold text-slate-300">Staff Aktif: {auth.user.name}</span>
+                            </div>
+                            <ThemeSwitcher />
                         </div>
                     </div>
 
