@@ -10,50 +10,33 @@ interface DonorProfile {
     total_donations: number;
     last_donation_date?: string;
     next_eligible_date?: string;
-    referral_code: string;
+    referral_code?: string;
 }
 
-interface DonationItem {
+interface User {
+    name: string;
+    email: string;
+    role: string;
+}
+
+interface Donation {
     id: string;
+    donation_date: string;
     blood_type: string;
-    rhesus: string;
-    component_type: string;
-    volume_ml: number;
-    donated_at: string;
-    institution?: {
-        name: string;
-        address?: {
-            city: string;
-        };
-    };
-}
-
-interface ScheduleSlotItem {
-    id: string;
-    slot_date: string;
-    start_time: string;
-    end_time: string;
-    capacity: number;
-    booked_count: number;
-    institution?: {
-        name: string;
-    };
+    volume_ml?: number;
+    points_earned: number;
+    status: string;
 }
 
 interface Props {
     donorProfile: DonorProfile;
-    donations: DonationItem[];
-    upcomingSlots: ScheduleSlotItem[];
+    recentDonations: Donation[];
     auth: {
-        user: {
-            name: string;
-            email: string;
-            role: string;
-        };
+        user: User;
     };
 }
 
-export default function DonorDashboard({ donorProfile, donations, upcomingSlots, auth }: Props) {
+export default function DonorDashboard({ donorProfile, recentDonations, auth }: Props) {
     const handleLogout = (e: React.FormEvent) => {
         e.preventDefault();
         router.post('/logout');
@@ -64,29 +47,41 @@ export default function DonorDashboard({ donorProfile, donations, upcomingSlots,
 
     return (
         <>
-            <Head title="Dashboard Pendonor - Maridonor" />
-            <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col lg:flex-row font-sans antialiased selection:bg-red-600 selection:text-white">
+            <Head>
+                <title>Dashboard Pendonor - Maridonor</title>
+                <link rel="preconnect" href="https://fonts.googleapis.com" />
+                <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+                <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+            </Head>
+            
+            <div className="min-h-screen theme-bg-main theme-text-main flex flex-col lg:flex-row antialiased relative overflow-hidden transition-colors duration-300" style={{ fontFamily: "'Outfit', sans-serif" }}>
                 
+                {/* Background Glows */}
+                <div className="absolute top-0 right-0 w-[400px] h-[400px] rounded-full bg-red-600/5 blur-3xl pointer-events-none"></div>
+                <div className="absolute bottom-0 left-0 w-[400px] h-[400px] rounded-full bg-rose-600/5 blur-3xl pointer-events-none"></div>
+
                 {/* Sidebar Menu */}
-                <aside className="w-full lg:w-64 bg-slate-900 border-b lg:border-b-0 lg:border-r border-slate-800 flex flex-col">
-                    <div className="p-6 border-b border-slate-800 flex items-center space-x-3">
-                        <img src="/images/logo_icon.png" alt="Maridonor Logo" className="h-8 w-auto" />
-                        <span className="text-lg font-bold tracking-tight text-white">
+                <aside className="w-full lg:w-64 theme-bg-sidebar border-b lg:border-b-0 lg:border-r theme-border-main backdrop-blur-xl flex flex-col relative z-20 transition-colors duration-300">
+                    <div className="p-6 border-b theme-border-main flex items-center space-x-3.5">
+                        <div className="p-2 bg-gradient-to-br from-red-500/10 to-rose-600/10 rounded-xl border border-red-500/20">
+                            <img src="/images/logo_icon.png" alt="Maridonor Logo" className="h-7 w-auto" />
+                        </div>
+                        <span className="text-xl font-extrabold tracking-tight theme-text-main">
                             Mari<span className="text-red-500">donor</span>
                         </span>
                     </div>
 
                     <div className="flex-1 p-4 space-y-1.5">
-                        <span className="px-3 text-[10px] font-bold text-slate-500 uppercase tracking-wider block mb-2">Portal Pendonor</span>
-                        <Link href="/dashboard/donor" className="flex items-center space-x-3 px-3 py-2.5 bg-red-600/10 text-red-500 rounded-xl text-sm font-semibold border border-red-500/10">
+                        <span className="px-3 text-[10px] font-bold theme-text-muted uppercase tracking-wider block mb-2">Portal Pendonor</span>
+                        <Link href="/dashboard/donor" className="flex items-center space-x-3 px-3 py-2.5 bg-gradient-to-r from-red-650/10 to-rose-650/5 text-red-500 rounded-xl text-sm font-bold border border-red-500/10">
                             <span>📊</span>
                             <span>Dashboard Anda</span>
                         </Link>
                     </div>
 
-                    <div className="p-4 border-t border-slate-800">
+                    <div className="p-4 border-t theme-border-main">
                         <form onSubmit={handleLogout}>
-                            <button type="submit" className="w-full py-2.5 text-sm font-semibold text-slate-400 hover:text-white hover:bg-slate-850 rounded-xl border border-slate-800 transition duration-150 flex items-center justify-center space-x-2">
+                            <button type="submit" className="w-full py-2.5 text-sm font-semibold theme-text-muted hover:theme-text-main hover:bg-slate-500/10 rounded-xl border theme-border-main transition duration-150 flex items-center justify-center space-x-2">
                                 <span>🚪</span>
                                 <span>Keluar Akun</span>
                             </button>
@@ -95,168 +90,118 @@ export default function DonorDashboard({ donorProfile, donations, upcomingSlots,
                 </aside>
 
                 {/* Main Content Area */}
-                <main className="flex-1 p-6 lg:p-10 space-y-8 overflow-y-auto">
+                <main className="flex-1 p-6 lg:p-10 space-y-8 overflow-y-auto relative z-10">
                     
                     {/* Header */}
-                    <div className="pb-6 border-b border-slate-900 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                    <div className="pb-6 border-b theme-border-main flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                         <div>
-                            <h1 className="text-2xl lg:text-3xl font-extrabold text-white tracking-tight">Selamat Datang, {auth.user.name}!</h1>
-                            <p className="text-sm text-slate-400">Terima kasih atas kontribusi kemanusiaan Anda. Pantau status dan poin donasi Anda di sini.</p>
+                            <h1 className="text-2xl lg:text-3xl font-extrabold theme-text-main tracking-tight font-serif">Selamat Datang, {auth.user.name}!</h1>
+                            <p className="text-sm theme-text-muted">Terima kasih atas kontribusi kemanusiaan Anda. Pantau status dan poin donasi Anda di sini.</p>
                         </div>
                         <ThemeSwitcher />
                     </div>
 
                     {/* Banner Status Kelayakan */}
-                    <div className={`p-6 rounded-2xl border flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 ${
-                        isEligible ? 'bg-emerald-500/10 border-emerald-500/25 text-emerald-400' : 'bg-rose-500/10 border-rose-500/25 text-rose-450'
+                    <div className={`p-6 rounded-2xl border flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 transition-colors ${
+                        isEligible 
+                            ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-600 dark:text-emerald-400' 
+                            : 'bg-rose-500/10 border-rose-500/20 text-rose-600 dark:text-rose-450'
                     }`}>
                         <div className="space-y-1">
                             <h4 className="font-bold text-base">{isEligible ? '🟢 Anda Siap Berdonor!' : '🔴 Belum Waktunya Berdonor'}</h4>
-                            <p className="text-sm opacity-80">
+                            <p className="text-xs opacity-90">
                                 {isEligible 
-                                    ? 'Kondisi tubuh Anda saat ini siap untuk melakukan donor darah berikutnya. Silakan kunjungi UDD PMI terdekat.' 
-                                    : `Demi kesehatan Anda, Anda baru dapat melakukan donor kembali setelah tanggal ${new Date(donorProfile.next_eligible_date!).toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' })}.`
-                                }
+                                    ? 'Anda telah memenuhi tenggang waktu 60 hari dari donasi terakhir. Silakan lakukan donor kembali.' 
+                                    : `Donasi berikutnya dapat dilakukan setelah tanggal ${donorProfile.next_eligible_date}.`}
                             </p>
                         </div>
-                        {isEligible && (
-                            <span className="px-4 py-2 bg-emerald-600 text-white rounded-xl text-xs font-bold uppercase tracking-wider block">
-                                Fit to Donate
-                            </span>
-                        )}
                     </div>
 
-                    {/* Stats Widget Grid */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                        
-                        {/* Golongan Darah */}
-                        <div className="bg-slate-900 border border-slate-800 p-6 rounded-2xl flex items-center space-x-4">
-                            <span className="text-3xl p-3 bg-red-600/10 text-red-500 rounded-xl">🩸</span>
-                            <div className="space-y-0.5">
-                                <span className="text-xs text-slate-400 block uppercase tracking-wider font-semibold">Golongan Darah</span>
-                                <span className="text-xl font-bold text-white block">{donorProfile.blood_type} ({donorProfile.rhesus === 'positive' ? 'Positif' : 'Negatif'})</span>
+                    {/* Stats Grid */}
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        {/* Stat 1: Golongan Darah */}
+                        <div className="p-6 rounded-2xl theme-bg-card border theme-border-card backdrop-blur-xl shadow-lg relative overflow-hidden transition-colors">
+                            <div className="flex justify-between items-center mb-4">
+                                <span className="text-xs font-bold theme-text-muted uppercase tracking-wider block">Golongan Darah</span>
+                                <span className="p-2 bg-red-500/10 text-red-500 rounded-xl text-xs font-bold border border-red-500/10">🩸</span>
                             </div>
+                            <p className="text-4xl font-extrabold theme-text-main">
+                                {donorProfile.blood_type} <span className="text-lg font-normal theme-text-muted">({donorProfile.rhesus})</span>
+                            </p>
                         </div>
 
-                        {/* Total Donasi */}
-                        <div className="bg-slate-900 border border-slate-800 p-6 rounded-2xl flex items-center space-x-4">
-                            <span className="text-3xl p-3 bg-red-600/10 text-red-500 rounded-xl">🏆</span>
-                            <div className="space-y-0.5">
-                                <span className="text-xs text-slate-400 block uppercase tracking-wider font-semibold">Total Donasi</span>
-                                <span className="text-xl font-bold text-white block">{donorProfile.total_donations} Kali Donasi</span>
+                        {/* Stat 2: Total Donasi */}
+                        <div className="p-6 rounded-2xl theme-bg-card border theme-border-card backdrop-blur-xl shadow-lg relative overflow-hidden transition-colors">
+                            <div className="flex justify-between items-center mb-4">
+                                <span className="text-xs font-bold theme-text-muted uppercase tracking-wider block">Total Donasi</span>
+                                <span className="p-2 bg-red-500/10 text-red-500 rounded-xl text-xs font-bold border border-red-500/10">🤝</span>
                             </div>
+                            <p className="text-4xl font-extrabold theme-text-main">{donorProfile.total_donations} Kali</p>
                         </div>
 
-                        {/* Poin Pendonor */}
-                        <div className="bg-slate-900 border border-slate-800 p-6 rounded-2xl flex items-center space-x-4">
-                            <span className="text-3xl p-3 bg-red-600/10 text-red-500 rounded-xl">✨</span>
-                            <div className="space-y-0.5">
-                                <span className="text-xs text-slate-400 block uppercase tracking-wider font-semibold">Poin Maridonor</span>
-                                <span className="text-xl font-bold text-white block">{donorProfile.points} Poin</span>
+                        {/* Stat 3: Poin Loyalitas */}
+                        <div className="p-6 rounded-2xl theme-bg-card border theme-border-card backdrop-blur-xl shadow-lg relative overflow-hidden transition-colors">
+                            <div className="flex justify-between items-center mb-4">
+                                <span className="text-xs font-bold theme-text-muted uppercase tracking-wider block">Loyalty Points</span>
+                                <span className="p-2 bg-red-500/10 text-red-500 rounded-xl text-xs font-bold border border-red-500/10">✨</span>
                             </div>
-                        </div>
-
-                        {/* Referral Code */}
-                        <div className="bg-slate-900 border border-slate-800 p-6 rounded-2xl flex items-center space-x-4">
-                            <span className="text-3xl p-3 bg-red-600/10 text-red-500 rounded-xl">🔗</span>
-                            <div className="space-y-0.5">
-                                <span className="text-xs text-slate-400 block uppercase tracking-wider font-semibold">Kode Referral</span>
-                                <span className="text-xl font-mono font-bold text-white block">{donorProfile.referral_code}</span>
-                            </div>
+                            <p className="text-4xl font-extrabold theme-text-main">{donorProfile.points} Pts</p>
                         </div>
                     </div>
 
-                    {/* Riwayat Donasi & Jadwal PMI */}
-                    <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
-                        
-                        {/* Riwayat Donasi */}
-                        <div className="xl:col-span-2 space-y-4">
-                            <div className="flex justify-between items-center">
-                                <h3 className="text-lg font-bold text-white">Riwayat Donasi Anda</h3>
-                                <span className="text-xs text-slate-400">{donations.length} Transaksi Terdaftar</span>
-                            </div>
-
-                            <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden">
-                                <div className="overflow-x-auto">
-                                    <table className="w-full text-left border-collapse">
-                                        <thead>
-                                            <tr className="border-b border-slate-800 text-xs font-bold text-slate-400">
-                                                <th className="py-3 px-4">PMI Penyelenggara</th>
-                                                <th className="py-3 px-4">Kota</th>
-                                                <th className="py-3 px-4">Komponen</th>
-                                                <th className="py-3 px-4">Volume</th>
-                                                <th className="py-3 px-4">Tanggal Donasi</th>
-                                                <th className="py-3 px-4 text-center">Sertifikat</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody className="text-sm divide-y divide-slate-850">
-                                            {donations.length === 0 ? (
-                                                <tr>
-                                                    <td colSpan={6} className="py-8 text-center text-slate-500 font-semibold">
-                                                        Anda belum memiliki riwayat donasi.
-                                                    </td>
-                                                </tr>
-                                            ) : (
-                                                donations.map((don) => (
-                                                    <tr key={don.id} className="hover:bg-slate-850/30 transition duration-100">
-                                                        <td className="py-4 px-4 font-semibold text-white">{don.institution?.name || '-'}</td>
-                                                        <td className="py-4 px-4 text-slate-350">{don.institution?.address?.city || '-'}</td>
-                                                        <td className="py-4 px-4 text-slate-300 capitalize">{don.component_type.replace('_', ' ')}</td>
-                                                        <td className="py-4 px-4 text-slate-350">{don.volume_ml} ml</td>
-                                                        <td className="py-4 px-4 text-slate-400">
-                                                            {new Date(don.donated_at).toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' })}
-                                                        </td>
-                                                        <td className="py-4 px-4 text-center">
-                                                            <a 
-                                                                href={`/donations/${don.id}/certificate`}
-                                                                target="_blank"
-                                                                rel="noopener noreferrer"
-                                                                className="px-3 py-1 bg-red-600/10 hover:bg-red-600/25 text-red-500 rounded-lg text-xs font-bold border border-red-500/25 transition duration-150"
-                                                            >
-                                                                Unduh
-                                                            </a>
-                                                        </td>
-                                                    </tr>
-                                                ))
-                                            )}
-                                        </tbody>
-                                    </table>
-                                </div>
+                    {/* Riwayat Donasi Terakhir */}
+                    <div className="p-6 rounded-2xl theme-bg-card border theme-border-card backdrop-blur-xl shadow-lg space-y-6 transition-colors">
+                        <div className="flex justify-between items-center">
+                            <div>
+                                <h3 className="font-bold theme-text-main text-base">Riwayat Donasi Terakhir</h3>
+                                <p className="text-xs theme-text-muted">Daftar kontribusi kemanusiaan yang berhasil Anda lakukan</p>
                             </div>
                         </div>
 
-                        {/* Jadwal Slot Aktif PMI */}
-                        <div className="space-y-4">
-                            <h3 className="text-lg font-bold text-white">Jadwal Donor PMI Aktif</h3>
-
-                            <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-4">
-                                {upcomingSlots.length === 0 ? (
-                                    <p className="text-xs text-slate-500 font-semibold text-center py-6">
-                                        Saat ini tidak ada slot jadwal donor yang aktif.
-                                    </p>
-                                ) : (
-                                    <div className="space-y-3.5">
-                                        {upcomingSlots.map((slot) => (
-                                            <div key={slot.id} className="p-3.5 bg-slate-950 border border-slate-850 rounded-xl space-y-2">
-                                                <div className="flex justify-between items-start">
-                                                    <span className="text-xs font-bold text-white">{slot.institution?.name}</span>
-                                                    <span className="text-[10px] bg-red-500/10 text-red-500 px-2 py-0.5 rounded font-bold uppercase">
-                                                        {slot.booked_count} / {slot.capacity} Slot
+                        {recentDonations.length === 0 ? (
+                            <div className="text-center py-10 border border-dashed theme-border-main rounded-2xl">
+                                <p className="text-sm theme-text-muted">Anda belum memiliki riwayat donasi yang tercatat.</p>
+                            </div>
+                        ) : (
+                            <div className="overflow-x-auto">
+                                <table className="w-full text-left border-collapse">
+                                    <thead>
+                                        <tr className="border-b theme-border-main text-xs font-bold theme-text-muted">
+                                            <th className="py-3 px-4">Tanggal Donasi</th>
+                                            <th className="py-3 px-4">Komponen</th>
+                                            <th className="py-3 px-4">Volume (ml)</th>
+                                            <th className="py-3 px-4">Poin Diperoleh</th>
+                                            <th className="py-3 px-4">Status</th>
+                                            <th className="py-3 px-4 text-right">Unduh</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="text-sm divide-y theme-divide-main">
+                                        {recentDonations.map((donation) => (
+                                            <tr key={donation.id} className="hover:bg-slate-500/5 transition">
+                                                <td className="py-4 px-4 font-medium theme-text-main">{donation.donation_date}</td>
+                                                <td className="py-4 px-4 theme-text-muted">{donation.blood_type}</td>
+                                                <td className="py-4 px-4 theme-text-muted">{donation.volume_ml || '-'} ml</td>
+                                                <td className="py-4 px-4 font-bold text-red-500">+{donation.points_earned} Pts</td>
+                                                <td className="py-4 px-4">
+                                                    <span className="text-[10px] bg-green-500/15 text-green-600 dark:text-green-400 px-2 py-0.5 rounded font-bold uppercase">
+                                                        {donation.status}
                                                     </span>
-                                                </div>
-                                                <div className="flex justify-between text-xs text-slate-400">
-                                                    <span>{new Date(slot.slot_date).toLocaleDateString('id-ID', { month: 'short', day: 'numeric' })}</span>
-                                                    <span className="font-mono">{slot.start_time} - {slot.end_time}</span>
-                                                </div>
-                                            </div>
+                                                </td>
+                                                <td className="py-4 px-4 text-right">
+                                                    <Link 
+                                                        href={`/certificates/${donation.id}/print`}
+                                                        target="_blank"
+                                                        className="inline-flex items-center text-xs font-bold text-red-500 hover:text-red-650 transition"
+                                                    >
+                                                        🖨️ Cetak Sertifikat
+                                                    </Link>
+                                                </td>
+                                            </tr>
                                         ))}
-                                    </div>
-                                )}
-                                <p className="text-[10px] text-slate-500 leading-normal text-center pt-2">
-                                    💡 Untuk memesan / booking slot waktu donor secara online, silakan gunakan Aplikasi Mobile Maridonor di handphone Anda.
-                                </p>
+                                    </tbody>
+                                </table>
                             </div>
-                        </div>
+                        )}
                     </div>
                 </main>
             </div>
