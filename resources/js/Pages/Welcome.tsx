@@ -57,8 +57,8 @@ export default function Welcome({ title, articles = [], announcements = [], auth
                 <div className="absolute top-[40%] right-[-10%] w-[500px] h-[500px] rounded-full bg-rose-600/5 blur-[100px] pointer-events-none"></div>
                 <div className="absolute bottom-[10%] left-[-10%] w-[450px] h-[450px] rounded-full bg-red-500/5 blur-[110px] pointer-events-none"></div>
 
-                {/* Navbar Sticky Glassmorphic */}
-                <header className="sticky top-0 z-50 backdrop-blur-xl theme-bg-main/60 border-b theme-border-main transition-colors duration-300">
+                {/* Navbar Fixed Glassmorphic */}
+                <header className="fixed top-0 left-0 right-0 z-50 backdrop-blur-xl theme-bg-main/80 border-b theme-border-main transition-colors duration-300">
                     <div className="max-w-7xl mx-auto px-6 lg:px-8 h-20 flex items-center justify-between">
                         {/* Logo */}
                         <div className="flex items-center space-x-3 group cursor-pointer">
@@ -120,7 +120,7 @@ export default function Welcome({ title, articles = [], announcements = [], auth
                     </div>
                 </header>
 
-                <main className="max-w-7xl mx-auto px-6 lg:px-8 py-16 lg:py-24 relative z-10 space-y-32">
+                <main className="max-w-7xl mx-auto px-6 lg:px-8 pt-32 lg:pt-40 pb-16 lg:pb-24 relative z-10 space-y-32">
                     
                     {/* Hero Section */}
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
