@@ -35,6 +35,10 @@ class BloodStockService
 
     public function addStock(array $data, string $creatorId): BloodStock
     {
+        if (empty($data['batch_number'])) {
+            $data['batch_number'] = 'BATCH-' . now()->format('Ymd');
+        }
+
         // Hitung masa expired secara otomatis berdasarkan tipe komponen jika tidak di-input manual
         if (empty($data['expires_at'])) {
             $collectedAt = !empty($data['collected_at']) ? Carbon::parse($data['collected_at']) : now();

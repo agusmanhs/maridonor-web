@@ -26,4 +26,11 @@ Route::post('/logout', [WebAuthController::class, 'logout'])->middleware('auth')
 Route::middleware(['auth'])->group(function () {
     Route::middleware('role:pmi_staff,pmi_admin,super_admin')->get('/dashboard/pmi', [\App\Http\Controllers\Web\Dashboard\WebDashboardController::class, 'pmiDashboard'])->name('dashboard.pmi');
     Route::middleware('role:rs_staff,rs_admin,super_admin')->get('/dashboard/hospital', [\App\Http\Controllers\Web\Dashboard\WebDashboardController::class, 'hospitalDashboard'])->name('dashboard.hospital');
+
+    // Rute Manajemen Stok Darah
+    Route::get('/blood-stocks', [\App\Http\Controllers\Web\BloodStock\WebBloodStockController::class, 'index'])->name('blood-stocks.index');
+    Route::middleware('role:pmi_staff,pmi_admin,super_admin')->group(function () {
+        Route::post('/blood-stocks', [\App\Http\Controllers\Web\BloodStock\WebBloodStockController::class, 'store'])->name('blood-stocks.store');
+        Route::post('/blood-stocks/{id}/distribute', [\App\Http\Controllers\Web\BloodStock\WebBloodStockController::class, 'distribute'])->name('blood-stocks.distribute');
+    });
 });

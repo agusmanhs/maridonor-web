@@ -1,5 +1,5 @@
 import React from 'react';
-import { Head, router } from '@inertiajs/react';
+import { Head, router, Link } from '@inertiajs/react';
 
 interface Metrics {
     total_requests_sent: number;
@@ -43,18 +43,18 @@ export default function HospitalDashboard({ metrics, auth }: Props) {
 
                     <div className="flex-1 p-4 space-y-1.5">
                         <span className="px-3 text-[10px] font-bold text-slate-500 uppercase tracking-wider block mb-2">Menu Utama</span>
-                        <a href="#" className="flex items-center space-x-3 px-3 py-2.5 bg-red-600/10 text-red-500 rounded-xl text-sm font-semibold border border-red-500/10">
+                        <Link href="/dashboard/hospital" className="flex items-center space-x-3 px-3 py-2.5 bg-red-600/10 text-red-500 rounded-xl text-sm font-semibold border border-red-500/10">
                             <span>📊</span>
                             <span>Ikhtisar Dashboard</span>
-                        </a>
+                        </Link>
                         <a href="#" className="flex items-center space-x-3 px-3 py-2.5 text-slate-400 hover:text-white hover:bg-slate-850 rounded-xl text-sm font-semibold transition duration-150">
                             <span>🚨</span>
                             <span>Ajukan Permohonan</span>
                         </a>
-                        <a href="#" className="flex items-center space-x-3 px-3 py-2.5 text-slate-400 hover:text-white hover:bg-slate-850 rounded-xl text-sm font-semibold transition duration-150">
+                        <Link href="/blood-stocks" className="flex items-center space-x-3 px-3 py-2.5 text-slate-400 hover:text-white hover:bg-slate-850 rounded-xl text-sm font-semibold transition duration-150">
                             <span>🩺</span>
                             <span>Stok Bank Darah RS</span>
-                        </a>
+                        </Link>
                     </div>
 
                     <div className="p-4 border-t border-slate-800">
