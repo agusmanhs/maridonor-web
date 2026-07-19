@@ -8,14 +8,34 @@ interface User {
     role: string;
 }
 
+interface ArticleItem {
+    id: string;
+    title: string;
+    slug: string;
+    excerpt: string;
+    category: string;
+    created_at: string;
+}
+
+interface AnnouncementItem {
+    id: string;
+    title: string;
+    content: string;
+    type: string;
+    is_pinned: boolean;
+    created_at: string;
+}
+
 interface Props {
     title: string;
+    articles: ArticleItem[];
+    announcements: AnnouncementItem[];
     auth: {
         user: User | null;
     };
 }
 
-export default function Welcome({ title, auth }: Props) {
+export default function Welcome({ title, articles = [], announcements = [], auth }: Props) {
     const handleLogout = (e: React.FormEvent) => {
         e.preventDefault();
         router.post('/logout');
@@ -45,6 +65,12 @@ export default function Welcome({ title, auth }: Props) {
                             <span className="text-2xl font-black tracking-tight theme-text-main">
                                 Mari<span className="text-red-600">donor</span>
                             </span>
+                        </div>
+
+                        {/* Mid Navigation Links */}
+                        <div className="hidden md:flex items-center space-x-8">
+                            <a href="#features" className="text-sm font-semibold theme-text-muted hover:theme-text-main transition duration-150">Fitur Utama</a>
+                            <a href="#news" className="text-sm font-semibold theme-text-muted hover:theme-text-main transition duration-150">Info & Berita</a>
                         </div>
 
                         <nav className="flex items-center space-x-6">
@@ -196,6 +222,88 @@ export default function Welcome({ title, auth }: Props) {
                                 </div>
                             ))}
                         </div>
+                    </div>
+
+                    {/* News & Info Section */}
+                    <div id="news" className="py-24 border-t theme-border-main grid grid-cols-1 lg:grid-cols-3 gap-12">
+                        
+                        {/* Articles Column (Left 2/3) */}
+                        <div className="lg:col-span-2 space-y-8">
+                            <div className="space-y-2">
+                                <span className="text-xs font-bold text-red-500 uppercase tracking-widest block">Artikel & Edukasi</span>
+                                <h2 className="text-3xl font-black theme-text-main tracking-tight">Kesehatan & Donor Darah</h2>
+                            </div>
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                {articles.length === 0 ? (
+                                    <div className="p-6 rounded-2xl border theme-border-card theme-bg-card theme-text-muted text-sm font-semibold col-span-2">
+                                        Belum ada artikel edukasi dipublikasikan.
+                                    </div>
+                                ) : (
+                                    articles.map((art) => (
+                                        <div key={art.id} className="p-6 rounded-3xl theme-bg-card border theme-border-card flex flex-col justify-between space-y-4 hover:shadow-lg transition">
+                                            <div className="space-y-2">
+                                                <div className="flex justify-between items-center">
+                                                    <span className="text-[10px] bg-red-500/10 text-red-500 px-2 py-0.5 rounded font-bold uppercase">
+                                                        {art.category}
+                                                    </span>
+                                                    <span className="text-[10px] theme-text-muted font-mono">
+                                                        {new Date(art.created_at).toLocaleDateString('id-ID', { month: 'short', day: 'numeric' })}
+                                                    </span>
+                                                </div>
+                                                <h4 className="font-bold text-base theme-text-main line-clamp-2 leading-tight">{art.title}</h4>
+                                                <p className="text-xs theme-text-muted line-clamp-3 leading-relaxed">{art.excerpt}</p>
+                                            </div>
+                                            <Link href="/login" className="text-xs font-bold text-red-550 hover:text-red-500 flex items-center space-x-1 pt-2">
+                                                <span>Baca Selengkapnya</span>
+                                                <span>&rarr;</span>
+                                            </Link>
+                                        </div>
+                                    ))
+                                )}
+                            </div>
+                        </div>
+
+                        {/* Announcements Column (Right 1/3) */}
+                        <div className="space-y-8">
+                            <div className="space-y-2">
+                                <span className="text-xs font-bold text-red-500 uppercase tracking-widest block">Pengumuman</span>
+                                <h2 className="text-3xl font-black theme-text-main tracking-tight">Siaran & Event</h2>
+                            </div>
+
+                            <div className="space-y-4">
+                                {announcements.length === 0 ? (
+                                    <div className="p-6 rounded-2xl border theme-border-card theme-bg-card theme-text-muted text-sm font-semibold">
+                                        Belum ada pengumuman disiarkan.
+                                    </div>
+                                ) : (
+                                    announcements.map((ann) => (
+                                        <div key={ann.id} className="p-5 rounded-2xl theme-bg-card border theme-border-card space-y-3 relative overflow-hidden">
+                                            {ann.is_pinned && (
+                                                <div className="absolute top-0 right-0 w-8 h-8 bg-red-650/10 rounded-bl-2xl flex items-center justify-center text-xs">
+                                                    📌
+                                                </div>
+                                            )}
+                                            <div className="flex items-center space-x-2">
+                                                <span className={`inline-flex text-[9px] font-black px-1.5 py-0.5 rounded uppercase ${
+                                                    ann.type === 'warning' ? 'bg-orange-500/10 text-orange-500' :
+                                                    ann.type === 'event' ? 'bg-blue-500/10 text-blue-500' :
+                                                    'bg-green-500/10 text-green-500'
+                                                }`}>
+                                                    {ann.type}
+                                                </span>
+                                                <span className="text-[9px] theme-text-muted font-mono">
+                                                    {new Date(ann.created_at).toLocaleDateString('id-ID', { month: 'short', day: 'numeric' })}
+                                                </span>
+                                            </div>
+                                            <h4 className="font-bold text-sm theme-text-main leading-tight line-clamp-2">{ann.title}</h4>
+                                            <p className="text-xs theme-text-muted line-clamp-3 leading-relaxed">{ann.content}</p>
+                                        </div>
+                                    ))
+                                )}
+                            </div>
+                        </div>
+
                     </div>
                 </main>
             </div>

@@ -4,8 +4,19 @@ use App\Http\Controllers\Web\Auth\WebAuthController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
+    $articles = \App\Models\Article::where('status', 'published')
+        ->latest()
+        ->take(3)
+        ->get();
+
+    $announcements = \App\Models\Announcement::latest()
+        ->take(3)
+        ->get();
+
     return inertia('Welcome', [
         'title' => 'Maridonor Admin Portal',
+        'articles' => $articles,
+        'announcements' => $announcements,
         'auth' => [
             'user' => auth()->user() ? [
                 'name' => auth()->user()->name,
