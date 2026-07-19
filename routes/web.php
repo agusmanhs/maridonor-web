@@ -39,4 +39,11 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/blood-requests/{id}', [\App\Http\Controllers\Web\BloodRequest\WebBloodRequestController::class, 'show'])->name('blood-requests.show');
     Route::middleware('role:rs_staff,rs_admin,super_admin')->post('/blood-requests', [\App\Http\Controllers\Web\BloodRequest\WebBloodRequestController::class, 'store'])->name('blood-requests.store');
     Route::middleware('role:pmi_staff,pmi_admin,super_admin')->post('/blood-requests/{id}/fulfill', [\App\Http\Controllers\Web\BloodRequest\WebBloodRequestController::class, 'fulfill'])->name('blood-requests.fulfill');
+
+    // Rute Slot Jadwal & Transaksi Donor (PMI)
+    Route::get('/schedules', [\App\Http\Controllers\Web\Schedule\WebScheduleController::class, 'index'])->name('schedules.index');
+    Route::middleware('role:pmi_staff,pmi_admin,super_admin')->group(function () {
+        Route::post('/schedules/slots', [\App\Http\Controllers\Web\Schedule\WebScheduleController::class, 'storeSlot'])->name('schedules.store_slot');
+        Route::post('/schedules/donations', [\App\Http\Controllers\Web\Schedule\WebScheduleController::class, 'storeDonation'])->name('schedules.store_donation');
+    });
 });
