@@ -78,4 +78,51 @@ class WebDashboardController extends Controller
             ]
         ]);
     }
+
+    public function donorDashboard(Request $request): Response
+    {
+        $user = $request->user();
+        
+        $donorProfile = \App\Models\DonorProfile::where('user_id', $user->id)->first();
+        if (!$donorProfile) {
+            abort(404, 'Profil pendonor Anda belum dikonfigurasi.');
+        }
+
+        // Ambil riwayat donasi sukses pendonor
+        $donations = \App\Models\Donation::where('donor_id', $donorProfile->id)
+            ->with(['institution.address'])
+            ->orderBy('donated_at', 'desc')
+            ->get();
+
+        // Ambil daftar slot aktif di PMI
+        $upcomingSlots = \App\Models\ScheduleSlot::with(['institution'])
+            ->where('slot_date', '>=', now()->toDateString())
+            ->where('is_cancelled', false)
+            ->orderBy('slot_date', 'asc')
+            ->orderBy('start_time', 'asc')
+            ->take(5)
+            ->get();
+
+        return Inertia::render('Dashboard/Donor', [
+            'donorProfile' => [
+                'id' => $donorProfile->id,
+                'blood_type' => $donorProfile->blood_type,
+                'rhesus' => $donorProfile->rhesus,
+                'points' => $donorProfile->points,
+                'total_donations' => $donorProfile->total_donations,
+                'last_donation_date' => $donorProfile->last_donation_date?->toDateString(),
+                'next_eligible_date' => $donorProfile->next_eligible_date?->toDateString(),
+                'referral_code' => $donorProfile->referral_code,
+            ],
+            'donations' => $donations,
+            'upcomingSlots' => $upcomingSlots,
+            'auth' => [
+                'user' => [
+                    'name' => $user->name,
+                    'email' => $user->email,
+                    'role' => $user->role->value,
+                ]
+            ]
+        ]);
+    }
 }
