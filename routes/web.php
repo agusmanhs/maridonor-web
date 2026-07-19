@@ -46,4 +46,7 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/schedules/slots', [\App\Http\Controllers\Web\Schedule\WebScheduleController::class, 'storeSlot'])->name('schedules.store_slot');
         Route::post('/schedules/donations', [\App\Http\Controllers\Web\Schedule\WebScheduleController::class, 'storeDonation'])->name('schedules.store_donation');
     });
+
+    // Rute Sertifikat Digital
+    Route::get('/donations/{id}/certificate', [\App\Http\Controllers\Web\Certificate\WebCertificateController::class, 'show'])->name('donations.certificate');
 });

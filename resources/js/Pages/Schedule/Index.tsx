@@ -257,12 +257,13 @@ export default function ScheduleIndex({ slots, donations, currentInstitution, au
                                             <th className="py-3 px-4">Komponen</th>
                                             <th className="py-3 px-4">Volume (ml)</th>
                                             <th className="py-3 px-4">Tanggal Donasi</th>
+                                            <th className="py-3 px-4 text-center">Sertifikat</th>
                                         </tr>
                                     </thead>
                                     <tbody className="text-sm divide-y divide-slate-850">
                                         {donations.length === 0 ? (
                                             <tr>
-                                                <td colSpan={6} className="py-8 text-center text-slate-500 font-semibold">
+                                                <td colSpan={7} className="py-8 text-center text-slate-500 font-semibold">
                                                     Belum ada riwayat transaksi donasi sukses.
                                                 </td>
                                             </tr>
@@ -279,6 +280,16 @@ export default function ScheduleIndex({ slots, donations, currentInstitution, au
                                                     <td className="py-4 px-4 text-slate-350">{don.volume_ml} ml</td>
                                                     <td className="py-4 px-4 text-slate-400">
                                                         {new Date(don.donated_at).toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' })}
+                                                    </td>
+                                                    <td className="py-4 px-4 text-center">
+                                                        <a 
+                                                            href={`/donations/${don.id}/certificate`}
+                                                            target="_blank"
+                                                            rel="noopener noreferrer"
+                                                            className="px-3 py-1 bg-red-600/10 hover:bg-red-600/25 text-red-500 rounded-lg text-xs font-bold border border-red-500/25 transition duration-150"
+                                                        >
+                                                            Unduh
+                                                        </a>
                                                     </td>
                                                 </tr>
                                             ))
