@@ -12,6 +12,14 @@ use App\Http\Controllers\Api\V1\Schedule\DonationScheduleController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->name('api.v1.')->group(function () {
+    Route::get('/', function () {
+        return response()->json([
+            'name' => 'Maridonor API',
+            'version' => 'v1',
+            'status' => 'active'
+        ]);
+    });
+
     // Public Auth Routes
     Route::post('/auth/register', [AuthController::class, 'register'])->name('auth.register');
     Route::post('/auth/register/institution', [InstitutionController::class, 'register'])->name('auth.register.institution');
