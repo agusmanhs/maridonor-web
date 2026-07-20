@@ -19,9 +19,9 @@ class BloodRequestController extends Controller
 
     public function index(Request $request): JsonResponse
     {
-        // Proteksi role: Hanya PMI Staff, PMI Admin, RS Staff, RS Admin, Super Admin
+        // Proteksi role: Hanya PMI Staff, PMI Admin, RS Staff, RS Admin, Super Admin, dan Donor
         $user = $request->user();
-        if (!in_array($user->role->value, ['pmi_staff', 'pmi_admin', 'rs_staff', 'rs_admin', 'super_admin'])) {
+        if (!in_array($user->role->value, ['pmi_staff', 'pmi_admin', 'rs_staff', 'rs_admin', 'super_admin', 'donor'])) {
             return response()->json([
                 'success' => false,
                 'message' => 'Anda tidak memiliki hak akses untuk melihat data permintaan darah.',
