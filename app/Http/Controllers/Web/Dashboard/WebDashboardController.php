@@ -184,45 +184,4 @@ class WebDashboardController extends Controller
             ]
         ]);
     }
-
-    public function updateDonorProfile(Request $request): \Illuminate\Http\RedirectResponse
-    {
-        $user = $request->user();
-        $donorProfile = \App\Models\DonorProfile::where('user_id', $user->id)->firstOrFail();
-
-        $validated = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'phone' => ['required', 'string', 'regex:/^(08|62)\d{8,11}$/', 'unique:users,phone,' . $user->id],
-            'gender' => ['required', 'string', 'in:male,female'],
-            'birth_date' => [
-                'required',
-                'date',
-                'date_format:Y-m-d',
-                function ($attribute, $value, $fail) {
-                    $age = \Carbon\Carbon::parse($value)->age;
-                    if ($age < 17) {
-                        $fail('Usia minimal untuk menjadi pendonor adalah 17 tahun.');
-                    }
-                },
-            ],
-            'blood_type' => ['required', 'string', 'in:A,B,AB,O'],
-            'rhesus' => ['required', 'string', 'in:positive,negative'],
-        ]);
-
-        \Illuminate\Support\Facades\DB::transaction(function () use ($user, $donorProfile, $validated) {
-            $user->update([
-                'name' => $validated['name'],
-                'phone' => $validated['phone'],
-            ]);
-
-            $donorProfile->update([
-                'gender' => $validated['gender'],
-                'birth_date' => $validated['birth_date'],
-                'blood_type' => $validated['blood_type'],
-                'rhesus' => $validated['rhesus'],
-            ]);
-        });
-
-        return redirect()->back()->with('success', 'Profil Anda berhasil diperbarui.');
-    }
 }

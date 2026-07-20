@@ -93,7 +93,7 @@ export default function DonorDashboard({ donorProfile, donations, upcomingSlots,
 
     const handleProfileSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        router.patch('/dashboard/donor/profile', profileForm, {
+        router.patch('/profile', profileForm, {
             onSuccess: () => {
                 setIsEditModalOpen(false);
             }
@@ -105,41 +105,28 @@ export default function DonorDashboard({ donorProfile, donations, upcomingSlots,
             alert('Anda belum layak mendonorkan darah kembali sesuai tenggat waktu medis.');
             return;
         }
-        if (confirm(`Apakah Anda yakin ingin melakukan reservasi jadwal donor di ${instName}?`)) {
+
+        if (confirm(`Apakah Anda yakin ingin melakukan reservasi donor darah di ${instName}?`)) {
             router.post(`/schedules/slots/${slotId}/book`, {}, {
-                onError: (errors) => {
-                    alert(errors.booking || 'Terjadi kesalahan saat memproses reservasi.');
-                }
+                onSuccess: () => alert('Pemesanan jadwal berhasil!')
             });
         }
     };
 
     const handleCancelBooking = (bookingId: string) => {
-        if (confirm('Apakah Anda yakin ingin membatalkan reservasi jadwal donor aktif ini?')) {
-            router.delete(`/bookings/${bookingId}`);
+        if (confirm('Apakah Anda yakin ingin membatalkan booking jadwal ini?')) {
+            router.delete(`/bookings/${bookingId}`, {
+                onSuccess: () => alert('Booking berhasil dibatalkan.')
+            });
         }
     };
 
     const handleRespondRequest = (req: BloodRequest) => {
-        // Cari slot terdekat yang dibuka oleh RS tersebut atau PMI
-        // Cari slot instansi yang sesuai
-        const matchedSlot = upcomingSlots.find(s => s.institution.name.toLowerCase().includes(req.hospital_name.toLowerCase()));
-        
-        if (matchedSlot) {
-            if (confirm(`Apakah Anda bersedia berdonor di ${req.hospital_name} untuk membantu pasien ini?`)) {
-                router.post(`/schedules/slots/${matchedSlot.id}/book`);
-            }
-        } else {
-            // Alternatif: cari slot pertama yang tersedia secara umum
-            if (upcomingSlots.length > 0) {
-                const firstSlot = upcomingSlots[0];
-                if (confirm(`Slot langsung di ${req.hospital_name} belum tersedia. Apakah Anda bersedia berdonor di slot terdekat: ${firstSlot.institution.name}?`)) {
-                    router.post(`/schedules/slots/${firstSlot.id}/book`);
-                }
-            } else {
-                alert(`Maaf, belum ada slot jadwal donor yang dibuka oleh ${req.hospital_name} saat ini.`);
-            }
+        if (!isEligible) {
+            alert('Anda belum layak mendonorkan darah kembali secara medis.');
+            return;
         }
+        alert(`Terima kasih atas kesediaan Anda mendonorkan darah ${req.blood_type} untuk RS/PMI. Silakan hubungi admin atau daftarkan jadwal kunjungan Anda melalui slot aktif.`);
     };
 
     return (
@@ -158,7 +145,7 @@ export default function DonorDashboard({ donorProfile, donations, upcomingSlots,
                 headerRight={(
                     <button
                         onClick={() => setIsEditModalOpen(true)}
-                        className="px-4 py-2.5 bg-gradient-to-r from-red-650 to-rose-650 hover:from-red-600 hover:to-rose-600 text-white rounded-xl text-xs font-bold shadow-md hover:shadow-lg transition active:scale-95 flex items-center space-x-1.5"
+                        className="px-4 py-2.5 bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white rounded-xl text-xs font-bold shadow-md hover:shadow-lg transition active:scale-95 flex items-center space-x-1.5"
                     >
                         <span>✏️</span>
                         <span>Edit Profil</span>

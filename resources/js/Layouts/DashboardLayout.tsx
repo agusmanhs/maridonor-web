@@ -13,6 +13,68 @@ interface DashboardLayoutProps {
 export default function DashboardLayout({ children, sidebarType, title, subtitle, headerRight }: DashboardLayoutProps) {
     const { auth } = usePage<any>().props;
 
+    const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
+    const [activeTab, setActiveTab] = useState<'profile' | 'password'>('profile');
+
+    const [profileForm, setProfileForm] = useState({
+        name: '',
+        phone: '',
+        gender: 'male',
+        birth_date: '',
+        blood_type: 'O',
+        rhesus: 'positive',
+    });
+
+    const [passwordForm, setPasswordForm] = useState({
+        current_password: '',
+        password: '',
+        password_confirmation: '',
+    });
+
+    useEffect(() => {
+        if (auth?.user) {
+            setProfileForm({
+                name: auth.user.name || '',
+                phone: auth.user.phone || '',
+                gender: auth.user.donor_profile?.gender || 'male',
+                birth_date: auth.user.donor_profile?.birth_date || '',
+                blood_type: auth.user.donor_profile?.blood_type || 'O',
+                rhesus: auth.user.donor_profile?.rhesus || 'positive',
+            });
+        }
+    }, [auth?.user, isSettingsModalOpen]);
+
+    const handleProfileSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        router.patch('/profile', profileForm, {
+            onSuccess: () => {
+                alert('Profil berhasil diperbarui.');
+                setIsSettingsModalOpen(false);
+            },
+            onError: (err) => {
+                alert(Object.values(err).join('\n'));
+            }
+        });
+    };
+
+    const handlePasswordSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        router.patch('/profile/password', passwordForm, {
+            onSuccess: () => {
+                alert('Kata sandi berhasil diperbarui.');
+                setIsSettingsModalOpen(false);
+                setPasswordForm({
+                    current_password: '',
+                    password: '',
+                    password_confirmation: '',
+                });
+            },
+            onError: (err) => {
+                alert(Object.values(err).join('\n'));
+            }
+        });
+    };
+
     const [adminContext, setAdminContext] = useState<'pmi' | 'hospital' | 'donor'>(() => {
         if (typeof window !== 'undefined') {
             const saved = localStorage.getItem('maridonor_admin_context');
@@ -178,9 +240,17 @@ export default function DashboardLayout({ children, sidebarType, title, subtitle
                     )}
                 </div>
 
-                <div className="p-4 border-t theme-border-main">
+                <div className="p-4 border-t theme-border-main space-y-2">
+                    <button 
+                        type="button"
+                        onClick={() => setIsSettingsModalOpen(true)}
+                        className="w-full py-2.5 text-xs font-semibold theme-text-muted hover:theme-text-main hover:bg-slate-500/10 rounded-xl border theme-border-main transition duration-150 flex items-center justify-center space-x-2"
+                    >
+                        <span>⚙️</span>
+                        <span>Pengaturan Akun</span>
+                    </button>
                     <form onSubmit={handleLogout}>
-                        <button type="submit" className="w-full py-2.5 text-sm font-semibold theme-text-muted hover:theme-text-main hover:bg-slate-500/10 rounded-xl border theme-border-main transition duration-150 flex items-center justify-center space-x-2">
+                        <button type="submit" className="w-full py-2.5 text-xs font-semibold theme-text-muted hover:theme-text-main hover:bg-slate-500/10 rounded-xl border theme-border-main transition duration-150 flex items-center justify-center space-x-2">
                             <span>🚪</span>
                             <span>Keluar Akun</span>
                         </button>
@@ -219,6 +289,191 @@ export default function DashboardLayout({ children, sidebarType, title, subtitle
                 {children}
 
             </main>
+
+            {/* Modal Pengaturan Akun */}
+            {isSettingsModalOpen && auth?.user && (
+                <div className="fixed inset-0 z-[100] flex items-center justify-center theme-bg-main/80 backdrop-blur-sm p-4">
+                    <div className="theme-bg-card border theme-border-main w-full max-w-lg rounded-2xl overflow-hidden shadow-2xl flex flex-col max-h-[90vh]">
+                        <div className="p-6 border-b theme-border-main flex justify-between items-center">
+                            <div>
+                                <h3 className="text-lg font-bold theme-text-main">Pengaturan Akun & Profil</h3>
+                                <p className="text-xs theme-text-muted">Kelola informasi pribadi dan keamanan kata sandi Anda</p>
+                            </div>
+                            <button onClick={() => setIsSettingsModalOpen(false)} className="theme-text-muted hover:theme-text-main text-lg font-bold">&times;</button>
+                        </div>
+
+                        {/* Tabs */}
+                        <div className="flex border-b theme-border-main bg-slate-500/5">
+                            <button 
+                                onClick={() => setActiveTab('profile')}
+                                className={`flex-1 py-3 text-xs font-bold border-b-2 transition ${
+                                    activeTab === 'profile' ? 'border-red-600 text-red-550' : 'border-transparent theme-text-muted hover:theme-text-main'
+                                }`}
+                            >
+                                👤 Informasi Profil
+                            </button>
+                            <button 
+                                onClick={() => setActiveTab('password')}
+                                className={`flex-1 py-3 text-xs font-bold border-b-2 transition ${
+                                    activeTab === 'password' ? 'border-red-600 text-red-550' : 'border-transparent theme-text-muted hover:theme-text-main'
+                                }`}
+                            >
+                                🔒 Keamanan / Kata Sandi
+                            </button>
+                        </div>
+
+                        <div className="p-6 overflow-y-auto flex-1">
+                            {activeTab === 'profile' ? (
+                                <form onSubmit={handleProfileSubmit} className="space-y-4">
+                                    <div className="space-y-1.5">
+                                        <label className="text-xs font-bold theme-text-muted uppercase">Nama Lengkap</label>
+                                        <input 
+                                            type="text" 
+                                            required 
+                                            value={profileForm.name}
+                                            onChange={(e) => setProfileForm({ ...profileForm, name: e.target.value })}
+                                            className="w-full theme-bg-main border theme-border-main rounded-xl px-3 py-2 text-sm theme-text-main focus:outline-none"
+                                        />
+                                    </div>
+
+                                    <div className="space-y-1.5">
+                                        <label className="text-xs font-bold theme-text-muted uppercase">Nomor HP</label>
+                                        <input 
+                                            type="text" 
+                                            required 
+                                            value={profileForm.phone}
+                                            onChange={(e) => setProfileForm({ ...profileForm, phone: e.target.value })}
+                                            className="w-full theme-bg-main border theme-border-main rounded-xl px-3 py-2 text-sm theme-text-main focus:outline-none"
+                                        />
+                                    </div>
+
+                                    {auth.user.role === 'donor' && (
+                                        <>
+                                            <div className="grid grid-cols-2 gap-4">
+                                                <div className="space-y-1.5">
+                                                    <label className="text-xs font-bold theme-text-muted uppercase">Jenis Kelamin</label>
+                                                    <select 
+                                                        value={profileForm.gender}
+                                                        onChange={(e) => setProfileForm({ ...profileForm, gender: e.target.value })}
+                                                        className="w-full theme-bg-main border theme-border-main rounded-xl px-3 py-2 text-sm theme-text-main focus:outline-none"
+                                                    >
+                                                        <option value="male">Laki-laki</option>
+                                                        <option value="female">Perempuan</option>
+                                                    </select>
+                                                </div>
+                                                <div className="space-y-1.5">
+                                                    <label className="text-xs font-bold theme-text-muted uppercase">Tanggal Lahir</label>
+                                                    <input 
+                                                        type="date" 
+                                                        required 
+                                                        value={profileForm.birth_date}
+                                                        onChange={(e) => setProfileForm({ ...profileForm, birth_date: e.target.value })}
+                                                        className="w-full theme-bg-main border theme-border-main rounded-xl px-3 py-2 text-sm theme-text-main focus:outline-none"
+                                                    />
+                                                </div>
+                                            </div>
+
+                                            <div className="grid grid-cols-2 gap-4">
+                                                <div className="space-y-1.5">
+                                                    <label className="text-xs font-bold theme-text-muted uppercase">Golongan Darah</label>
+                                                    <select 
+                                                        value={profileForm.blood_type}
+                                                        onChange={(e) => setProfileForm({ ...profileForm, blood_type: e.target.value })}
+                                                        className="w-full theme-bg-main border theme-border-main rounded-xl px-3 py-2 text-sm theme-text-main focus:outline-none"
+                                                    >
+                                                        <option value="A">A</option>
+                                                        <option value="B">B</option>
+                                                        <option value="AB">AB</option>
+                                                        <option value="O">O</option>
+                                                    </select>
+                                                </div>
+                                                <div className="space-y-1.5">
+                                                    <label className="text-xs font-bold theme-text-muted uppercase">Rhesus</label>
+                                                    <select 
+                                                        value={profileForm.rhesus}
+                                                        onChange={(e) => setProfileForm({ ...profileForm, rhesus: e.target.value })}
+                                                        className="w-full theme-bg-main border theme-border-main rounded-xl px-3 py-2 text-sm theme-text-main focus:outline-none"
+                                                    >
+                                                        <option value="positive">Positif (+)</option>
+                                                        <option value="negative">Negatif (-)</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </>
+                                    )}
+
+                                    <div className="flex justify-end space-x-3 pt-4 border-t theme-border-main">
+                                        <button 
+                                            type="button" 
+                                            onClick={() => setIsSettingsModalOpen(false)}
+                                            className="px-4 py-2 border theme-border-main hover:theme-bg-sidebar text-slate-350 rounded-xl text-xs font-bold"
+                                        >
+                                            Batal
+                                        </button>
+                                        <button 
+                                            type="submit" 
+                                            className="px-4 py-2 bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white rounded-xl text-xs font-bold shadow-lg"
+                                        >
+                                            Simpan Perubahan
+                                        </button>
+                                    </div>
+                                </form>
+                            ) : (
+                                <form onSubmit={handlePasswordSubmit} className="space-y-4">
+                                    <div className="space-y-1.5">
+                                        <label className="text-xs font-bold theme-text-muted uppercase">Kata Sandi Saat Ini</label>
+                                        <input 
+                                            type="password" 
+                                            required 
+                                            value={passwordForm.current_password}
+                                            onChange={(e) => setPasswordForm({ ...passwordForm, current_password: e.target.value })}
+                                            className="w-full theme-bg-main border theme-border-main rounded-xl px-3 py-2 text-sm theme-text-main focus:outline-none"
+                                        />
+                                    </div>
+
+                                    <div className="space-y-1.5">
+                                        <label className="text-xs font-bold theme-text-muted uppercase">Kata Sandi Baru</label>
+                                        <input 
+                                            type="password" 
+                                            required 
+                                            value={passwordForm.password}
+                                            onChange={(e) => setPasswordForm({ ...passwordForm, password: e.target.value })}
+                                            className="w-full theme-bg-main border theme-border-main rounded-xl px-3 py-2 text-sm theme-text-main focus:outline-none"
+                                        />
+                                    </div>
+
+                                    <div className="space-y-1.5">
+                                        <label className="text-xs font-bold theme-text-muted uppercase">Konfirmasi Kata Sandi Baru</label>
+                                        <input 
+                                            type="password" 
+                                            required 
+                                            value={passwordForm.password_confirmation}
+                                            onChange={(e) => setPasswordForm({ ...passwordForm, password_confirmation: e.target.value })}
+                                            className="w-full theme-bg-main border theme-border-main rounded-xl px-3 py-2 text-sm theme-text-main focus:outline-none"
+                                        />
+                                    </div>
+
+                                    <div className="flex justify-end space-x-3 pt-4 border-t theme-border-main">
+                                        <button 
+                                            type="button" 
+                                            onClick={() => setIsSettingsModalOpen(false)}
+                                            className="px-4 py-2 border theme-border-main hover:theme-bg-sidebar text-slate-350 rounded-xl text-xs font-bold"
+                                        >
+                                            Batal
+                                        </button>
+                                        <button 
+                                            type="submit" 
+                                            className="px-4 py-2 bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-550 hover:to-rose-550 text-white rounded-xl text-xs font-bold shadow-lg"
+                                        >
+                                            Ubah Kata Sandi
+                                        </button>
+                                    </div>
+                                </form>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

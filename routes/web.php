@@ -64,11 +64,14 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/schedules/donations', [\App\Http\Controllers\Web\Schedule\WebScheduleController::class, 'storeDonation'])->name('schedules.store_donation');
     });
 
+    // Generic profile & password routes for all users
+    Route::patch('/profile', [\App\Http\Controllers\Web\Profile\WebProfileController::class, 'updateProfile'])->name('profile.update');
+    Route::patch('/profile/password', [\App\Http\Controllers\Web\Profile\WebProfileController::class, 'updatePassword'])->name('profile.password');
+
     // Booking Rutes bagi Pendonor
     Route::middleware('role:donor,super_admin')->group(function () {
         Route::post('/schedules/slots/{id}/book', [\App\Http\Controllers\Web\Schedule\WebScheduleController::class, 'bookSlot'])->name('schedules.book_slot');
         Route::delete('/bookings/{id}', [\App\Http\Controllers\Web\Schedule\WebScheduleController::class, 'cancelBooking'])->name('bookings.cancel');
-        Route::patch('/dashboard/donor/profile', [\App\Http\Controllers\Web\Dashboard\WebDashboardController::class, 'updateDonorProfile'])->name('dashboard.donor.profile');
     });
 
     // Rute Sertifikat Digital
