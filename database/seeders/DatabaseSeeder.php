@@ -243,5 +243,68 @@ class DatabaseSeeder extends Seeder
                 ]);
             }
         }
+
+        // 7. Create Sample KYC Documents
+        \App\Models\KycDocument::create([
+            'user_id' => $donor->id,
+            'type' => \App\Enums\KycDocumentType::KtpPhoto,
+            'file_url' => 'https://placehold.co/600x400/27272a/ef4444?text=Foto+KTP+Ahmad+Hidayat',
+            'status' => 'pending',
+        ]);
+
+        // 8. Create Sample Articles
+        \App\Models\Article::create([
+            'author_id' => $superAdmin->id,
+            'title' => 'Pentingnya Menjaga Kadar Hemoglobin Sebelum Donor',
+            'slug' => 'pentingnya-menjaga-kadar-hemoglobin-sebelum-donor',
+            'excerpt' => 'Hemoglobin yang cukup merupakan syarat mutlak agar Anda dapat mendonorkan darah secara aman dan sehat.',
+            'content' => 'Kadar hemoglobin (Hb) yang normal bagi pendonor berkisar antara 12.5 hingga 17.0 g/dL. Jika kadar Hb terlalu rendah, Anda akan ditangguhkan untuk mendonor karena berisiko mengalami anemia atau kelelahan setelah berdonasi. Untuk menjaga kadar Hb tetap ideal, konsumsilah makanan kaya zat besi seperti daging merah, bayam, kacang-kacangan, dan hati ayam beberapa hari sebelum jadwal donor Anda.',
+            'category' => 'Kesehatan',
+            'status' => 'published',
+            'published_at' => now(),
+        ]);
+
+        \App\Models\Article::create([
+            'author_id' => $superAdmin->id,
+            'title' => 'Daftar Makanan Terbaik untuk Mempercepat Regenerasi Sel Darah',
+            'slug' => 'daftar-makanan-terbaik-untuk-mempercepat-regenerasi-sel-darah',
+            'excerpt' => 'Ketahui jenis makanan bernutrisi tinggi yang wajib dikonsumsi pendonor setelah mendonorkan darah.',
+            'content' => 'Setelah mendonorkan darah, tubuh Anda membutuhkan nutrisi tambahan untuk memproduksi sel darah merah baru. Mengonsumsi protein berkualitas tinggi, buah-buahan kaya Vitamin C (untuk membantu penyerapan zat besi), serta minum air putih yang cukup (minimal 8-10 gelas) sangat direkomendasikan dalam 24 jam pertama pasca donor. Hindari minuman berkafein seperti kopi dan teh segera setelah donor karena dapat menghambat penyerapan nutrisi.',
+            'category' => 'Gaya Hidup',
+            'status' => 'published',
+            'published_at' => now(),
+        ]);
+
+        \App\Models\Article::create([
+            'author_id' => $superAdmin->id,
+            'title' => 'Panduan Langkah Demi Langkah bagi Pendonor Pemula',
+            'slug' => 'panduan-langkah-demi-langkah-bagi-pendonor-pemula',
+            'excerpt' => 'Merasa gugup untuk donor pertama kali? Simak alur lengkap dan persiapan praktis ini.',
+            'content' => 'Bagi Anda yang baru pertama kali mendonorkan darah, wajar jika merasa sedikit khawatir. Persiapan terbaik adalah tidur cukup minimal 7-8 jam sebelum donor, pastikan sudah makan makanan ringan 2-3 jam sebelum berdonasi, dan minum banyak air. Di lokasi, Anda akan melalui tahap registrasi, screening medis (tensi dan kadar Hb), barulah proses donor yang hanya memakan waktu sekitar 10 menit. Setelah selesai, Anda diwajibkan beristirahat sejenak sambil menikmati makanan ringan yang disediakan petugas.',
+            'category' => 'Informasi',
+            'status' => 'published',
+            'published_at' => now(),
+        ]);
+
+        // 9. Create Sample Announcements
+        \App\Models\Announcement::create([
+            'author_id' => $superAdmin->id,
+            'title' => 'Event Donor Darah Massal Semarak Ramadhan PMI Bandung',
+            'content' => 'PMI Kota Bandung mengadakan kegiatan donor darah massal spesial menyambut bulan suci Ramadhan di Aula Balai Kota Bandung pada Sabtu ini mulai pukul 08.00 - 14.00 WIB. Dapatkan souvenir menarik bagi 100 pendonor pertama!',
+            'type' => 'event',
+            'target_audience' => 'all',
+            'is_pinned' => true,
+            'published_at' => now(),
+        ]);
+
+        \App\Models\Announcement::create([
+            'author_id' => $superAdmin->id,
+            'title' => 'Kebutuhan Siaga Darurat Golongan Darah O Positif',
+            'content' => 'UDD RS Immanuel Bandung saat ini mendesak membutuhkan 4 kantong golongan darah O Rhesus Positif untuk menangani pasien bedah darurat malam ini. Mohon bagi rekan pendonor yang memenuhi syarat dapat merapat ke lokasi secepatnya.',
+            'type' => 'warning',
+            'target_audience' => 'donor',
+            'is_pinned' => false,
+            'published_at' => now(),
+        ]);
     }
 }
