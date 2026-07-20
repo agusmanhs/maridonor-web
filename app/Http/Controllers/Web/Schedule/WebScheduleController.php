@@ -56,7 +56,7 @@ class WebScheduleController extends Controller
             })
             ->with(['donorProfile.user', 'scheduleSlot'])
             ->whereIn('status', [BookingStatus::Booked, BookingStatus::CheckedIn, BookingStatus::Donated, BookingStatus::Deferred])
-            ->orderByRaw("FIELD(status, 'checked_in', 'booked', 'donated', 'deferred')")
+            ->orderByRaw("CASE status WHEN 'checked_in' THEN 1 WHEN 'booked' THEN 2 WHEN 'donated' THEN 3 WHEN 'deferred' THEN 4 ELSE 5 END")
             ->orderBy('created_at', 'desc')
             ->paginate(15, ['*'], 'bookings_page')->withQueryString();
 
