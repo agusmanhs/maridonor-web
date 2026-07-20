@@ -68,6 +68,7 @@ Route::middleware(['auth'])->group(function () {
     Route::middleware('role:donor,super_admin')->group(function () {
         Route::post('/schedules/slots/{id}/book', [\App\Http\Controllers\Web\Schedule\WebScheduleController::class, 'bookSlot'])->name('schedules.book_slot');
         Route::delete('/bookings/{id}', [\App\Http\Controllers\Web\Schedule\WebScheduleController::class, 'cancelBooking'])->name('bookings.cancel');
+        Route::patch('/dashboard/donor/profile', [\App\Http\Controllers\Web\Dashboard\WebDashboardController::class, 'updateDonorProfile'])->name('dashboard.donor.profile');
     });
 
     // Rute Sertifikat Digital

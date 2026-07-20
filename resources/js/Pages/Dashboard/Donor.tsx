@@ -11,11 +11,14 @@ interface DonorProfile {
     last_donation_date?: string;
     next_eligible_date?: string;
     referral_code?: string;
+    gender: string;
+    birth_date: string;
 }
 
 interface User {
     name: string;
     email: string;
+    phone: string;
     role: string;
 }
 
@@ -78,6 +81,25 @@ export default function DonorDashboard({ donorProfile, donations, upcomingSlots,
     // Deteksi kelayakan donor hari ini
     const isEligible = !donorProfile.next_eligible_date || new Date(donorProfile.next_eligible_date) <= new Date();
 
+    const [isEditModalOpen, setIsEditModalOpen] = React.useState(false);
+    const [profileForm, setProfileForm] = React.useState({
+        name: auth.user.name,
+        phone: auth.user.phone || '',
+        gender: donorProfile.gender || 'male',
+        birth_date: donorProfile.birth_date || '',
+        blood_type: donorProfile.blood_type || 'O',
+        rhesus: donorProfile.rhesus || 'positive',
+    });
+
+    const handleProfileSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        router.patch('/dashboard/donor/profile', profileForm, {
+            onSuccess: () => {
+                setIsEditModalOpen(false);
+            }
+        });
+    };
+
     const handleBookSlot = (slotId: string, instName: string) => {
         if (!isEligible) {
             alert('Anda belum layak mendonorkan darah kembali sesuai tenggat waktu medis.');
@@ -133,6 +155,15 @@ export default function DonorDashboard({ donorProfile, donations, upcomingSlots,
                 sidebarType="donor"
                 title={`Selamat Datang, ${auth.user.name}!`}
                 subtitle="Terima kasih atas kontribusi kemanusiaan Anda. Pantau status dan poin donasi Anda di sini."
+                headerRight={(
+                    <button
+                        onClick={() => setIsEditModalOpen(true)}
+                        className="px-4 py-2.5 bg-gradient-to-r from-red-650 to-rose-650 hover:from-red-600 hover:to-rose-600 text-white rounded-xl text-xs font-bold shadow-md hover:shadow-lg transition active:scale-95 flex items-center space-x-1.5"
+                    >
+                        <span>✏️</span>
+                        <span>Edit Profil</span>
+                    </button>
+                )}
             >
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
                     
@@ -459,6 +490,109 @@ export default function DonorDashboard({ donorProfile, donations, upcomingSlots,
                     </div>
                 </div>
             </DashboardLayout>
+
+            {/* Modal Edit Profil */}
+            {isEditModalOpen && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center theme-bg-main/80 backdrop-blur-sm p-4">
+                    <div className="theme-bg-card border theme-border-main w-full max-w-lg rounded-2xl overflow-hidden shadow-2xl">
+                        <div className="p-6 border-b theme-border-main flex justify-between items-center">
+                            <h3 className="text-lg font-bold theme-text-main">Edit Profil Saya</h3>
+                            <button onClick={() => setIsEditModalOpen(false)} className="theme-text-muted hover:theme-text-main text-lg font-bold">&times;</button>
+                        </div>
+
+                        <form onSubmit={handleProfileSubmit} className="p-6 space-y-4">
+                            <div className="space-y-1.5">
+                                <label className="text-xs font-bold theme-text-muted uppercase">Nama Lengkap</label>
+                                <input 
+                                    type="text" 
+                                    required 
+                                    value={profileForm.name}
+                                    onChange={(e) => setProfileForm({ ...profileForm, name: e.target.value })}
+                                    className="w-full theme-bg-main border theme-border-main rounded-xl px-3 py-2 text-sm theme-text-main focus:outline-none"
+                                />
+                            </div>
+
+                            <div className="space-y-1.5">
+                                <label className="text-xs font-bold theme-text-muted uppercase">Nomor HP</label>
+                                <input 
+                                    type="text" 
+                                    required 
+                                    value={profileForm.phone}
+                                    onChange={(e) => setProfileForm({ ...profileForm, phone: e.target.value })}
+                                    className="w-full theme-bg-main border theme-border-main rounded-xl px-3 py-2 text-sm theme-text-main focus:outline-none"
+                                />
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-4">
+                                <div className="space-y-1.5">
+                                    <label className="text-xs font-bold theme-text-muted uppercase">Jenis Kelamin</label>
+                                    <select 
+                                        value={profileForm.gender}
+                                        onChange={(e) => setProfileForm({ ...profileForm, gender: e.target.value })}
+                                        className="w-full theme-bg-main border theme-border-main rounded-xl px-3 py-2 text-sm theme-text-main focus:outline-none"
+                                    >
+                                        <option value="male">Laki-laki</option>
+                                        <option value="female">Perempuan</option>
+                                    </select>
+                                </div>
+                                <div className="space-y-1.5">
+                                    <label className="text-xs font-bold theme-text-muted uppercase">Tanggal Lahir</label>
+                                    <input 
+                                        type="date" 
+                                        required 
+                                        value={profileForm.birth_date}
+                                        onChange={(e) => setProfileForm({ ...profileForm, birth_date: e.target.value })}
+                                        className="w-full theme-bg-main border theme-border-main rounded-xl px-3 py-2 text-sm theme-text-main focus:outline-none"
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-4">
+                                <div className="space-y-1.5">
+                                    <label className="text-xs font-bold theme-text-muted uppercase">Golongan Darah</label>
+                                    <select 
+                                        value={profileForm.blood_type}
+                                        onChange={(e) => setProfileForm({ ...profileForm, blood_type: e.target.value })}
+                                        className="w-full theme-bg-main border theme-border-main rounded-xl px-3 py-2 text-sm theme-text-main focus:outline-none"
+                                    >
+                                        <option value="A">A</option>
+                                        <option value="B">B</option>
+                                        <option value="AB">AB</option>
+                                        <option value="O">O</option>
+                                    </select>
+                                </div>
+                                <div className="space-y-1.5">
+                                    <label className="text-xs font-bold theme-text-muted uppercase">Rhesus</label>
+                                    <select 
+                                        value={profileForm.rhesus}
+                                        onChange={(e) => setProfileForm({ ...profileForm, rhesus: e.target.value })}
+                                        className="w-full theme-bg-main border theme-border-main rounded-xl px-3 py-2 text-sm theme-text-main focus:outline-none"
+                                    >
+                                        <option value="positive">Positif (+)</option>
+                                        <option value="negative">Negatif (-)</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div className="flex justify-end space-x-3 pt-4 border-t theme-border-main">
+                                <button 
+                                    type="button" 
+                                    onClick={() => setIsEditModalOpen(false)}
+                                    className="px-4 py-2 border theme-border-main hover:theme-bg-sidebar text-slate-350 rounded-xl text-sm font-semibold"
+                                >
+                                    Batal
+                                </button>
+                                <button 
+                                    type="submit" 
+                                    className="px-4 py-2 bg-gradient-to-r from-red-650 to-rose-650 hover:from-red-600 hover:to-rose-600 theme-text-main rounded-xl text-sm font-semibold shadow-lg"
+                                >
+                                    Simpan Perubahan
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
         </>
     );
 }

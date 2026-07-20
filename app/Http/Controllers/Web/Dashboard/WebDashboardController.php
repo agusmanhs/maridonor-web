@@ -160,13 +160,15 @@ class WebDashboardController extends Controller
         return Inertia::render('Dashboard/Donor', [
             'donorProfile' => [
                 'id' => $donorProfile->id,
-                'blood_type' => $donorProfile->blood_type,
-                'rhesus' => $donorProfile->rhesus,
+                'blood_type' => $donorProfile->blood_type->value,
+                'rhesus' => $donorProfile->rhesus->value,
                 'points' => $donorProfile->points,
                 'total_donations' => $donorProfile->total_donations,
                 'last_donation_date' => $donorProfile->last_donation_date?->toDateString(),
                 'next_eligible_date' => $donorProfile->next_eligible_date?->toDateString(),
                 'referral_code' => $donorProfile->referral_code,
+                'gender' => $donorProfile->gender,
+                'birth_date' => $donorProfile->birth_date ? $donorProfile->birth_date->toDateString() : null,
             ],
             'donations' => $donations,
             'upcomingSlots' => $upcomingSlots,
@@ -176,9 +178,51 @@ class WebDashboardController extends Controller
                 'user' => [
                     'name' => $user->name,
                     'email' => $user->email,
+                    'phone' => $user->phone,
                     'role' => $user->role->value,
                 ]
             ]
         ]);
+    }
+
+    public function updateDonorProfile(Request $request): \Illuminate\Http\RedirectResponse
+    {
+        $user = $request->user();
+        $donorProfile = \App\Models\DonorProfile::where('user_id', $user->id)->firstOrFail();
+
+        $validated = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'phone' => ['required', 'string', 'regex:/^(08|62)\d{8,11}$/', 'unique:users,phone,' . $user->id],
+            'gender' => ['required', 'string', 'in:male,female'],
+            'birth_date' => [
+                'required',
+                'date',
+                'date_format:Y-m-d',
+                function ($attribute, $value, $fail) {
+                    $age = \Carbon\Carbon::parse($value)->age;
+                    if ($age < 17) {
+                        $fail('Usia minimal untuk menjadi pendonor adalah 17 tahun.');
+                    }
+                },
+            ],
+            'blood_type' => ['required', 'string', 'in:A,B,AB,O'],
+            'rhesus' => ['required', 'string', 'in:positive,negative'],
+        ]);
+
+        \Illuminate\Support\Facades\DB::transaction(function () use ($user, $donorProfile, $validated) {
+            $user->update([
+                'name' => $validated['name'],
+                'phone' => $validated['phone'],
+            ]);
+
+            $donorProfile->update([
+                'gender' => $validated['gender'],
+                'birth_date' => $validated['birth_date'],
+                'blood_type' => $validated['blood_type'],
+                'rhesus' => $validated['rhesus'],
+            ]);
+        });
+
+        return redirect()->back()->with('success', 'Profil Anda berhasil diperbarui.');
     }
 }
