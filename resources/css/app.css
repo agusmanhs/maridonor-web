@@ -44,6 +44,14 @@
     --color-inverse-surface: #213145;
     --color-inverse-on-surface: #eaf1ff;
     --color-inverse-primary: #ffb4a8;
+
+    /* Global override for red and rose utilities to match the brand color */
+    --color-red-500: #8b0000;
+    --color-red-600: #610000;
+    --color-red-700: #4a0000;
+    --color-rose-500: #8b0000;
+    --color-rose-600: #610000;
+    --color-rose-700: #4a0000;
 }
 
 /* BASE DESIGN SYSTEM VARIABLES */
@@ -106,6 +114,14 @@
     --color-on-surface-variant: #afafb0;
     --color-outline: #8e706b;
     --color-outline-variant: #414343;
+
+    /* Dark Mode specific overrides for red and rose utilities */
+    --color-red-500: #ffb4a8;
+    --color-red-600: #ff8a7a;
+    --color-red-700: #ff5449;
+    --color-rose-500: #ffb4a8;
+    --color-rose-600: #ff8a7a;
+    --color-rose-700: #ff5449;
 }
 
 /* GLOBAL RESET FOR THEMES */
