@@ -117,7 +117,7 @@ export default function DashboardLayout({ children, sidebarType, title, subtitle
 
     const isActive = (path: string, typeParam?: string) => {
         if (typeof window === 'undefined') {
-            return "flex items-center px-6 h-12 gap-3 text-secondary dark:text-secondary-fixed-dim hover:bg-secondary-container dark:hover:bg-tertiary-container border-l-4 border-transparent font-nav-item text-nav-item transition-all duration-200";
+            return "flex items-center px-6 h-12 gap-3 text-secondary dark:text-slate-400 hover:bg-secondary-container dark:hover:bg-[#414343]/50 hover:text-slate-900 dark:hover:text-white border-l-4 border-transparent font-nav-item text-nav-item transition-all duration-200";
         }
         const urlParams = new URLSearchParams(window.location.search);
         const currentType = urlParams.get('type');
@@ -126,15 +126,15 @@ export default function DashboardLayout({ children, sidebarType, title, subtitle
         const typeMatches = !typeParam || currentType === typeParam;
 
         return (pathMatches && typeMatches)
-            ? "flex items-center px-6 h-12 gap-3 text-primary dark:text-primary-fixed bg-primary-fixed/20 border-l-4 border-primary font-nav-item text-nav-item transition-all duration-200" 
-            : "flex items-center px-6 h-12 gap-3 text-secondary dark:text-secondary-fixed-dim hover:bg-secondary-container dark:hover:bg-tertiary-container border-l-4 border-transparent font-nav-item text-nav-item transition-all duration-200";
+            ? "flex items-center px-6 h-12 gap-3 text-primary dark:text-[#ffb4a8] bg-primary/10 dark:bg-[#ffb4a8]/10 border-l-4 border-primary dark:border-[#ffb4a8] font-nav-item text-nav-item transition-all duration-200" 
+            : "flex items-center px-6 h-12 gap-3 text-secondary dark:text-slate-400 hover:bg-secondary-container dark:hover:bg-[#414343]/50 hover:text-slate-900 dark:hover:text-white border-l-4 border-transparent font-nav-item text-nav-item transition-all duration-200";
     };
 
     return (
         <div className="min-h-screen lg:h-screen lg:overflow-hidden bg-surface dark:bg-[#1a1c1c] text-on-surface flex flex-col lg:flex-row antialiased relative transition-colors duration-300" style={{ fontFamily: "'Inter', sans-serif" }}>
             
             {/* Top Navigation Bar */}
-            <header className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-8 h-16 bg-white/70 dark:bg-tertiary/70 backdrop-blur-md border-b border-outline-variant dark:border-[#414343] transition-colors duration-300">
+            <header className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-8 h-16 bg-white/70 dark:bg-[#2b2d2d]/70 backdrop-blur-md border-b border-outline-variant dark:border-[#414343] transition-colors duration-300">
                 <div className="flex items-center gap-8">
                     <Link href="/" className="flex items-center gap-2">
                         <img 
@@ -212,7 +212,7 @@ export default function DashboardLayout({ children, sidebarType, title, subtitle
             </header>
 
             {/* SideNavBar */}
-            <aside className="w-full lg:w-[260px] lg:h-screen lg:sticky lg:top-0 bg-white dark:bg-tertiary border-b lg:border-b-0 lg:border-r border-outline-variant dark:border-[#414343] pt-16 flex flex-col relative z-20 transition-colors duration-300">
+            <aside className="w-full lg:w-[260px] lg:h-screen lg:sticky lg:top-0 bg-white dark:bg-[#2b2d2d] border-b lg:border-b-0 lg:border-r border-outline-variant dark:border-[#414343] pt-16 flex flex-col relative z-20 transition-colors duration-300">
                 <nav className="flex-1 flex flex-col py-6 gap-0.5 overflow-y-auto">
                     <span className="px-6 text-[10px] font-bold text-secondary dark:text-secondary-fixed-dim uppercase tracking-widest block mb-3" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
                         {showDonorMenu && !showPmiMenu && !showHospitalMenu ? 'Portal Pendonor' : 'Menu Utama'}
