@@ -74,7 +74,7 @@ export default function Welcome({ title, articles = [], announcements = [], auth
                 {/* Top Navigation Bar */}
                 <header className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 md:px-12 h-16 bg-white/80 dark:bg-[#2b2d2d]/80 backdrop-blur-md border-b border-slate-200 dark:border-[#414343] transition-colors duration-300">
                     <div className="flex items-center gap-8">
-                        <Link href="/" className="flex items-center text-xl font-bold text-rose-800 dark:text-rose-450 tracking-tight" style={{ fontFamily: "'Hanken Grotesk', sans-serif" }}>
+                        <Link href="/" className="flex items-center text-xl font-bold text-rose-800 dark:text-rose-500 tracking-tight" style={{ fontFamily: "'Hanken Grotesk', sans-serif" }}>
                             <img 
                                 alt="MARIDONOR Logo" 
                                 className="h-7 w-auto inline-block mr-2" 
@@ -86,10 +86,10 @@ export default function Welcome({ title, articles = [], announcements = [], auth
                             MARIDONOR
                         </Link>
                         <nav className="hidden md:flex items-center gap-6">
-                            <a href="#" className="text-xs font-bold text-rose-800 dark:text-rose-400 border-b-2 border-rose-800 dark:border-rose-450 pb-1">Beranda</a>
-                            <a href="#metrics" className="text-xs font-bold text-slate-500 dark:text-slate-400 hover:text-rose-700 dark:hover:text-rose-350 transition-colors">Metrik Live</a>
-                            <a href="#methodology" className="text-xs font-bold text-slate-500 dark:text-slate-400 hover:text-rose-700 dark:hover:text-rose-350 transition-colors">Metodologi</a>
-                            <a href="#feeds" className="text-xs font-bold text-slate-500 dark:text-slate-400 hover:text-rose-700 dark:hover:text-rose-350 transition-colors">Edukasi & Pengumuman</a>
+                            <a href="#" className="text-xs font-bold text-rose-800 dark:text-rose-400 border-b-2 border-rose-800 dark:border-rose-500 pb-1">Beranda</a>
+                            <a href="#metrics" className="text-xs font-bold text-slate-500 dark:text-slate-400 hover:text-rose-700 dark:hover:text-rose-400 transition-colors">Metrik Live</a>
+                            <a href="#methodology" className="text-xs font-bold text-slate-500 dark:text-slate-400 hover:text-rose-700 dark:hover:text-rose-400 transition-colors">Metodologi</a>
+                            <a href="#feeds" className="text-xs font-bold text-slate-500 dark:text-slate-400 hover:text-rose-700 dark:hover:text-rose-400 transition-colors">Edukasi & Pengumuman</a>
                         </nav>
                     </div>
                     <div className="flex items-center gap-4">
@@ -99,7 +99,7 @@ export default function Welcome({ title, articles = [], announcements = [], auth
                             <div className="flex items-center gap-3">
                                 <Link 
                                     href={auth.user.role === 'donor' ? '/dashboard/donor' : (auth.user.role.includes('pmi') ? '/dashboard/pmi' : '/dashboard/hospital')}
-                                    className="bg-rose-700 dark:bg-rose-650 text-white text-xs font-bold px-4 py-2 rounded-xl active:scale-95 transition-all shadow-sm"
+                                    className="bg-rose-700 dark:bg-rose-600 text-white text-xs font-bold px-4 py-2 rounded-xl active:scale-95 transition-all shadow-sm"
                                 >
                                     Dashboard
                                 </Link>
@@ -116,7 +116,7 @@ export default function Welcome({ title, articles = [], announcements = [], auth
                         ) : (
                             <Link 
                                 href="/login" 
-                                className="bg-rose-750 dark:bg-rose-650 text-white text-xs font-bold px-5 py-2.5 rounded-xl active:scale-95 transition-all shadow-md shadow-rose-700/10"
+                                className="bg-rose-700 dark:bg-rose-600 text-white text-xs font-bold px-5 py-2.5 rounded-xl active:scale-95 transition-all shadow-md shadow-rose-700/10"
                             >
                                 Portal Staf / Masuk
                             </Link>
@@ -136,7 +136,7 @@ export default function Welcome({ title, articles = [], announcements = [], auth
                                 <span className="text-[10px] font-bold text-rose-700 dark:text-rose-400 tracking-widest uppercase" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
                                     Jaringan Logistik Darah Nasional
                                 </span>
-                                <h1 className="text-4xl sm:text-5xl lg:text-[4rem] font-bold text-rose-800 dark:text-rose-450 leading-[1.08]" style={{ fontFamily: "'Hanken Grotesk', sans-serif" }}>
+                                <h1 className="text-4xl sm:text-5xl lg:text-[4rem] font-bold text-rose-800 dark:text-rose-500 leading-[1.08]" style={{ fontFamily: "'Hanken Grotesk', sans-serif" }}>
                                     Penyelamatan Jiwa Melalui <br/>
                                     <span className="text-slate-800 dark:text-white">Presisi Logistik Digital</span>
                                 </h1>
@@ -146,7 +146,7 @@ export default function Welcome({ title, articles = [], announcements = [], auth
                                 <div className="flex flex-wrap justify-center lg:justify-start gap-4 mt-2">
                                     <Link 
                                         href="/login" 
-                                        className="bg-rose-700 hover:bg-rose-850 text-white px-8 py-3.5 rounded-xl text-sm font-bold active:scale-95 transition-all flex items-center gap-2 shadow-lg shadow-rose-700/10"
+                                        className="bg-rose-700 hover:bg-rose-800 text-white px-8 py-3.5 rounded-xl text-sm font-bold active:scale-95 transition-all flex items-center gap-2 shadow-lg shadow-rose-700/10"
                                     >
                                         Gabung Jaringan
                                         <span className="material-symbols-outlined text-[18px]">arrow_forward</span>
@@ -189,7 +189,7 @@ export default function Welcome({ title, articles = [], announcements = [], auth
                     <section id="metrics" className="py-20 bg-slate-100 dark:bg-[#2b2d2d]/30 border-t border-b border-slate-200 dark:border-[#414343]">
                         <div className="px-6 md:px-12">
                             <div className="flex flex-col items-center mb-12 text-center">
-                                <h2 className="text-3xl font-bold text-rose-800 dark:text-rose-450 mb-3" style={{ fontFamily: "'Hanken Grotesk', sans-serif" }}>
+                                <h2 className="text-3xl font-bold text-rose-800 dark:text-rose-500 mb-3" style={{ fontFamily: "'Hanken Grotesk', sans-serif" }}>
                                     Metrik Kinerja & Distribusi
                                 </h2>
                                 <p className="text-sm text-slate-500 dark:text-slate-400 max-w-xl font-light">
@@ -266,7 +266,7 @@ export default function Welcome({ title, articles = [], announcements = [], auth
                                         <p className="text-xs text-slate-500 dark:text-slate-400 mb-4 font-light">
                                             Pemetaan geografis persebaran kebutuhan rumah sakit dan ketersediaan relawan pendonor secara dinamis.
                                         </p>
-                                        <div className="flex items-center gap-2 text-rose-700 dark:text-rose-450 text-xs font-bold">
+                                        <div className="flex items-center gap-2 text-rose-700 dark:text-rose-500 text-xs font-bold">
                                             <span className="material-symbols-outlined text-[18px]">location_on</span>
                                             <span>48 Unit Terdaftar</span>
                                         </div>
@@ -289,7 +289,7 @@ export default function Welcome({ title, articles = [], announcements = [], auth
                     <section id="methodology" className="py-20 px-6 md:px-12">
                         <div className="grid grid-cols-12 gap-12 items-center">
                             <div className="col-span-12 lg:col-span-5 flex flex-col gap-6">
-                                <h2 className="text-3xl font-bold text-rose-800 dark:text-rose-450 leading-tight" style={{ fontFamily: "'Hanken Grotesk', sans-serif" }}>
+                                <h2 className="text-3xl font-bold text-rose-800 dark:text-rose-500 leading-tight" style={{ fontFamily: "'Hanken Grotesk', sans-serif" }}>
                                     Metodologi Penyaluran & Keamanan Medis
                                 </h2>
                                 <p className="text-sm text-slate-500 dark:text-slate-400 font-light leading-relaxed">
@@ -358,7 +358,7 @@ export default function Welcome({ title, articles = [], announcements = [], auth
                                     <span className="text-xs font-bold text-rose-700 dark:text-rose-400 uppercase tracking-widest block" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
                                         📚 Edukasi & Informasi
                                     </span>
-                                    <h2 className="text-3xl font-bold text-rose-800 dark:text-rose-450" style={{ fontFamily: "'Hanken Grotesk', sans-serif" }}>
+                                    <h2 className="text-3xl font-bold text-rose-800 dark:text-rose-500" style={{ fontFamily: "'Hanken Grotesk', sans-serif" }}>
                                         Kesehatan & Tips Pendonor
                                     </h2>
                                 </div>
@@ -399,7 +399,7 @@ export default function Welcome({ title, articles = [], announcements = [], auth
                                     <span className="text-xs font-bold text-rose-700 dark:text-rose-400 uppercase tracking-widest block" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
                                         📢 Siaran Resmi
                                     </span>
-                                    <h2 className="text-3xl font-bold text-rose-800 dark:text-rose-450" style={{ fontFamily: "'Hanken Grotesk', sans-serif" }}>
+                                    <h2 className="text-3xl font-bold text-rose-800 dark:text-rose-500" style={{ fontFamily: "'Hanken Grotesk', sans-serif" }}>
                                         Event & Pengumuman
                                     </h2>
                                 </div>
@@ -490,9 +490,9 @@ export default function Welcome({ title, articles = [], announcements = [], auth
                                 Halaman Utama
                             </h4>
                             <ul className="flex flex-col gap-3 text-xs font-medium">
-                                <li><a className="hover:text-rose-700 dark:hover:text-rose-450 transition-colors" href="#">Dokumentasi</a></li>
-                                <li><a className="hover:text-rose-700 dark:hover:text-rose-450 transition-colors" href="#">Peta Unit UDD</a></li>
-                                <li><a className="hover:text-rose-700 dark:hover:text-rose-450 transition-colors" href="#">Artikel Medis</a></li>
+                                <li><a className="hover:text-rose-700 dark:hover:text-rose-400 transition-colors" href="#">Dokumentasi</a></li>
+                                <li><a className="hover:text-rose-700 dark:hover:text-rose-400 transition-colors" href="#">Peta Unit UDD</a></li>
+                                <li><a className="hover:text-rose-700 dark:hover:text-rose-400 transition-colors" href="#">Artikel Medis</a></li>
                             </ul>
                         </div>
                         <div className="col-span-6 md:col-span-3 lg:col-span-2">
@@ -500,9 +500,9 @@ export default function Welcome({ title, articles = [], announcements = [], auth
                                 Jaringan Mitra
                             </h4>
                             <ul className="flex flex-col gap-3 text-xs font-medium">
-                                <li><a className="hover:text-rose-700 dark:hover:text-rose-450 transition-colors" href="#">Mitra PMI</a></li>
-                                <li><a className="hover:text-rose-700 dark:hover:text-rose-450 transition-colors" href="#">Rumah Sakit</a></li>
-                                <li><a className="hover:text-rose-700 dark:hover:text-rose-450 transition-colors" href="#">Kemitraan Baru</a></li>
+                                <li><a className="hover:text-rose-700 dark:hover:text-rose-400 transition-colors" href="#">Mitra PMI</a></li>
+                                <li><a className="hover:text-rose-700 dark:hover:text-rose-400 transition-colors" href="#">Rumah Sakit</a></li>
+                                <li><a className="hover:text-rose-700 dark:hover:text-rose-400 transition-colors" href="#">Kemitraan Baru</a></li>
                             </ul>
                         </div>
                         <div className="col-span-12 md:col-span-6 lg:col-span-4">
@@ -518,7 +518,7 @@ export default function Welcome({ title, articles = [], announcements = [], auth
                                     placeholder="Alamat Email Anda" 
                                     type="email"
                                 />
-                                <button className="bg-rose-750 dark:bg-rose-650 text-white px-5 py-2.5 rounded-xl text-xs font-bold hover:brightness-105 active:scale-95 transition-all">
+                                <button className="bg-rose-700 dark:bg-rose-600 text-white px-5 py-2.5 rounded-xl text-xs font-bold hover:brightness-105 active:scale-95 transition-all">
                                     Gabung
                                 </button>
                             </form>
