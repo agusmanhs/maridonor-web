@@ -44,295 +44,493 @@ export default function Welcome({ title, articles = [], announcements = [], auth
     return (
         <>
             <Head>
-                <title>Beranda - Maridonor</title>
+                <title>MARIDONOR - Jaringan Donor Darah Nasional</title>
                 <link rel="preconnect" href="https://fonts.googleapis.com" />
                 <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-                <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+                <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600;700;800;900&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet" />
+                <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
             </Head>
-            
-            <div className="min-h-screen theme-bg-main theme-text-main selection:bg-red-650 selection:text-white antialiased relative overflow-hidden transition-colors duration-300" style={{ fontFamily: "'Outfit', sans-serif" }}>
+
+            <style>{`
+                .material-symbols-outlined {
+                    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+                    display: inline-block;
+                    vertical-align: middle;
+                }
+                .glass-card {
+                    background: rgba(255, 255, 255, 0.7);
+                    backdrop-filter: blur(12px);
+                    -webkit-backdrop-filter: blur(12px);
+                    border: 1px solid rgba(226, 232, 240, 0.8);
+                }
+                .dark .glass-card {
+                    background: rgba(43, 45, 45, 0.7);
+                    border: 1px solid rgba(65, 67, 67, 0.8);
+                }
+            `}</style>
+
+            <div className="min-h-screen bg-slate-50 dark:bg-[#1a1c1c] text-slate-800 dark:text-slate-100 transition-colors duration-300 select-none antialiased" style={{ fontFamily: "'Inter', sans-serif" }}>
                 
-                {/* Decorative Glowing Orbs */}
-                <div className="absolute top-[-10%] left-[5%] w-[600px] h-[600px] rounded-full bg-red-600/5 blur-[120px] pointer-events-none"></div>
-                <div className="absolute top-[40%] right-[-10%] w-[500px] h-[500px] rounded-full bg-rose-600/5 blur-[100px] pointer-events-none"></div>
-                <div className="absolute bottom-[10%] left-[-10%] w-[450px] h-[450px] rounded-full bg-red-500/5 blur-[110px] pointer-events-none"></div>
-
-                {/* Navbar Fixed Glassmorphic */}
-                <header className="fixed top-0 left-0 right-0 z-50 backdrop-blur-xl theme-bg-main/80 border-b theme-border-main transition-colors duration-300">
-                    <div className="max-w-7xl mx-auto px-6 lg:px-8 h-20 flex items-center justify-between">
-                        {/* Logo */}
-                        <div className="flex items-center space-x-3 group cursor-pointer">
-                            <div className="p-2.5 bg-gradient-to-br from-red-600 to-rose-600 rounded-2xl shadow-lg shadow-red-600/10 group-hover:shadow-red-600/20 transition-all duration-300 group-hover:scale-105">
-                                <img src="/images/logo_icon.png" alt="Maridonor Logo" className="h-6 w-auto filter brightness-0 invert" />
-                            </div>
-                            <span className="text-2xl font-black tracking-tight theme-text-main">
-                                Mari<span className="text-red-600 bg-clip-text bg-gradient-to-r from-red-500 to-rose-600">donor</span>
-                            </span>
-                        </div>
-
-                        {/* Mid Navigation Links */}
-                        <div className="hidden md:flex items-center space-x-1.5 p-1 bg-slate-500/5 rounded-2xl border theme-border-main backdrop-blur-md">
-                            <a href="#features" className="px-4 py-2 text-xs font-bold theme-text-muted hover:theme-text-main hover:bg-slate-500/10 rounded-xl transition-all duration-200">
-                                🌟 Fitur Utama
-                            </a>
-                            <a href="#news" className="px-4 py-2 text-xs font-bold theme-text-muted hover:theme-text-main hover:bg-slate-500/10 rounded-xl transition-all duration-200">
-                                📢 Info & Berita
-                            </a>
-                        </div>
-
-                        {/* Right Auth CTA / Actions */}
-                        <nav className="flex items-center space-x-4">
-                            {auth.user ? (
-                                <div className="flex items-center space-x-4">
-                                    <div className="hidden lg:block text-right">
-                                        <p className="text-xs font-bold theme-text-main leading-none mb-0.5">{auth.user.name}</p>
-                                        <span className="text-[9px] font-black text-red-500 bg-red-500/10 px-1.5 py-0.5 rounded capitalize">
-                                            {auth.user.role.replace('_', ' ')}
-                                        </span>
-                                    </div>
-                                    <Link 
-                                        href={auth.user.role === 'donor' ? '/dashboard/donor' : (auth.user.role.includes('pmi') ? '/dashboard/pmi' : '/dashboard/hospital')}
-                                        className="px-4 py-2 text-xs font-bold text-white bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-550 hover:to-rose-550 rounded-xl shadow-md shadow-red-600/10 transition duration-150 active:scale-95"
-                                    >
-                                        Dashboard
-                                    </Link>
-                                    <form onSubmit={handleLogout}>
-                                        <button 
-                                            type="submit" 
-                                            className="p-2 text-xs font-bold theme-text-muted hover:theme-text-main transition duration-150 rounded-xl hover:bg-slate-500/5"
-                                            title="Keluar"
-                                        >
-                                            🚪
-                                        </button>
-                                    </form>
-                                </div>
-                            ) : (
-                                <Link 
-                                    href="/login" 
-                                    className="px-5 py-2.5 text-xs font-extrabold text-white bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-550 hover:to-rose-550 rounded-xl shadow-lg shadow-red-600/15 transition-all duration-200 active:scale-95"
-                                >
-                                    Portal Masuk
-                                </Link>
-                            )}
-                            <div className="h-6 w-[1px] bg-slate-500/20 hidden sm:block"></div>
-                            <ThemeSwitcher />
+                {/* Top Navigation Bar */}
+                <header className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 md:px-12 h-16 bg-white/80 dark:bg-[#2b2d2d]/80 backdrop-blur-md border-b border-slate-200 dark:border-[#414343] transition-colors duration-300">
+                    <div className="flex items-center gap-8">
+                        <Link href="/" className="flex items-center text-xl font-bold text-rose-800 dark:text-rose-450 tracking-tight" style={{ fontFamily: "'Hanken Grotesk', sans-serif" }}>
+                            <img 
+                                alt="MARIDONOR Logo" 
+                                className="h-7 w-auto inline-block mr-2" 
+                                src="/images/logo_icon.png"
+                                onError={(e) => {
+                                    (e.target as HTMLElement).style.display = 'none';
+                                }}
+                            />
+                            MARIDONOR
+                        </Link>
+                        <nav className="hidden md:flex items-center gap-6">
+                            <a href="#" className="text-xs font-bold text-rose-800 dark:text-rose-400 border-b-2 border-rose-800 dark:border-rose-450 pb-1">Beranda</a>
+                            <a href="#metrics" className="text-xs font-bold text-slate-500 dark:text-slate-400 hover:text-rose-700 dark:hover:text-rose-350 transition-colors">Metrik Live</a>
+                            <a href="#methodology" className="text-xs font-bold text-slate-500 dark:text-slate-400 hover:text-rose-700 dark:hover:text-rose-350 transition-colors">Metodologi</a>
+                            <a href="#feeds" className="text-xs font-bold text-slate-500 dark:text-slate-400 hover:text-rose-700 dark:hover:text-rose-350 transition-colors">Edukasi & Pengumuman</a>
                         </nav>
+                    </div>
+                    <div className="flex items-center gap-4">
+                        <ThemeSwitcher />
+                        
+                        {auth.user ? (
+                            <div className="flex items-center gap-3">
+                                <Link 
+                                    href={auth.user.role === 'donor' ? '/dashboard/donor' : (auth.user.role.includes('pmi') ? '/dashboard/pmi' : '/dashboard/hospital')}
+                                    className="bg-rose-700 dark:bg-rose-650 text-white text-xs font-bold px-4 py-2 rounded-xl active:scale-95 transition-all shadow-sm"
+                                >
+                                    Dashboard
+                                </Link>
+                                <form onSubmit={handleLogout} className="inline-block">
+                                    <button 
+                                        type="submit" 
+                                        className="p-2 text-xs font-bold text-slate-400 hover:text-rose-600 transition duration-150 rounded-xl"
+                                        title="Keluar"
+                                    >
+                                        🚪
+                                    </button>
+                                </form>
+                            </div>
+                        ) : (
+                            <Link 
+                                href="/login" 
+                                className="bg-rose-750 dark:bg-rose-650 text-white text-xs font-bold px-5 py-2.5 rounded-xl active:scale-95 transition-all shadow-md shadow-rose-700/10"
+                            >
+                                Portal Staf / Masuk
+                            </Link>
+                        )}
                     </div>
                 </header>
 
-                <main className="max-w-7xl mx-auto px-6 lg:px-8 pt-32 lg:pt-40 pb-16 lg:pb-24 relative z-10 space-y-32">
-                    
+                <main className="pt-16">
                     {/* Hero Section */}
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-                        <div className="space-y-8 text-center lg:text-left">
-                            <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-red-500/5 border border-red-500/20 text-red-500 text-xs font-bold">
-                                <span>🩸</span>
-                                <span>Platform Logistik Donor Darah Nasional</span>
-                            </div>
+                    <section className="relative min-h-[calc(100vh-64px)] flex items-center overflow-hidden py-16 px-6 md:px-12">
+                        {/* Decorative background glows */}
+                        <div className="absolute top-[-10%] left-[5%] w-[500px] h-[500px] rounded-full bg-rose-600/5 blur-[120px] pointer-events-none"></div>
+                        <div className="absolute bottom-[10%] right-[-5%] w-[450px] h-[450px] rounded-full bg-rose-700/5 blur-[110px] pointer-events-none"></div>
 
-                            <h1 className="text-4xl sm:text-5xl lg:text-[4rem] font-black tracking-tight theme-text-main leading-[1.05]">
-                                Setetes <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-500 via-rose-500 to-red-650">Darah</span>,<br />
-                                Satu Kehidupan.
-                            </h1>
-
-                            <p className="text-base sm:text-lg theme-text-muted max-w-xl mx-auto lg:mx-0 leading-relaxed font-light">
-                                Platform cerdas yang menghubungkan pendonor secara langsung dengan Unit Donor Darah PMI dan Rumah Sakit. Mempercepat proses pemesanan & penyaluran darah darurat secara real-time.
-                            </p>
-
-                            <div className="flex flex-col sm:flex-row justify-center lg:justify-start gap-4">
-                                <Link 
-                                    href="/login" 
-                                    className="px-8 py-4 text-xs font-bold text-white bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-550 hover:to-rose-550 rounded-2xl shadow-xl shadow-red-600/20 text-center transition-all duration-200 active:scale-95"
-                                >
-                                    Gabung Pendonor / Staf
-                                </Link>
-                                <a 
-                                    href="#news" 
-                                    className="px-8 py-4 text-xs font-bold theme-text-main theme-bg-card hover:bg-slate-500/10 rounded-2xl border theme-border-main text-center transition duration-150 shadow-sm"
-                                >
-                                    Lihat Berita & Event
-                                </a>
-                            </div>
-
-                            {/* Live Stats */}
-                            <div className="grid grid-cols-3 gap-6 pt-8 border-t theme-border-main max-w-md mx-auto lg:mx-0">
-                                <div className="text-center lg:text-left space-y-1">
-                                    <p className="text-3xl font-black theme-text-main">150+</p>
-                                    <p className="text-[10px] font-bold theme-text-muted uppercase tracking-widest">Pendonor Aktif</p>
+                        <div className="relative z-10 grid grid-cols-12 gap-6 w-full items-center">
+                            <div className="col-span-12 lg:col-span-7 flex flex-col gap-6 text-center lg:text-left">
+                                <span className="text-[10px] font-bold text-rose-700 dark:text-rose-400 tracking-widest uppercase" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
+                                    Jaringan Logistik Darah Nasional
+                                </span>
+                                <h1 className="text-4xl sm:text-5xl lg:text-[4rem] font-bold text-rose-800 dark:text-rose-450 leading-[1.08]" style={{ fontFamily: "'Hanken Grotesk', sans-serif" }}>
+                                    Penyelamatan Jiwa Melalui <br/>
+                                    <span className="text-slate-800 dark:text-white">Presisi Logistik Digital</span>
+                                </h1>
+                                <p className="text-sm sm:text-base text-slate-500 dark:text-slate-400 max-w-xl mx-auto lg:mx-0 leading-relaxed font-light">
+                                    MARIDONOR adalah ekosistem digital premium untuk memantau rantai pasok kantong darah secara real-time. Kami menghubungkan pendonor sukarela dengan Unit Donor Darah PMI dan fasilitas darurat Rumah Sakit dengan presisi medis.
+                                </p>
+                                <div className="flex flex-wrap justify-center lg:justify-start gap-4 mt-2">
+                                    <Link 
+                                        href="/login" 
+                                        className="bg-rose-700 hover:bg-rose-850 text-white px-8 py-3.5 rounded-xl text-sm font-bold active:scale-95 transition-all flex items-center gap-2 shadow-lg shadow-rose-700/10"
+                                    >
+                                        Gabung Jaringan
+                                        <span className="material-symbols-outlined text-[18px]">arrow_forward</span>
+                                    </Link>
+                                    <a 
+                                        href="#metrics" 
+                                        className="border border-slate-300 dark:border-[#414343] text-rose-700 dark:text-rose-400 hover:bg-rose-500/5 px-8 py-3.5 rounded-xl text-sm font-semibold transition-all"
+                                    >
+                                        Pantau Stok Live
+                                    </a>
                                 </div>
-                                <div className="text-center lg:text-left space-y-1">
-                                    <p className="text-3xl font-black theme-text-main">48+</p>
-                                    <p className="text-[10px] font-bold theme-text-muted uppercase tracking-widest">PMI & RS Mitra</p>
-                                </div>
-                                <div className="text-center lg:text-left space-y-1">
-                                    <p className="text-3xl font-black theme-text-main">1.5K</p>
-                                    <p className="text-[10px] font-bold theme-text-muted uppercase tracking-widest">Kantung Disalurkan</p>
+                            </div>
+                            <div className="hidden lg:col-span-5 lg:flex justify-end">
+                                <div className="relative w-[440px] h-[480px] rounded-2xl overflow-hidden border border-slate-200 dark:border-[#414343] shadow-2xl">
+                                    <img 
+                                        className="w-full h-full object-cover" 
+                                        alt="Laboratorium Medis" 
+                                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuCZRYeX2L9eTbAcyuBIeqjOmopQlp-MR8vGrD6m4OJQyplvHHLr8Z_PIpiaHO-oOmbSODLdAOSGziHepKaNSeklGeFyb6f5ejmGgrrawysaxMaDB8-zEzyLs9ppZj4gZJi20TyV8O0C4eKW51HQZf06wceRqCtkCVLa5Qmov7K0woNeaCYjMTQMRZtNKstN7bR_v5fhjWWrP6jVOvAhK32n2eQETcTuSXv5dOEv8Z6fghcCVDAgNyV4lA"
+                                    />
+                                    <div className="absolute bottom-6 left-6 right-6 p-6 glass-card rounded-2xl shadow-lg">
+                                        <div className="flex justify-between items-center mb-2">
+                                            <span className="text-xs font-bold text-rose-800 dark:text-rose-400" style={{ fontFamily: "'Hanken Grotesk', sans-serif" }}>
+                                                Pahlawan Pendonor
+                                            </span>
+                                            <span className="text-[9px] font-bold text-rose-700 bg-rose-600/10 px-2 py-0.5 rounded" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
+                                                LIVE
+                                            </span>
+                                        </div>
+                                        <div className="flex items-baseline gap-2">
+                                            <span className="text-3xl font-extrabold text-slate-800 dark:text-white" style={{ fontFamily: "'Hanken Grotesk', sans-serif" }}>12,482</span>
+                                            <span className="text-slate-500 dark:text-slate-400 text-xs font-semibold">+12% minggu ini</span>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
+                    </section>
 
-                        {/* Interactive Visual Graphic Card */}
-                        <div className="relative flex justify-center lg:justify-end">
-                            <div className="absolute -inset-4 bg-gradient-to-tr from-red-600/20 to-rose-600/5 rounded-[2.5rem] blur-2xl opacity-40"></div>
-                            <div className="relative w-full max-w-md theme-bg-card border theme-border-card rounded-[2rem] p-8 shadow-2xl space-y-6">
-                                <div className="flex justify-between items-center pb-4 border-b theme-border-main">
-                                    <div className="flex items-center space-x-2">
-                                        <span className="h-2.5 w-2.5 rounded-full bg-red-500 animate-pulse"></span>
-                                        <h3 className="font-extrabold theme-text-main text-xs uppercase tracking-widest">Stok Darah Darurat Nasional</h3>
+                    {/* Stats Bento Grid */}
+                    <section id="metrics" className="py-20 bg-slate-100 dark:bg-[#2b2d2d]/30 border-t border-b border-slate-200 dark:border-[#414343]">
+                        <div className="px-6 md:px-12">
+                            <div className="flex flex-col items-center mb-12 text-center">
+                                <h2 className="text-3xl font-bold text-rose-800 dark:text-rose-450 mb-3" style={{ fontFamily: "'Hanken Grotesk', sans-serif" }}>
+                                    Metrik Kinerja & Distribusi
+                                </h2>
+                                <p className="text-sm text-slate-500 dark:text-slate-400 max-w-xl font-light">
+                                    Sistem pemantauan dasbor kami mencatat setiap siklus kantong darah dari pendonor hingga terdistribusi dengan aman ke pasien penerima.
+                                </p>
+                            </div>
+                            
+                            <div className="grid grid-cols-12 gap-6">
+                                {/* Metric Card 1 */}
+                                <div className="col-span-12 md:col-span-6 lg:col-span-4 glass-card p-8 rounded-2xl flex flex-col justify-between h-64 hover:border-rose-700/35 transition-all shadow-sm">
+                                    <div className="flex items-center justify-between">
+                                        <span className="material-symbols-outlined text-4xl text-rose-700" style={{ fontVariationSettings: "'FILL' 1" }}>
+                                            bloodtype
+                                        </span>
+                                        <span className="material-symbols-outlined text-slate-400">monitoring</span>
                                     </div>
-                                    <span className="text-[9px] text-red-500 bg-red-500/10 px-2 py-0.5 rounded font-black uppercase">Live</span>
+                                    <div>
+                                        <h3 className="text-sm font-bold text-rose-700 dark:text-rose-400" style={{ fontFamily: "'Hanken Grotesk', sans-serif" }}>
+                                            Kapasitas Suplai
+                                        </h3>
+                                        <p className="text-4xl font-extrabold my-2 text-slate-800 dark:text-white" style={{ fontFamily: "'Hanken Grotesk', sans-serif" }}>94.8%</p>
+                                        <p className="text-xs text-slate-500 dark:text-slate-400">Kapasitas penyimpanan optimal di 48 bank darah UDD.</p>
+                                    </div>
+                                </div>
+                                {/* Metric Card 2 */}
+                                <div className="col-span-12 md:col-span-6 lg:col-span-4 glass-card p-8 rounded-2xl flex flex-col justify-between h-64 hover:border-rose-700/35 transition-all shadow-sm">
+                                    <div className="flex items-center justify-between">
+                                        <span className="material-symbols-outlined text-4xl text-rose-700" style={{ fontVariationSettings: "'FILL' 1" }}>
+                                            emergency
+                                        </span>
+                                        <span className="material-symbols-outlined text-slate-400">speed</span>
+                                    </div>
+                                    <div>
+                                        <h3 className="text-sm font-bold text-rose-700 dark:text-rose-400" style={{ fontFamily: "'Hanken Grotesk', sans-serif" }}>
+                                            Waktu Tanggap Darurat
+                                        </h3>
+                                        <p className="text-4xl font-extrabold my-2 text-slate-800 dark:text-white" style={{ fontFamily: "'Hanken Grotesk', sans-serif" }}>
+                                            14 <span className="text-base font-normal">menit</span>
+                                        </p>
+                                        <p className="text-xs text-slate-500 dark:text-slate-400">Rata-rata kecepatan penyaluran darah darurat ke Rumah Sakit.</p>
+                                    </div>
+                                </div>
+                                {/* Metric Card 3 (Featured) */}
+                                <div className="col-span-12 lg:col-span-4 row-span-2 bg-rose-800 dark:bg-rose-900 p-8 rounded-2xl flex flex-col justify-between text-white relative overflow-hidden group shadow-md">
+                                    <div className="relative z-10 h-full flex flex-col justify-between">
+                                        <div>
+                                            <span className="material-symbols-outlined text-4xl mb-4 text-white/95">public</span>
+                                            <h3 className="text-xl font-bold mb-2 text-white" style={{ fontFamily: "'Hanken Grotesk', sans-serif" }}>
+                                                Jangkauan Kolaboratif
+                                            </h3>
+                                            <p className="text-xs text-rose-100 leading-relaxed font-light">
+                                                Mengembangkan kolaborasi dengan berbagai rumah sakit umum, RS swasta, dan unit transfusi darah regional demi menjamin ketersediaan darah di saat kritis.
+                                            </p>
+                                        </div>
+                                        <div className="mt-8">
+                                            <div className="flex -space-x-3 mb-4">
+                                                <div className="w-10 h-10 rounded-full border-2 border-rose-800 overflow-hidden bg-slate-300"></div>
+                                                <div className="w-10 h-10 rounded-full border-2 border-rose-800 overflow-hidden bg-slate-400"></div>
+                                                <div className="w-10 h-10 rounded-full border-2 border-rose-800 overflow-hidden bg-slate-500"></div>
+                                                <div className="w-10 h-10 rounded-full border-2 border-rose-800 bg-[#2b2d2d] flex items-center justify-center text-[10px] font-bold">+2k</div>
+                                            </div>
+                                            <Link href="/login" className="w-full py-3 bg-white text-rose-800 hover:bg-slate-100 rounded-xl font-bold active:scale-95 transition-transform text-xs text-center block">
+                                                Daftar Sekarang
+                                            </Link>
+                                        </div>
+                                    </div>
+                                </div>
+                                {/* Map/Location Card */}
+                                <div className="col-span-12 md:col-span-8 glass-card rounded-2xl overflow-hidden flex flex-col md:flex-row h-64 md:h-auto lg:h-64 shadow-sm">
+                                    <div className="md:w-1/2 p-8 flex flex-col justify-center">
+                                        <h3 className="text-sm font-bold text-rose-700 dark:text-rose-400 mb-2" style={{ fontFamily: "'Hanken Grotesk', sans-serif" }}>
+                                            Distribusi Regional Aktif
+                                        </h3>
+                                        <p className="text-xs text-slate-500 dark:text-slate-400 mb-4 font-light">
+                                            Pemetaan geografis persebaran kebutuhan rumah sakit dan ketersediaan relawan pendonor secara dinamis.
+                                        </p>
+                                        <div className="flex items-center gap-2 text-rose-700 dark:text-rose-450 text-xs font-bold">
+                                            <span className="material-symbols-outlined text-[18px]">location_on</span>
+                                            <span>48 Unit Terdaftar</span>
+                                        </div>
+                                    </div>
+                                    <div className="md:w-1/2 relative bg-rose-50 dark:bg-[#414343]">
+                                        <div 
+                                            className="w-full h-full bg-cover bg-center" 
+                                            style={{ 
+                                                backgroundImage: "url('https://lh3.googleusercontent.com/aida-public/AB6AXuCZvB3-jHV3cLdCSRLI-EN2oPPbfw8yQ_z9ZvbbRU97e0hzAx4eaVr3ecvGAtpNBWvJVb0w2ChClUF6n3JFWxoMO4MNGsIi0UZg0-YbMNTJfsgSIvyQEB5bUWTUNlshrNXqngrAjDn1DiwS7LGQGg4HwLkbVQiSG5XHOLXc_BVxXYZWCCqh1x46lZ22rnZSlIkXV8GgV9XyM7OMvFF8Pk29ETOudF-r5mUwJOm8wWPxasLUKmGPjJjhew')" 
+                                            }}
+                                        />
+                                        <div className="absolute inset-0 bg-rose-800/10 pointer-events-none"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    {/* Methodology Section */}
+                    <section id="methodology" className="py-20 px-6 md:px-12">
+                        <div className="grid grid-cols-12 gap-12 items-center">
+                            <div className="col-span-12 lg:col-span-5 flex flex-col gap-6">
+                                <h2 className="text-3xl font-bold text-rose-800 dark:text-rose-450 leading-tight" style={{ fontFamily: "'Hanken Grotesk', sans-serif" }}>
+                                    Metodologi Penyaluran & Keamanan Medis
+                                </h2>
+                                <p className="text-sm text-slate-500 dark:text-slate-400 font-light leading-relaxed">
+                                    Kami menerapkan standar skrining klinis berlapis dan sistem distribusi terjadwal untuk menjamin mutu produk darah tetap terjaga sempurna hingga di tangan resipien.
+                                </p>
+                                <ul className="flex flex-col gap-5">
+                                    <li className="flex gap-4 items-start">
+                                        <div className="p-2.5 bg-rose-600/10 rounded-xl">
+                                            <span className="material-symbols-outlined text-rose-700">verified</span>
+                                        </div>
+                                        <div>
+                                            <span className="text-sm font-bold block text-slate-800 dark:text-white">Pemeriksaan Medis Ketat</span>
+                                            <p className="text-xs text-slate-500 dark:text-slate-400 font-light mt-1">Skrining Hb, tekanan darah, dan pemeriksaan sampel laboratorium menyeluruh.</p>
+                                        </div>
+                                    </li>
+                                    <li className="flex gap-4 items-start">
+                                        <div className="p-2.5 bg-rose-600/10 rounded-xl">
+                                            <span className="material-symbols-outlined text-rose-700">analytics</span>
+                                        </div>
+                                        <div>
+                                            <span className="text-sm font-bold block text-slate-800 dark:text-white">Prediksi Stok Cerdas</span>
+                                            <p className="text-xs text-slate-500 dark:text-slate-400 font-light mt-1">Pemetaan tren kebutuhan musiman untuk mencegah kekosongan suplai darah darurat.</p>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div className="col-span-12 lg:col-span-7 grid grid-cols-2 gap-6">
+                                <div className="col-span-2 md:col-span-1 rounded-2xl overflow-hidden group shadow-md border border-slate-200 dark:border-[#414343]">
+                                    <div className="h-80 relative">
+                                        <img 
+                                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" 
+                                            alt="Teknologi Bank Darah"
+                                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuBZd7eMlVU4A3kX8qDebz5VHFvSpBD_wEmIywi7LP7ZsM9mR5m7kIt9f8h6HnQAUPUiml2ZREDg6EO5OSknhg6La2XIOIu8zbLzE_hPzWvaTNgYGDgFQa2X2fam_y90z1a-DLwN_1hL93Zee8ByxGMsqkoQNViJ8PC28CeZVfJIattCKu17cIwUrOiQ72tSGf29ViBK0CgxZV_cNbXN3N4P914wFru7OJ5orW8zQUQoqV1yr_9wO2v4cQ"
+                                        />
+                                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
+                                        <div className="absolute bottom-6 left-6">
+                                            <span className="text-[9px] text-white/70 tracking-widest block mb-1" style={{ fontFamily: "'JetBrains Mono', monospace" }}>RISERSET & KLINIS</span>
+                                            <h4 className="text-white font-bold text-sm" style={{ fontFamily: "'Hanken Grotesk', sans-serif" }}>Penyimpanan Suhu Stabil</h4>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="col-span-2 md:col-span-1 rounded-2xl overflow-hidden group shadow-md border border-slate-200 dark:border-[#414343]">
+                                    <div className="h-80 relative">
+                                        <img 
+                                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" 
+                                            alt="Visual Data Rantai Pasok"
+                                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuA0WHWuWOBTVtEaAM5VDsVX7WBilv9DLmWWuMOcLs9Uhs_vFODnnfGkKMp-EutW9KPJwD4wAEuIueuCoDflaErK5x1Ei584o6DoFaFvKmdPndgHjxKDT3rdKaVphOwZLyjKX0-L_ouGKI-w9BJ6Sf8u436fRKK6upmmhjUTHzFlDMsB3HC4gMcPOByDUnvY83krbLNdBr4uO70rYF0qfDcFfLnp9yKoVL8slsCdJKwPWR3JWFFj6P0EVA"
+                                        />
+                                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
+                                        <div className="absolute bottom-6 left-6">
+                                            <span className="text-[9px] text-white/70 tracking-widest block mb-1" style={{ fontFamily: "'JetBrains Mono', monospace" }}>TEKNOLOGI RANTAI PASOK</span>
+                                            <h4 className="text-white font-bold text-sm" style={{ fontFamily: "'Hanken Grotesk', sans-serif" }}>Rantai Dingin Terproteksi</h4>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    {/* Feeds Section (Dynamic articles and announcements) */}
+                    <section id="feeds" className="py-20 bg-slate-100 dark:bg-[#2b2d2d]/30 border-t border-slate-200 dark:border-[#414343]">
+                        <div className="px-6 md:px-12 grid grid-cols-12 gap-12">
+                            {/* Articles Column (Left 2/3) */}
+                            <div className="col-span-12 lg:col-span-8 space-y-8">
+                                <div className="space-y-2">
+                                    <span className="text-xs font-bold text-rose-700 dark:text-rose-400 uppercase tracking-widest block" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
+                                        📚 Edukasi & Informasi
+                                    </span>
+                                    <h2 className="text-3xl font-bold text-rose-800 dark:text-rose-450" style={{ fontFamily: "'Hanken Grotesk', sans-serif" }}>
+                                        Kesehatan & Tips Pendonor
+                                    </h2>
+                                </div>
+
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    {articles.length === 0 ? (
+                                        <div className="p-8 rounded-2xl border border-slate-200 dark:border-[#414343] bg-white dark:bg-[#2b2d2d] text-slate-500 dark:text-slate-400 text-sm font-semibold col-span-2 text-center shadow-sm">
+                                            📰 Belum ada artikel kesehatan dipublikasikan saat ini.
+                                        </div>
+                                    ) : (
+                                        articles.map((art) => (
+                                            <div key={art.id} className="p-6 rounded-2xl bg-white dark:bg-[#2b2d2d] border border-slate-200 dark:border-[#414343] flex flex-col justify-between space-y-5 hover:-translate-y-1 hover:border-rose-500/20 transition-all duration-300 shadow-sm hover:shadow-lg">
+                                                <div className="space-y-3">
+                                                    <div className="flex justify-between items-center">
+                                                        <span className="text-[9px] bg-rose-600/10 text-rose-700 px-2.5 py-0.5 rounded font-bold uppercase">
+                                                            {art.category}
+                                                        </span>
+                                                        <span className="text-[10px] text-slate-400 font-mono">
+                                                            {new Date(art.created_at).toLocaleDateString('id-ID', { month: 'long', day: 'numeric' })}
+                                                        </span>
+                                                    </div>
+                                                    <h4 className="font-bold text-base text-slate-800 dark:text-white line-clamp-2 leading-snug" style={{ fontFamily: "'Hanken Grotesk', sans-serif" }}>{art.title}</h4>
+                                                    <p className="text-xs text-slate-500 dark:text-slate-400 line-clamp-3 leading-relaxed font-light">{art.excerpt}</p>
+                                                </div>
+                                                <Link href="/login" className="text-xs font-bold text-rose-700 hover:text-rose-800 flex items-center space-x-1 pt-2 w-fit">
+                                                    <span>Baca Artikel</span>
+                                                    <span>&rarr;</span>
+                                                </Link>
+                                            </div>
+                                        ))
+                                    )}
+                                </div>
+                            </div>
+
+                            {/* Announcements Column (Right 1/3) */}
+                            <div className="col-span-12 lg:col-span-4 space-y-8">
+                                <div className="space-y-2">
+                                    <span className="text-xs font-bold text-rose-700 dark:text-rose-400 uppercase tracking-widest block" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
+                                        📢 Siaran Resmi
+                                    </span>
+                                    <h2 className="text-3xl font-bold text-rose-800 dark:text-rose-450" style={{ fontFamily: "'Hanken Grotesk', sans-serif" }}>
+                                        Event & Pengumuman
+                                    </h2>
                                 </div>
 
                                 <div className="space-y-4">
-                                    {[
-                                        { type: 'A (Positif)', count: 12, percent: 'w-4/5', color: 'from-red-600 to-rose-600' },
-                                        { type: 'B (Positif)', count: 8, percent: 'w-3/5', color: 'from-red-500 to-orange-500' },
-                                        { type: 'AB (Positif)', count: 4, percent: 'w-2/5', color: 'from-rose-500 to-rose-700' },
-                                        { type: 'O (Positif)', count: 18, percent: 'w-[92%]', color: 'from-red-600 via-rose-600 to-red-500' },
-                                    ].map((stock) => (
-                                        <div key={stock.type} className="space-y-2">
-                                            <div className="flex justify-between text-xs font-bold">
-                                                <span className="theme-text-muted">{stock.type}</span>
-                                                <span className="theme-text-main">{stock.count} Kantong</span>
-                                            </div>
-                                            <div className="w-full theme-bg-main h-3.5 rounded-full overflow-hidden p-[1px] border theme-border-main">
-                                                <div className={`h-full ${stock.percent} bg-gradient-to-r ${stock.color} rounded-full`}></div>
-                                            </div>
+                                    {announcements.length === 0 ? (
+                                        <div className="p-8 rounded-2xl border border-slate-200 dark:border-[#414343] bg-white dark:bg-[#2b2d2d] text-slate-500 dark:text-slate-400 text-sm font-semibold text-center shadow-sm">
+                                            🔔 Tidak ada pengumuman aktif saat ini.
                                         </div>
-                                    ))}
+                                    ) : (
+                                        announcements.map((ann) => (
+                                            <div key={ann.id} className="p-6 rounded-2xl bg-white dark:bg-[#2b2d2d] border border-slate-200 dark:border-[#414343] space-y-3 relative overflow-hidden shadow-sm hover:shadow-md hover:border-rose-500/20 transition-all">
+                                                {ann.is_pinned && (
+                                                    <div className="absolute top-0 right-0 w-8 h-8 bg-rose-600/10 rounded-bl-2xl flex items-center justify-center text-xs">
+                                                        📌
+                                                    </div>
+                                                )}
+                                                <div className="flex items-center space-x-2">
+                                                    <span className={`inline-flex text-[8px] font-bold px-1.5 py-0.5 rounded uppercase ${
+                                                        ann.type === 'warning' ? 'bg-orange-500/10 text-orange-600' :
+                                                        ann.type === 'event' ? 'bg-blue-500/10 text-blue-600' :
+                                                        'bg-green-500/10 text-green-600'
+                                                    }`}>
+                                                        {ann.type}
+                                                    </span>
+                                                    <span className="text-[9px] text-slate-400 font-mono">
+                                                        {new Date(ann.created_at).toLocaleDateString('id-ID', { month: 'short', day: 'numeric' })}
+                                                    </span>
+                                                </div>
+                                                <h4 className="font-bold text-sm text-slate-800 dark:text-white leading-tight line-clamp-2" style={{ fontFamily: "'Hanken Grotesk', sans-serif" }}>{ann.title}</h4>
+                                                <p className="text-xs text-slate-500 dark:text-slate-400 line-clamp-3 leading-relaxed font-light">{ann.content}</p>
+                                            </div>
+                                        ))
+                                    )}
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </section>
 
-                    {/* News & Info Section (Brought Up front for better content flow) */}
-                    <div id="news" className="py-12 border-t theme-border-main grid grid-cols-1 lg:grid-cols-3 gap-12">
-                        
-                        {/* Articles Column (Left 2/3) */}
-                        <div className="lg:col-span-2 space-y-8">
-                            <div className="space-y-2 text-center lg:text-left">
-                                <span className="text-xs font-bold text-red-500 uppercase tracking-widest block">📚 Artikel & Edukasi</span>
-                                <h2 className="text-3xl font-black theme-text-main tracking-tight">Kesehatan & Informasi Pendonor</h2>
-                            </div>
-
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                {articles.length === 0 ? (
-                                    <div className="p-8 rounded-3xl border theme-border-card theme-bg-card theme-text-muted text-sm font-semibold col-span-2 text-center">
-                                        📰 Belum ada artikel edukasi dipublikasikan saat ini.
-                                    </div>
-                                ) : (
-                                    articles.map((art) => (
-                                        <div key={art.id} className="p-6 rounded-[2rem] theme-bg-card border theme-border-card flex flex-col justify-between space-y-5 hover:-translate-y-1.5 hover:border-red-500/20 transition-all duration-300 shadow-sm hover:shadow-lg">
-                                            <div className="space-y-3">
-                                                <div className="flex justify-between items-center">
-                                                    <span className="text-[9px] bg-red-500/10 text-red-500 px-2 py-0.5 rounded font-black uppercase">
-                                                        {art.category}
-                                                    </span>
-                                                    <span className="text-[10px] theme-text-muted font-mono">
-                                                        {new Date(art.created_at).toLocaleDateString('id-ID', { month: 'long', day: 'numeric' })}
-                                                    </span>
-                                                </div>
-                                                <h4 className="font-extrabold text-base theme-text-main line-clamp-2 leading-snug">{art.title}</h4>
-                                                <p className="text-xs theme-text-muted line-clamp-3 leading-relaxed font-light">{art.excerpt}</p>
-                                            </div>
-                                            <Link href="/login" className="text-xs font-bold text-red-500 hover:text-red-400 flex items-center space-x-1 pt-2 w-fit">
-                                                <span>Baca Artikel</span>
-                                                <span>&rarr;</span>
-                                            </Link>
-                                        </div>
-                                    ))
-                                )}
-                            </div>
-                        </div>
-
-                        {/* Announcements Column (Right 1/3) */}
-                        <div className="space-y-8">
-                            <div className="space-y-2 text-center lg:text-left">
-                                <span className="text-xs font-bold text-red-500 uppercase tracking-widest block">📢 Pengumuman Resmi</span>
-                                <h2 className="text-3xl font-black theme-text-main tracking-tight">Siaran & Event</h2>
-                            </div>
-
-                            <div className="space-y-4">
-                                {announcements.length === 0 ? (
-                                    <div className="p-8 rounded-3xl border theme-border-card theme-bg-card theme-text-muted text-sm font-semibold text-center">
-                                        🔔 Tidak ada pengumuman aktif saat ini.
-                                    </div>
-                                ) : (
-                                    announcements.map((ann) => (
-                                        <div key={ann.id} className="p-6 rounded-2xl theme-bg-card border theme-border-card space-y-3 relative overflow-hidden shadow-sm hover:shadow-md hover:border-slate-500/20 transition-all">
-                                            {ann.is_pinned && (
-                                                <div className="absolute top-0 right-0 w-8 h-8 bg-red-650/10 rounded-bl-2xl flex items-center justify-center text-xs">
-                                                    📌
-                                                </div>
-                                            )}
-                                            <div className="flex items-center space-x-2">
-                                                <span className={`inline-flex text-[8px] font-black px-1.5 py-0.5 rounded uppercase ${
-                                                    ann.type === 'warning' ? 'bg-orange-500/10 text-orange-500' :
-                                                    ann.type === 'event' ? 'bg-blue-500/10 text-blue-500' :
-                                                    'bg-green-500/10 text-green-500'
-                                                }`}>
-                                                    {ann.type}
-                                                </span>
-                                                <span className="text-[9px] theme-text-muted font-mono">
-                                                    {new Date(ann.created_at).toLocaleDateString('id-ID', { month: 'short', day: 'numeric' })}
-                                                </span>
-                                            </div>
-                                            <h4 className="font-extrabold text-sm theme-text-main leading-tight line-clamp-2">{ann.title}</h4>
-                                            <p className="text-xs theme-text-muted line-clamp-3 leading-relaxed font-light">{ann.content}</p>
-                                        </div>
-                                    ))
-                                )}
-                            </div>
-                        </div>
-
-                    </div>
-
-                    {/* Features Section */}
-                    <div id="features" className="py-12 border-t theme-border-main space-y-16">
-                        <div className="max-w-3xl space-y-4 text-center lg:text-left">
-                            <span className="text-xs font-bold text-red-500 uppercase tracking-widest block">🛡️ Manfaat & Keunggulan</span>
-                            <h2 className="text-3xl lg:text-4xl font-black theme-text-main tracking-tight">Solusi Ekosistem Donor Darah</h2>
-                            <p className="text-sm theme-text-muted leading-relaxed font-light">
-                                Kami merancang platform Maridonor untuk memangkas birokrasi logistik darah darurat dan memberikan kenyamanan maksimal bagi para pendonor.
+                    {/* CTA Section */}
+                    <section className="py-20 px-6 md:px-12 bg-slate-900 dark:bg-[#111212] text-white overflow-hidden relative">
+                        <div className="relative z-10 flex flex-col items-center text-center">
+                            <h2 className="text-3xl font-bold mb-6 text-white" style={{ fontFamily: "'Hanken Grotesk', sans-serif" }}>
+                                Siap memperkuat Jaringan Donor Darah?
+                            </h2>
+                            <p className="text-slate-300 max-w-2xl mb-10 text-sm font-light leading-relaxed">
+                                Baik Anda pendonor mandiri yang ingin menyelamatkan jiwa, maupun administrator logistik rumah sakit, MARIDONOR menyediakan platform mutakhir untuk mengelola dan memantau pasokan kritis secara cepat.
                             </p>
+                            <div className="flex flex-wrap justify-center gap-4">
+                                <Link 
+                                    href="/login" 
+                                    className="bg-white text-rose-800 px-10 py-3.5 rounded-xl font-bold text-xs hover:bg-slate-100 transition-colors active:scale-95 shadow-sm"
+                                >
+                                    Daftar Pendonor
+                                </Link>
+                                <Link 
+                                    href="/login" 
+                                    className="border-2 border-white/20 text-white px-10 py-3.5 rounded-xl font-bold text-xs hover:bg-white/10 transition-colors active:scale-95"
+                                >
+                                    Portal Rumah Sakit / PMI
+                                </Link>
+                            </div>
                         </div>
-
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                            {[
-                                { title: 'Pencarian Instan', desc: 'Pemantauan stok kantong darah secara akurat untuk kebutuhan darurat di Rumah Sakit.', icon: '🔍', color: 'bg-red-500' },
-                                { title: 'Verifikasi KYC Cepat', desc: 'Sistem verifikasi berkas identitas tingkat 1 terintegrasi langsung untuk pendonor.', icon: '🛡️', color: 'bg-purple-500' },
-                                { title: 'Schedules & Booking', desc: 'Pendonor dapat memesan antrean donor mandiri lewat aplikasi untuk menghindari antrean panjang.', icon: '📅', color: 'bg-orange-500' },
-                                { title: 'Loyalty & Reward', desc: 'Kumpulkan poin loyalty untuk setiap donasi dan tukarkan dengan sertifikat penghargaan digital.', icon: '🏆', color: 'bg-emerald-500' },
-                            ].map((feat, idx) => (
-                                <div key={idx} className="theme-bg-card border theme-border-card p-8 rounded-[2rem] shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col items-start relative group">
-                                    <div className="w-12 h-12 rounded-2xl bg-red-500/5 flex items-center justify-center text-2xl mb-6 group-hover:scale-110 transition-transform">
-                                        {feat.icon}
-                                    </div>
-                                    <h4 className="text-base font-extrabold theme-text-main mb-3 leading-tight">{feat.title}</h4>
-                                    <p className="text-xs theme-text-muted leading-relaxed flex-1 mb-8 font-light">{feat.desc}</p>
-                                    
-                                    {/* Accent Bar at bottom */}
-                                    <div className={`absolute bottom-8 left-8 h-1 w-6 rounded-full ${feat.color}`}></div>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
+                    </section>
                 </main>
 
-                {/* Footer Section */}
-                <footer className="border-t theme-border-main bg-slate-500/5 transition-colors duration-300">
-                    <div className="max-w-7xl mx-auto px-6 lg:px-8 py-12 flex flex-col sm:flex-row items-center justify-between gap-6">
-                        <div className="flex items-center space-x-3">
-                            <div className="p-2 bg-gradient-to-r from-red-600 to-rose-600 rounded-xl">
-                                <img src="/images/logo_icon.png" alt="Logo icon" className="h-5 w-auto filter brightness-0 invert" />
-                            </div>
-                            <span className="text-base font-bold theme-text-main">
-                                Mari<span className="text-red-650 bg-clip-text bg-gradient-to-r from-red-500 to-rose-600">donor</span>
+                {/* Footer */}
+                <footer className="bg-white dark:bg-[#2b2d2d] border-t border-slate-200 dark:border-[#414343] text-slate-500 dark:text-slate-400 transition-colors duration-300">
+                    <div className="grid grid-cols-12 gap-6 px-6 md:px-12 py-16 w-full">
+                        <div className="col-span-12 lg:col-span-4 flex flex-col gap-6">
+                            <span className="text-xl font-bold text-rose-800 dark:text-rose-400 flex items-center" style={{ fontFamily: "'Hanken Grotesk', sans-serif" }}>
+                                <img 
+                                    alt="MARIDONOR Logo" 
+                                    className="h-6 w-auto inline-block mr-2" 
+                                    src="/images/logo_icon.png"
+                                    onError={(e) => {
+                                        (e.target as HTMLElement).style.display = 'none';
+                                    }}
+                                />
+                                MARIDONOR
                             </span>
+                            <p className="text-xs text-slate-500 dark:text-slate-400 max-w-xs font-light leading-relaxed">
+                                Ekosistem digital berkelas dunia untuk manajemen rantai pasok medis kritis dan koordinasi kerelawanan nasional.
+                            </p>
                         </div>
-                        <p className="text-xs theme-text-muted text-center sm:text-right font-light">
-                            &copy; {new Date().getFullYear()} Maridonor. Seluruh hak cipta dilindungi undang-undang.
-                        </p>
+                        <div className="col-span-6 md:col-span-3 lg:col-span-2">
+                            <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-4" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
+                                Halaman Utama
+                            </h4>
+                            <ul className="flex flex-col gap-3 text-xs font-medium">
+                                <li><a className="hover:text-rose-700 dark:hover:text-rose-450 transition-colors" href="#">Dokumentasi</a></li>
+                                <li><a className="hover:text-rose-700 dark:hover:text-rose-450 transition-colors" href="#">Peta Unit UDD</a></li>
+                                <li><a className="hover:text-rose-700 dark:hover:text-rose-450 transition-colors" href="#">Artikel Medis</a></li>
+                            </ul>
+                        </div>
+                        <div className="col-span-6 md:col-span-3 lg:col-span-2">
+                            <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-4" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
+                                Jaringan Mitra
+                            </h4>
+                            <ul className="flex flex-col gap-3 text-xs font-medium">
+                                <li><a className="hover:text-rose-700 dark:hover:text-rose-450 transition-colors" href="#">Mitra PMI</a></li>
+                                <li><a className="hover:text-rose-700 dark:hover:text-rose-450 transition-colors" href="#">Rumah Sakit</a></li>
+                                <li><a className="hover:text-rose-700 dark:hover:text-rose-450 transition-colors" href="#">Kemitraan Baru</a></li>
+                            </ul>
+                        </div>
+                        <div className="col-span-12 md:col-span-6 lg:col-span-4">
+                            <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-4" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
+                                Berlangganan Informasi
+                            </h4>
+                            <p className="text-xs text-slate-500 dark:text-slate-400 mb-4 font-light leading-relaxed">
+                                Dapatkan berita darurat ketersediaan stok golongan darah langka dan pemberitahuan donor di wilayah Anda.
+                            </p>
+                            <form onSubmit={(e) => e.preventDefault()} className="flex gap-2">
+                                <input 
+                                    className="flex-grow bg-slate-100 dark:bg-[#414343] border border-slate-200 dark:border-transparent rounded-xl px-4 py-2.5 text-xs text-slate-800 dark:text-white focus:ring-1 focus:ring-rose-600 outline-none" 
+                                    placeholder="Alamat Email Anda" 
+                                    type="email"
+                                />
+                                <button className="bg-rose-750 dark:bg-rose-650 text-white px-5 py-2.5 rounded-xl text-xs font-bold hover:brightness-105 active:scale-95 transition-all">
+                                    Gabung
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                    <div className="px-6 md:px-12 py-6 border-t border-slate-200 dark:border-[#414343] flex flex-col md:flex-row justify-between items-center gap-4 text-xs">
+                        <span className="text-slate-450">&copy; {new Date().getFullYear()} MARIDONOR. Seluruh Hak Cipta Dilindungi.</span>
+                        <div className="flex gap-6">
+                            <a className="hover:text-rose-700 dark:hover:text-rose-400 transition-colors" href="#">Kebijakan Privasi</a>
+                            <a className="hover:text-rose-700 dark:hover:text-rose-400 transition-colors" href="#">Syarat & Ketentuan</a>
+                            <a className="hover:text-rose-700 dark:hover:text-rose-400 transition-colors" href="#">Kontak Bantuan</a>
+                        </div>
                     </div>
                 </footer>
             </div>
