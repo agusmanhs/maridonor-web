@@ -8,6 +8,42 @@
 @theme {
     --font-sans: 'Outfit', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
+
+    --color-primary: #610000;
+    --color-primary-container: #8b0000;
+    --color-primary-fixed: #ffdad4;
+    --color-primary-fixed-dim: #ffb4a8;
+    --color-on-primary-fixed-variant: #920703;
+    --color-on-primary-fixed: #410000;
+
+    --color-secondary: #5f5e5e;
+    --color-secondary-container: #e2dfde;
+    --color-secondary-fixed: #e5e2e1;
+    --color-secondary-fixed-dim: #c8c6c5;
+    
+    --color-tertiary: #2b2d2d;
+    --color-tertiary-container: #414343;
+    
+    --color-error: #ba1a1a;
+    --color-error-container: #ffdad6;
+
+    --color-surface: #f8f9ff;
+    --color-surface-dim: #cbdbf5;
+    --color-surface-bright: #f8f9ff;
+    --color-surface-container-lowest: #ffffff;
+    --color-surface-container-low: #eff4ff;
+    --color-surface-container: #e5eeff;
+    --color-surface-container-high: #dce9ff;
+    --color-surface-container-highest: #d3e4fe;
+    
+    --color-on-surface: #0b1c30;
+    --color-on-surface-variant: #5a403c;
+    --color-outline: #8e706b;
+    --color-outline-variant: #e3beb8;
+    
+    --color-inverse-surface: #213145;
+    --color-inverse-on-surface: #eaf1ff;
+    --color-inverse-primary: #ffb4a8;
 }
 
 /* BASE DESIGN SYSTEM VARIABLES */
@@ -22,21 +58,54 @@
     --border-card: rgba(255, 255, 255, 0.6);
     --shadow-main: 0 10px 40px -10px rgba(0,0,0,0.08), 0 4px 6px -1px rgba(0,0,0,0.04);
     --focus-ring: rgba(220, 38, 38, 0.25);
-    --gradient-bg: linear-gradient(135deg, #f6f8fd 0%, #f1f5f9 100%);
+    --gradient-bg: linear-gradient(135deg, #f8f9ff 0%, #eff4ff 100%);
 }
 
 .dark {
-    --bg-main: #020617;
-    --bg-card: rgba(15, 23, 42, 0.45); 
-    --bg-sidebar: rgba(15, 23, 42, 0.6); 
-    --bg-input: rgba(15, 23, 42, 0.7);
+    --bg-main: #1a1c1c;
+    --bg-card: rgba(43, 45, 45, 0.45); 
+    --bg-sidebar: rgba(43, 45, 45, 0.6); 
+    --bg-input: rgba(43, 45, 45, 0.7);
     --text-main: #f8fafc; 
     --text-muted: #94a3b8; 
-    --border-main: rgba(51, 65, 85, 0.5); 
+    --border-main: rgba(65, 67, 67, 0.5); 
     --border-card: rgba(255, 255, 255, 0.05);
     --shadow-main: 0 20px 40px -5px rgba(0,0,0,0.4);
     --focus-ring: rgba(220, 38, 38, 0.5);
-    --gradient-bg: radial-gradient(circle at top right, #0f172a, #020617 70%);
+    --gradient-bg: radial-gradient(circle at top right, #2b2d2d, #1a1c1c 70%);
+
+    /* Dark Mode overrides for Stitch design colors */
+    --color-primary: #ffb4a8;
+    --color-primary-container: #8b0000;
+    --color-primary-fixed: #ffdad4;
+    --color-primary-fixed-dim: #ffb4a8;
+    --color-on-primary-fixed-variant: #920703;
+    --color-on-primary-fixed: #410000;
+
+    --color-secondary: #c8c6c5;
+    --color-secondary-container: #414343;
+    --color-secondary-fixed: #e5e2e1;
+    --color-secondary-fixed-dim: #c8c6c5;
+    
+    --color-tertiary: #ffffff;
+    --color-tertiary-container: #414343;
+    
+    --color-error: #ffdad6;
+    --color-error-container: #ffdad6;
+
+    --color-surface: #1a1c1c;
+    --color-surface-dim: #0f1010;
+    --color-surface-bright: #2b2d2d;
+    --color-surface-container-lowest: #2b2d2d;
+    --color-surface-container-low: #2b2d2d;
+    --color-surface-container: #414343;
+    --color-surface-container-high: #414343;
+    --color-surface-container-highest: #4d4f4f;
+    
+    --color-on-surface: #ffffff;
+    --color-on-surface-variant: #afafb0;
+    --color-outline: #8e706b;
+    --color-outline-variant: #414343;
 }
 
 /* GLOBAL RESET FOR THEMES */
