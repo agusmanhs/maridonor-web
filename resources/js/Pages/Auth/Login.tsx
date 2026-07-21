@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Head, Link, useForm } from '@inertiajs/react';
-import ThemeSwitcher from '../../Components/ThemeSwitcher';
 
 export default function Login() {
+    const [showPassword, setShowPassword] = useState(false);
+    
     const { data, setData, post, processing, errors, reset } = useForm({
         email: '',
         password: '',
@@ -16,133 +17,239 @@ export default function Login() {
         });
     };
 
+    const handleQuickLogin = (role: 'pmi' | 'rs') => {
+        setData((prev) => ({
+            ...prev,
+            email: role === 'pmi' ? 'pmi@maridonor.com' : 'rs@maridonor.com',
+            password: 'password',
+        }));
+    };
+
     return (
         <>
             <Head>
-                <title>Masuk - Portal Staf Maridonor</title>
+                <title>Masuk - MARIDONOR</title>
                 <link rel="preconnect" href="https://fonts.googleapis.com" />
                 <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-                <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+                <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+                <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
             </Head>
-            
-            <div className="min-h-screen theme-bg-main flex flex-col items-center justify-center p-4 sm:p-6 selection:bg-red-600 selection:theme-text-main antialiased relative overflow-hidden transition-colors duration-300" style={{ fontFamily: "'Outfit', sans-serif" }}>
-                
-                {/* Floating Theme Switcher */}
-                <div className="absolute top-6 right-6 z-30">
-                    <ThemeSwitcher />
-                </div>
-                
-                {/* Background Grid Pattern & Glowing Circles */}
-                <div className="absolute inset-0 bg-[linear-gradient(to_right,var(--border-main)_1px,transparent_1px),linear-gradient(to_bottom,var(--border-main)_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_100%)] opacity-40"></div>
-                <div className="absolute top-1/4 left-1/4 -translate-x-1/2 -translate-y-1/2 w-96 h-96 rounded-full bg-red-600/10 blur-3xl pointer-events-none"></div>
-                <div className="absolute bottom-1/4 right-1/4 translate-x-1/2 translate-y-1/2 w-96 h-96 rounded-full bg-rose-600/10 blur-3xl pointer-events-none"></div>
 
-                <div className="w-full max-w-md space-y-8 relative z-10">
-                    
-                    {/* Header Logo */}
-                    <div className="text-center space-y-3">
-                        <Link href="/" className="inline-flex items-center space-x-3.5 group">
-                            <div className="p-2 bg-gradient-to-br from-red-500/10 to-rose-600/10 rounded-xl border border-red-500/20 group-hover:border-red-500/40 transition duration-200">
-                                <img src="/images/logo_icon.png" alt="Maridonor Logo" className="h-8 w-auto group-hover:scale-105 transition duration-200" />
+            <style>{`
+                .crimson-overlay {
+                    background: linear-gradient(135deg, rgba(120, 0, 38, 0.75) 0%, rgba(159, 18, 57, 0.45) 100%);
+                }
+                .input-transition {
+                    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+                }
+                .input-transition:focus {
+                    box-shadow: 0 0 0 2px rgba(159, 18, 57, 0.1);
+                }
+            `}</style>
+
+            <main className="min-h-screen w-full flex select-none antialiased bg-slate-50" style={{ fontFamily: "'Inter', sans-serif" }}>
+                {/* Left Side: Visual Narrative */}
+                <section className="hidden lg:flex lg:w-1/2 relative overflow-hidden">
+                    <div 
+                        className="absolute inset-0 z-0 bg-cover bg-center" 
+                        style={{ 
+                            backgroundImage: "url('https://lh3.googleusercontent.com/aida-public/AB6AXuC0pAKSiAv2tJROjcoKV1lCYC6GQ8YSH6fPj_e7B1SACv9VOs_O4rSNqm1zWADD6xQeRtK5UDugVrzSXkA6QssEq3Bu031l3ECKLdfeW_jBT-l_GxHJgN7Q_3vcQfm-yezJuwfHGi-FnPZ52Bdh5fFU5EVwAQy40-kw_vIjP9r3hmS939B9tGso_T3-d9XBQVuglXcrWMpi-t--qWkKr6Lit7LOUIYevY4A73ivcggbIwtah06Mqn7PeQ')" 
+                        }}
+                    />
+                    <div className="absolute inset-0 crimson-overlay z-10 flex flex-col justify-end p-12 text-white">
+                        <div className="max-w-md mb-8">
+                            <h2 className="font-semibold text-4xl mb-4 leading-tight" style={{ fontFamily: "'Outfit', sans-serif" }}>
+                                Berikan Harapan, Selamatkan Jiwa.
+                            </h2>
+                            <p className="text-base opacity-90 leading-relaxed">
+                                Setiap tetes darah yang Anda donasikan adalah nafas kehidupan bagi mereka yang membutuhkan. Bergabunglah dalam gerakan pahlawan kemanusiaan hari ini.
+                            </p>
+                        </div>
+                        <div className="flex gap-6 items-center border-t border-white/20 pt-6 mb-8">
+                            <div className="flex -space-x-3">
+                                <div className="w-10 h-10 rounded-full border-2 border-white bg-slate-300"></div>
+                                <div className="w-10 h-10 rounded-full border-2 border-white bg-slate-400"></div>
+                                <div className="w-10 h-10 rounded-full border-2 border-white bg-slate-500"></div>
+                                <div className="w-10 h-10 rounded-full border-2 border-white bg-rose-600 flex items-center justify-center text-[10px] font-bold">+12k</div>
                             </div>
-                            <span className="text-2xl font-black tracking-tight theme-text-main">
-                                Mari<span className="text-red-600">donor</span>
-                            </span>
-                        </Link>
-                        <h2 className="text-lg font-bold theme-text-main tracking-tight">
-                            Portal Staf PMI & Rumah Sakit
-                        </h2>
-                        <p className="text-xs theme-text-muted">
-                            Masuk untuk mengelola logistik bank darah dan slot jadwal.
-                        </p>
+                            <p className="text-sm font-semibold">Pahlawan MARIDONOR aktif di seluruh Indonesia</p>
+                        </div>
                     </div>
+                </section>
 
-                    {/* Card Form Glassmorphism */}
-                    <div className="theme-bg-card border theme-border-card rounded-3xl p-6 sm:p-8 backdrop-blur-xl shadow-2xl space-y-6">
-                        <form onSubmit={submit} className="space-y-5">
-                            
-                            {/* Email Address */}
-                            <div className="space-y-1.5">
-                                <label htmlFor="email" className="text-xs font-bold theme-text-muted uppercase tracking-wider block">
-                                    Alamat Email
+                {/* Right Side: Login Form */}
+                <section className="w-full lg:w-1/2 flex items-center justify-center p-6 md:p-12 bg-white">
+                    <div className="w-full max-w-[440px] flex flex-col gap-6">
+                        
+                        {/* Brand Identity */}
+                        <div className="flex flex-col items-center lg:items-start gap-2">
+                            <img 
+                                alt="MARIDONOR" 
+                                className="h-14 w-auto object-contain mb-1" 
+                                src="/images/logo_icon.png"
+                                onError={(e) => {
+                                    // Fallback if logo icon doesn't load
+                                    (e.target as HTMLElement).style.display = 'none';
+                                }}
+                            />
+                            <span className="text-3xl font-bold tracking-tighter text-rose-700" style={{ fontFamily: "'Outfit', sans-serif" }}>
+                                MARIDONOR
+                            </span>
+                        </div>
+
+                        {/* Header Text */}
+                        <div className="space-y-1 text-center lg:text-left">
+                            <h1 className="text-2xl font-bold text-slate-900" style={{ fontFamily: "'Outfit', sans-serif" }}>
+                                Selamat Datang Kembali
+                            </h1>
+                            <p className="text-sm text-slate-500">
+                                Silakan masuk untuk melanjutkan kontribusi Anda.
+                            </p>
+                        </div>
+
+                        {/* Form */}
+                        <form className="flex flex-col gap-4" onSubmit={submit}>
+                            <div className="flex flex-col gap-1.5">
+                                <label className="text-xs font-bold text-slate-500 ml-1" htmlFor="email">
+                                    Email
                                 </label>
-                                <input
-                                    id="email"
-                                    type="email"
-                                    name="email"
-                                    value={data.email}
-                                    className="w-full px-4 py-3.5 theme-bg-input border theme-border-main rounded-xl text-sm theme-text-main placeholder-slate-500 focus:outline-none focus:border-red-500/50 focus:ring-1 focus:ring-red-500/50 transition duration-200"
-                                    placeholder="nama.staf@maridonor.com"
-                                    autoComplete="username"
-                                    required
-                                    onChange={(e) => setData('email', e.target.value)}
-                                />
+                                <div className="relative group">
+                                    <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-rose-700 transition-colors">
+                                        mail
+                                    </span>
+                                    <input 
+                                        className="w-full pl-12 pr-4 py-3.5 bg-slate-50 border border-slate-200 rounded-xl input-transition outline-none focus:border-rose-600 focus:bg-white text-sm" 
+                                        id="email" 
+                                        type="email"
+                                        value={data.email}
+                                        onChange={(e) => setData('email', e.target.value)}
+                                        placeholder="nama@email.com" 
+                                        required
+                                        autoComplete="username"
+                                    />
+                                </div>
                                 {errors.email && (
-                                    <p className="text-xs text-red-550 font-semibold pt-1">{errors.email}</p>
+                                    <p className="text-xs text-red-600 font-semibold pl-1">{errors.email}</p>
                                 )}
                             </div>
 
-                            {/* Password */}
-                            <div className="space-y-1.5">
-                                <label htmlFor="password" className="text-xs font-bold theme-text-muted uppercase tracking-wider block">
-                                    Kata Sandi
-                                </label>
-                                <input
-                                    id="password"
-                                    type="password"
-                                    name="password"
-                                    value={data.password}
-                                    className="w-full px-4 py-3.5 theme-bg-input border theme-border-main rounded-xl text-sm theme-text-main placeholder-slate-500 focus:outline-none focus:border-red-500/50 focus:ring-1 focus:ring-red-500/50 transition duration-200"
-                                    placeholder="••••••••"
-                                    autoComplete="current-password"
-                                    required
-                                    onChange={(e) => setData('password', e.target.value)}
-                                />
+                            <div className="flex flex-col gap-1.5">
+                                <div className="flex justify-between items-center px-1">
+                                    <label className="text-xs font-bold text-slate-500" htmlFor="password">
+                                        Password
+                                    </label>
+                                    <Link className="text-xs font-semibold text-rose-600 hover:underline transition-all" href="#">
+                                        Lupa Password?
+                                    </Link>
+                                </div>
+                                <div className="relative group">
+                                    <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-rose-700 transition-colors">
+                                        lock
+                                    </span>
+                                    <input 
+                                        className="w-full pl-12 pr-12 py-3.5 bg-slate-50 border border-slate-200 rounded-xl input-transition outline-none focus:border-rose-600 focus:bg-white text-sm" 
+                                        id="password" 
+                                        type={showPassword ? 'text' : 'password'}
+                                        value={data.password}
+                                        onChange={(e) => setData('password', e.target.value)}
+                                        placeholder="••••••••" 
+                                        required
+                                        autoComplete="current-password"
+                                    />
+                                    <button 
+                                        className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors" 
+                                        type="button"
+                                        onClick={() => setShowPassword(!showPassword)}
+                                    >
+                                        <span className="material-symbols-outlined">
+                                            {showPassword ? 'visibility_off' : 'visibility'}
+                                        </span>
+                                    </button>
+                                </div>
                                 {errors.password && (
-                                    <p className="text-xs text-red-550 font-semibold pt-1">{errors.password}</p>
+                                    <p className="text-xs text-red-600 font-semibold pl-1">{errors.password}</p>
                                 )}
                             </div>
 
-                            {/* Remember Me */}
-                            <div className="flex items-center">
-                                <input
-                                    id="remember"
+                            <div className="flex items-center gap-2 px-1 py-1">
+                                <input 
+                                    className="w-4 h-4 rounded border-slate-300 text-rose-600 focus:ring-rose-500" 
+                                    id="remember" 
                                     type="checkbox"
-                                    name="remember"
                                     checked={data.remember}
-                                    className="h-4 w-4 rounded theme-bg-input border theme-border-main text-red-600 focus:ring-red-550/30 focus:ring-offset-slate-900"
                                     onChange={(e) => setData('remember', e.target.checked)}
                                 />
-                                <label htmlFor="remember" className="ml-2.5 text-xs font-semibold theme-text-muted select-none">
+                                <label className="text-xs text-slate-500 cursor-pointer select-none" htmlFor="remember">
                                     Ingat saya di perangkat ini
                                 </label>
                             </div>
 
-                            {/* Submit Button */}
-                            <button
+                            <button 
+                                className="w-full py-4 bg-rose-700 text-white text-sm font-bold rounded-xl shadow-lg shadow-rose-700/10 hover:bg-rose-800 active:scale-[0.98] transition-all duration-200 mt-2 flex justify-center items-center" 
                                 type="submit"
                                 disabled={processing}
-                                className="w-full py-3.5 text-sm font-bold text-white bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 disabled:opacity-50 rounded-xl shadow-lg shadow-red-600/15 hover:shadow-red-600/25 transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0 flex justify-center items-center"
                             >
-                                {processing ? 'Memverifikasi...' : 'Masuk ke Portal'}
+                                {processing ? 'Memproses...' : 'Masuk'}
                             </button>
                         </form>
-                    </div>
 
-                    {/* Register & Back Links */}
-                    <div className="text-center space-y-2">
-                        <p className="text-xs theme-text-muted">
-                            Belum punya akun?{' '}
-                            <Link href="/register" className="text-red-500 font-bold hover:text-red-400 transition duration-150">
-                                Daftar sebagai Pendonor
-                            </Link>
-                        </p>
-                        <Link href="/" className="inline-block text-xs theme-text-muted hover:theme-text-main transition duration-150">
-                            &larr; Kembali ke Beranda
-                        </Link>
+                        {/* Divider */}
+                        <div className="relative flex items-center py-1">
+                            <div className="flex-grow border-t border-slate-100"></div>
+                            <span className="flex-shrink mx-4 text-slate-400 text-[10px] font-bold uppercase tracking-widest">
+                                Atau
+                            </span>
+                            <div className="flex-grow border-t border-slate-100"></div>
+                        </div>
+
+                        {/* Registration Trigger */}
+                        <div className="text-center">
+                            <p className="text-sm text-slate-500">
+                                Belum punya akun?{' '}
+                                <Link className="text-rose-600 font-bold hover:underline" href="/register">
+                                    Daftar Sebagai Pendonor
+                                </Link>
+                            </p>
+                        </div>
+
+                        {/* Institutional Entry */}
+                        <div className="mt-2 p-4 bg-slate-50 border border-slate-100 rounded-2xl flex flex-col gap-3">
+                            <p className="text-[10px] font-bold text-slate-400 tracking-wider text-center uppercase">
+                                LOGIN CEPAT SIMULATOR (DEV ONLY)
+                            </p>
+                            <div className="grid grid-cols-2 gap-3">
+                                <button 
+                                    type="button"
+                                    onClick={() => handleQuickLogin('pmi')}
+                                    className="flex items-center justify-center gap-2 py-2.5 px-4 bg-white border border-slate-200 rounded-xl hover:bg-slate-100 transition-all text-slate-600 text-xs font-bold shadow-sm"
+                                >
+                                    <span className="material-symbols-outlined text-[16px] text-rose-600">
+                                        local_hospital
+                                    </span>
+                                    PMI Staff
+                                </button>
+                                <button 
+                                    type="button"
+                                    onClick={() => handleQuickLogin('rs')}
+                                    className="flex items-center justify-center gap-2 py-2.5 px-4 bg-white border border-slate-200 rounded-xl hover:bg-slate-100 transition-all text-slate-600 text-xs font-bold shadow-sm"
+                                >
+                                    <span className="material-symbols-outlined text-[16px] text-rose-600">
+                                        apartment
+                                    </span>
+                                    RS Staff
+                                </button>
+                            </div>
+                        </div>
+
+                        {/* Footer Links */}
+                        <footer className="mt-8 pt-4 flex justify-center gap-6 border-t border-slate-100">
+                            <a className="text-xs text-slate-400 hover:text-rose-600 transition-colors" href="#">Bantuan</a>
+                            <a className="text-xs text-slate-400 hover:text-rose-600 transition-colors" href="#">Privasi</a>
+                            <a className="text-xs text-slate-400 hover:text-rose-600 transition-colors" href="#">Syarat &amp; Ketentuan</a>
+                        </footer>
                     </div>
-                </div>
-            </div>
+                </section>
+            </main>
         </>
     );
 }
